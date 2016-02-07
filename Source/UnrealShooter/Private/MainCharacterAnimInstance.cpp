@@ -208,7 +208,27 @@ std::cerr << "bad_cast caught: " << bc.what() << '\n';
 return;
 }
 
+//ITERATE ARRAY
+TArray<FScalarParameterValue> scalarParams = materialInst->ScalarParameterValues;
+for (FScalarParameterValue param : scalarParams)
+{
+if (param.ParameterName == "OpacityModifier")
+{
+opacityVal -= 0.1;
+materialInst->SetScalarParameterValue()
+param.ParameterValue = opacityVal;
+}
+}
 
+//Apply the skin to all skin elements
+Skin = UMaterialInstanceDynamic::Create(SkinMaterial, this);
+if (Skin)
+{
+for (auto Iter(SkinElements.CreateIterator()); Iter; Iter++)
+{
+Mesh->SetMaterial(*Iter, Skin);
+}
+}
 
 */
 
