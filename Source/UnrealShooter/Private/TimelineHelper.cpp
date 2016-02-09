@@ -5,7 +5,6 @@
 
 
 
-
 TimelineHelper::TimelineHelper(AActor* ObjInstance, FName onUpdateFuntionName)
 {
 	const ConstructorHelpers::FObjectFinder<UCurveFloat> Curve(TEXT("CurveFloat'/UnrealShooter/Animation/CurveFloat/TimeLineHelperCurve.TimeLineHelperCurve'"));

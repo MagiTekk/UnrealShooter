@@ -6,14 +6,13 @@
 #include "MainCharacterAnimInstance.h"
 #include "CustomAnimationNotify.generated.h"
 
-//UENUM(BluePrintType)
-enum class ECustomName:uint8
+UENUM()
+enum class ECustomName : uint8
 {
 	PistolEquippedNotify,	//UMETA(DisplayName="PistolEquippedNotify"),
 	PistolUnequippedNotify,	//UMETA(DisplayName = "PistolUnequippedNotify"),
 	PistolReloadedNotify,	//UMETA(DisplayName = "PistolReloadedNotify")
-	StepSoundNotify,
-	CustomNameMismatch
+	StepSoundNotify
 };
 
 /**
@@ -26,8 +25,6 @@ class UNREALSHOOTER_API UCustomAnimationNotify : public UAnimNotify
 
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
-	ECustomName getNameEnum(FString const& inString);
-
 	UMainCharacterAnimInstance* getMainCharAnimInstance(USkeletalMeshComponent * MeshComp);
 
 public:
@@ -35,7 +32,7 @@ public:
 	UCustomAnimationNotify();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AnimNotify)
-	FString NotifyCustomName;
+	ECustomName ENotifyCustomName;
 
 #pragma region Sound
 

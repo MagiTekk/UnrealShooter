@@ -4,11 +4,21 @@
 #include "RotatableTarget.h"
 #include "Engine/DestructibleMesh.h"
 
-
-// Sets default values
 ARotatableTarget::ARotatableTarget()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	ARotatableTarget::InitTarget();
+}
+
+// Sets default values
+ARotatableTarget::ARotatableTarget(ETargetType targetType) //TODO _nullBot: depending on the target type choose a material to dynamically instantiate
+{
+	TargetType = targetType;
+	ARotatableTarget::InitTarget();
+}
+
+void ARotatableTarget::InitTarget()
+{
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
@@ -23,15 +33,38 @@ ARotatableTarget::ARotatableTarget()
 	ConstructorHelpers::FObjectFinder<UStaticMesh> meshBody(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube'"));
 	BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BodyMesh"));
 	BodyMesh->SetStaticMesh(meshBody.Object);
-	BodyMesh->AttachTo(HeadMesh);
+	BodyMesh->AttachTo(DefaultSceneRoot);
 
-	ConstructorHelpers::FObjectFinder<UMaterial> MatObj(TEXT("Material'/Game/UnrealShooter/Materials/BasicMaterial.BasicMaterial'"));
-	if (MatObj.Succeeded()) BaseMaterial = MatObj.Object;
-	
+	ConstructorHelpers::FObjectFinder<UStaticMesh> meshBase(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube'"));
+	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
+	BaseMesh->SetStaticMesh(meshBase.Object);
+	BaseMesh->AttachTo(DefaultSceneRoot);
+
+	ARotatableTarget::InitMaterialInstance();
+
+	//listen for my destructible's onFracture signal
+	FScriptDelegate OnHeadFractured;
+	OnHeadFractured.BindUFunction(this, "OnHeadFractured");
+	HeadMesh->OnComponentFracture.AddUnique(OnHeadFractured);
+
 	//init bool vars
+	bHeadDestroyed = false;
 	bRaiseTarget = false;
 	bLowerTarget = false;
 	bVanish = false;
+}
+
+//load the desired material instance
+void ARotatableTarget::InitMaterialInstance()
+{
+	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> LowMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_LowTarget.BasicMaterial_Inst_LowTarget'"));
+	lowtMaterialInst = LowMaterialObj.Object;
+	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MidMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_MidTarget.BasicMaterial_Inst_MidTarget'"));
+	midMaterialInst = MidMaterialObj.Object;
+	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> FalseMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_FalseTarget.BasicMaterial_Inst_FalseTarget'"));
+	falseMaterialInst = FalseMaterialObj.Object;
+	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> DefaultMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_DefaultTarget.BasicMaterial_Inst_DefaultTarget'"));
+	defaultMaterialInst = DefaultMaterialObj.Object;
 }
 
 // Called when the game starts or when spawned
@@ -39,23 +72,47 @@ void ARotatableTarget::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//start on the ground
+
 	//TEST, delete
-	/* Activate the fuze to explode the bomb after several seconds */
-	GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::RaiseTarget, 5.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::RaiseTarget, 2.0f, false);
 }
 
 void ARotatableTarget::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	if (BaseMaterial)
+	//you could also create the dynamic instance using the material and not the instance.
+	//DynamicInstance = UMaterialInstanceDynamic::Create(BaseMaterial, this);
+
+	//create dynamic instance and apply it to all the meshes
+	DynamicInstance = UMaterialInstanceDynamic::Create(ARotatableTarget::GetMaterialInstance(), this);
+	HeadMesh->SetMaterial(0, DynamicInstance);
+	HeadMesh->SetMaterial(1, DynamicInstance);
+	BodyMesh->SetMaterial(0, DynamicInstance);
+	BaseMesh->SetMaterial(0, DynamicInstance);
+
+	//DynamicInstance->SetScalarParameterValue("Multi", 1);
+	//DynamicInstance->SetScalarParameterValue("OpacityModifier", 1);
+}
+
+UMaterialInstanceConstant* ARotatableTarget::GetMaterialInstance()
+{
+	switch (TargetType)
 	{
-		DynamicInstance = UMaterialInstanceDynamic::Create(BaseMaterial, this);
-		HeadMesh->SetMaterial(0, DynamicInstance);
-		HeadMesh->SetMaterial(1, DynamicInstance);
-		BodyMesh->SetMaterial(0, DynamicInstance);
-		DynamicInstance->SetScalarParameterValue("Multi", 1);
-		//DynamicInstance->SetScalarParameterValue("OpacityModifier", 1);
+	case ETargetType::LowTarget:
+		return lowtMaterialInst;
+		break;
+	case ETargetType::MidTarget:
+		return midMaterialInst;
+		break;
+	case ETargetType::FalseTarget:
+		return falseMaterialInst;
+		break;
+	case ETargetType::DefaultTarget:
+	default:
+		return defaultMaterialInst;
+		break;
 	}
 }
 
@@ -83,51 +140,60 @@ void ARotatableTarget::Tick( float DeltaTime )
 void ARotatableTarget::RaiseTarget()
 {
 	bRaiseTarget = true;
-	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::FString("RAISING TARGET NOW"));
 }
 
 //activates the lower target animation
 void ARotatableTarget::LowerTarget()
 {
 	bLowerTarget = true;
-	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::FString("LOWERING TARGET NOW"));
 }
 
 //Tick's function raise target until desired angle
 void ARotatableTarget::DoTargetUp()
 {
 	FRotator actorRotation = GetActorRotation();
-	if (actorRotation.Pitch < RAISED_ROTATION)
-	{
-		FRotator newRotation = FRotator{ actorRotation.Pitch + ROTATIONAL_RATE, GetActorRotation().Yaw, GetActorRotation().Roll };
-		SetActorRotation(newRotation);
-	}
-	else
-	{
-		bRaiseTarget = false;
-		GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Magenta, FString::FString("TARGET RAISED, DO DESTROY"));
-		ARotatableTarget::Kill();
-		//GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::LowerTarget, 5.0f, false);
-	}
-}
-
-void ARotatableTarget::DoTargetDown()
-{
-	FRotator actorRotation = GetActorRotation();
-	if (actorRotation.Pitch > LOWERED_ROTATION)
+	if (actorRotation.Pitch > RAISED_ROTATION)
 	{
 		FRotator newRotation = FRotator{ actorRotation.Pitch - ROTATIONAL_RATE, GetActorRotation().Yaw, GetActorRotation().Roll };
 		SetActorRotation(newRotation);
 	}
 	else
 	{
-		bLowerTarget = false;
-		GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Magenta, FString::FString("TARGET LOWERED, DO DESTROY"));
-		ARotatableTarget::Kill();
+		bRaiseTarget = false;
+		GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::LowerTarget, 5.0f, false);
 	}
 }
 
-void ARotatableTarget::Kill()
+void ARotatableTarget::DoTargetDown()
+{
+	FRotator actorRotation = GetActorRotation();
+	if (actorRotation.Pitch < LOWERED_ROTATION)
+	{
+		FRotator newRotation = FRotator{ actorRotation.Pitch + ROTATIONAL_RATE, GetActorRotation().Yaw, GetActorRotation().Roll };
+		SetActorRotation(newRotation);
+	}
+	else
+	{
+		bLowerTarget = false;
+		if (!bHeadDestroyed)
+		{
+			ARotatableTarget::Die();
+		}
+	}
+}
+
+void ARotatableTarget::OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection)
+{
+	bHeadDestroyed = true;
+	ARotatableTarget::startVanish();
+}
+
+void ARotatableTarget::OnTargetHit()
+{
+	ARotatableTarget::LowerTarget();
+}
+
+void ARotatableTarget::startVanish()
 {
 	//start vanishing actor
 	bVanish = true;

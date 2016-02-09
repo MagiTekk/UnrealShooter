@@ -57,6 +57,7 @@ public:
 
 
 	void ShootWeapon();
+	void OnHit(FHitResult hitResult);
 	bool singleLineTrace(FHitResult &HitResult);
 
 	UClass* Gunshot_InitialEffect;

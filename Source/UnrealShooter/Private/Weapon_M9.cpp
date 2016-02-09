@@ -3,6 +3,7 @@
 #include "UnrealShooter.h"
 #include "Weapon_M9.h"
 #include "MainCharacter.h"
+#include "RotatableTarget.h"
 
 // Sets default values
 AWeapon_M9::AWeapon_M9()
@@ -131,18 +132,31 @@ void AWeapon_M9::ShootWeapon()
 		//on hit!
 		if (RV_Hit.bBlockingHit)
 		{
-			//gunshot hit effect
-			GetWorld()->SpawnActor<AActor>(Gunshot_FinalEffect, LaserImpact->GetComponentLocation(), LaserImpact->GetComponentRotation());
-
-			//collision
-			UActorComponent* objectDestruct = RV_Hit.GetActor()->GetComponentByClass(UDestructibleComponent::StaticClass());
-
-			if (objectDestruct)
-			{
-				UDestructibleComponent* destructibleComponent = Cast<UDestructibleComponent>(objectDestruct);
-				destructibleComponent->ApplyDamage(1000.0f, RV_Hit.Location, FVector(1.0f, 1.0f, 1.0f), 100.0f);
-			}
+			AWeapon_M9::OnHit(RV_Hit);
 		}
+	}
+}
+
+void AWeapon_M9::OnHit(FHitResult hitResult)
+{
+	//gunshot hit effect
+	GetWorld()->SpawnActor<AActor>(Gunshot_FinalEffect, LaserImpact->GetComponentLocation(), LaserImpact->GetComponentRotation());
+
+	//collision
+	UActorComponent* objectDestruct = hitResult.GetActor()->GetComponentByClass(UDestructibleComponent::StaticClass());
+
+	//did I hit a target?
+	ARotatableTarget* rotatableTarget = Cast<ARotatableTarget>(hitResult.GetActor());
+
+	if (rotatableTarget)
+	{
+		rotatableTarget->OnTargetHit();
+	}
+
+	if (objectDestruct)
+	{
+		UDestructibleComponent* destructibleComponent = Cast<UDestructibleComponent>(objectDestruct);
+		destructibleComponent->ApplyDamage(1000.0f, hitResult.Location, FVector(1.0f, 1.0f, 1.0f), 100.0f);
 	}
 }
 

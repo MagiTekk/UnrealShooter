@@ -11,7 +11,7 @@ UCustomAnimationNotify::UCustomAnimationNotify()
 
 void UCustomAnimationNotify::Notify(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation)
 {
-	switch (UCustomAnimationNotify::getNameEnum(NotifyCustomName))
+	switch (ENotifyCustomName)
 	{
 		case ECustomName::PistolEquippedNotify:
 		case ECustomName::PistolUnequippedNotify:
@@ -34,15 +34,6 @@ void UCustomAnimationNotify::Notify(USkeletalMeshComponent * MeshComp, UAnimSequ
 
 	//UE_LOG(LogTemp, Warning, TEXT("%s"), *animName);
 	//GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Yellow, FString::FString("STEP_SOUND"));
-}
-
-ECustomName UCustomAnimationNotify::getNameEnum(FString const & inString)
-{
-	if (inString == "PistolEquippedNotify") return ECustomName::PistolEquippedNotify;
-	if (inString == "PistolUnequippedNotify") return ECustomName::PistolUnequippedNotify;
-	if (inString == "PistolReloadedNotify") return ECustomName::PistolReloadedNotify;
-	if (inString == "StepSoundNotify") return ECustomName::StepSoundNotify;
-	return ECustomName::CustomNameMismatch;
 }
 
 UMainCharacterAnimInstance * UCustomAnimationNotify::getMainCharAnimInstance(USkeletalMeshComponent * MeshComp)
