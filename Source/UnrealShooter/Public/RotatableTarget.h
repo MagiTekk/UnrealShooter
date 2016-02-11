@@ -32,8 +32,6 @@ class UNREALSHOOTER_API ARotatableTarget : public AActor
 	void Vanish();
 	void Die();
 
-	
-
 protected:
 
 	const float ROTATIONAL_RATE = 1.0f;
@@ -55,16 +53,16 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 	USceneComponent* DefaultSceneRoot;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Target)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 	UDestructibleComponent* HeadMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Target)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 	UStaticMeshComponent* BodyMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Target)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 	UStaticMeshComponent* BaseMesh;
 
 	UPROPERTY(EditDefaultsOnly, Category = Material)
@@ -84,6 +82,9 @@ public:
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Target)
 	ETargetType TargetType;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Target)
+	FVector CustomPosition;
 
 	UFUNCTION()
 	void OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection);

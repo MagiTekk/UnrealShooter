@@ -73,9 +73,10 @@ void ARotatableTarget::BeginPlay()
 	Super::BeginPlay();
 
 	//start on the ground
+	ARotatableTarget::RaiseTarget();
 
 	//TEST, delete
-	GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::RaiseTarget, 2.0f, false);
+	//GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::RaiseTarget, 1.0f, false);
 }
 
 void ARotatableTarget::PostInitializeComponents()
@@ -100,19 +101,19 @@ UMaterialInstanceConstant* ARotatableTarget::GetMaterialInstance()
 {
 	switch (TargetType)
 	{
-	case ETargetType::LowTarget:
-		return lowtMaterialInst;
-		break;
-	case ETargetType::MidTarget:
-		return midMaterialInst;
-		break;
-	case ETargetType::FalseTarget:
-		return falseMaterialInst;
-		break;
-	case ETargetType::DefaultTarget:
-	default:
-		return defaultMaterialInst;
-		break;
+		case ETargetType::LowTarget:
+			return lowtMaterialInst;
+			break;
+		case ETargetType::MidTarget:
+			return midMaterialInst;
+			break;
+		case ETargetType::FalseTarget:
+			return falseMaterialInst;
+			break;
+		case ETargetType::DefaultTarget:
+		default:
+			return defaultMaterialInst;
+			break;
 	}
 }
 
