@@ -43,12 +43,11 @@ void ARotatableTarget::InitTarget()
 	ARotatableTarget::InitMaterialInstance();
 
 	//listen for my destructible's onFracture signal
-	FScriptDelegate OnHeadFractured;
-	OnHeadFractured.BindUFunction(this, "OnHeadFractured");
-	HeadMesh->OnComponentFracture.AddUnique(OnHeadFractured);
+	//FScriptDelegate OnHeadFractured;
+	//OnHeadFractured.BindUFunction(this, "OnHeadFractured");
+	//HeadMesh->OnComponentFracture.AddUnique(OnHeadFractured);
 
 	//init bool vars
-	bHeadDestroyed = false;
 	bRaiseTarget = false;
 	bLowerTarget = false;
 	bVanish = false;
@@ -57,14 +56,10 @@ void ARotatableTarget::InitTarget()
 //load the desired material instance
 void ARotatableTarget::InitMaterialInstance()
 {
-	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> LowMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_LowTarget.BasicMaterial_Inst_LowTarget'"));
-	lowtMaterialInst = LowMaterialObj.Object;
-	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MidMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_MidTarget.BasicMaterial_Inst_MidTarget'"));
-	midMaterialInst = MidMaterialObj.Object;
-	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> FalseMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_FalseTarget.BasicMaterial_Inst_FalseTarget'"));
-	falseMaterialInst = FalseMaterialObj.Object;
 	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> DefaultMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_DefaultTarget.BasicMaterial_Inst_DefaultTarget'"));
-	defaultMaterialInst = DefaultMaterialObj.Object;
+	DefaultMaterialInst = DefaultMaterialObj.Object;
+	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> TransparentMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicTransparentMaterial_Inst.BasicTransparentMaterial_Inst'"));
+	TransparentMaterialInst = TransparentMaterialObj.Object;
 }
 
 // Called when the game starts or when spawned
@@ -83,36 +78,36 @@ void ARotatableTarget::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	//you could also create the dynamic instance using the material and not the instance.
-	//DynamicInstance = UMaterialInstanceDynamic::Create(BaseMaterial, this);
-
 	//create dynamic instance and apply it to all the meshes
-	DynamicInstance = UMaterialInstanceDynamic::Create(ARotatableTarget::GetMaterialInstance(), this);
+	ARotatableTarget::UpdateMaterialInstance();
+}
+
+void ARotatableTarget::UpdateMaterialInstance(bool bisTranslucent)
+{
+	DynamicInstance = UMaterialInstanceDynamic::Create(bisTranslucent? TransparentMaterialInst : DefaultMaterialInst, this);
+	DynamicInstance->SetVectorParameterValue("BaseColor", ARotatableTarget::GetMaterialColor());
 	HeadMesh->SetMaterial(0, DynamicInstance);
 	HeadMesh->SetMaterial(1, DynamicInstance);
 	BodyMesh->SetMaterial(0, DynamicInstance);
 	BaseMesh->SetMaterial(0, DynamicInstance);
-
-	//DynamicInstance->SetScalarParameterValue("Multi", 1);
-	//DynamicInstance->SetScalarParameterValue("OpacityModifier", 1);
 }
 
-UMaterialInstanceConstant* ARotatableTarget::GetMaterialInstance()
+FLinearColor ARotatableTarget::GetMaterialColor()
 {
 	switch (TargetType)
 	{
 		case ETargetType::LowTarget:
-			return lowtMaterialInst;
+			return LOWTARGET_COLOR;
 			break;
 		case ETargetType::MidTarget:
-			return midMaterialInst;
+			return MIDTARGET_COLOR;
 			break;
 		case ETargetType::FalseTarget:
-			return falseMaterialInst;
+			return FALSETARGET_COLOR;
 			break;
 		case ETargetType::DefaultTarget:
 		default:
-			return defaultMaterialInst;
+			return DEFAULTTARGET_COLOR;
 			break;
 	}
 }
@@ -134,7 +129,6 @@ void ARotatableTarget::Tick( float DeltaTime )
 	{
 		ARotatableTarget::Vanish();
 	}
-
 }
 
 //activates the raise target animation
@@ -176,22 +170,21 @@ void ARotatableTarget::DoTargetDown()
 	else
 	{
 		bLowerTarget = false;
-		if (!bHeadDestroyed)
-		{
-			ARotatableTarget::Die();
-		}
+		ARotatableTarget::Die();
 	}
 }
 
-void ARotatableTarget::OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection)
+//calback fired whenever the destructible mesh is destroyed, unused
+/*void ARotatableTarget::OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection)
 {
-	bHeadDestroyed = true;
 	ARotatableTarget::startVanish();
-}
+}*/
 
 void ARotatableTarget::OnTargetHit()
 {
+	ARotatableTarget::UpdateMaterialInstance(true);
 	ARotatableTarget::LowerTarget();
+	ARotatableTarget::startVanish();
 }
 
 void ARotatableTarget::startVanish()
@@ -208,13 +201,12 @@ void ARotatableTarget::Vanish()
 	
 	if (opacityVal > 0.0f)
 	{
-		DynamicInstance->SetScalarParameterValue("OpacityModifier", opacityVal - 0.005f);
+		DynamicInstance->SetScalarParameterValue("OpacityModifier", opacityVal - 0.01f); //0.005f
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), "BYE BYE");
+		//target has been vanished!
 		bVanish = false;
-		ARotatableTarget::Die();
 	}
 }
 

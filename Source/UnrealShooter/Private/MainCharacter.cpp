@@ -234,9 +234,9 @@ void AMainCharacter::LookRight(float rate)
 
 void AMainCharacter::AimRight(float rate)
 {
-	if (!Mesh) return;
+	if (!GetMesh()) return;
 
-	UMainCharacterAnimInstance * Animation = Cast<UMainCharacterAnimInstance>(Mesh->GetAnimInstance());
+	UMainCharacterAnimInstance * Animation = Cast<UMainCharacterAnimInstance>(GetMesh()->GetAnimInstance());
 
 	//No Anim Instance Acquired?
 	if (!Animation) return;
@@ -482,7 +482,7 @@ void AMainCharacter::ShootWeapon()
 void AMainCharacter::RecoilAnimation()
 {
 	//recoil animation
-	UMainCharacterAnimInstance * Animation = Cast<UMainCharacterAnimInstance>(Mesh->GetAnimInstance());
+	UMainCharacterAnimInstance * Animation = Cast<UMainCharacterAnimInstance>(GetMesh()->GetAnimInstance());
 
 	//No Anim Instance Acquired?
 	if (!Animation) return;
