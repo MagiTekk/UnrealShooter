@@ -48,19 +48,20 @@ AWeapon_M9::AWeapon_M9()
 	ConstructorHelpers::FObjectFinder<UClass> GunshotInitial(TEXT("Class'/Game/UnrealShooter/Blueprint/M9/Blueprint_Effect_Muzzle_Flash.Blueprint_Effect_Muzzle_Flash_C'"));
 	if (GunshotInitial.Object)
 	{
-		Gunshot_InitialEffect = GunshotInitial.Object;// ->GeneratedClass;
+		Gunshot_InitialEffect = GunshotInitial.Object;
 	}
 
 	ConstructorHelpers::FObjectFinder<UClass> GunshotFinal(TEXT("Class'/Game/UnrealShooter/Blueprint/M9/Blueprint_Effect_Bullet_Hit.Blueprint_Effect_Bullet_Hit_C'"));
 	if (GunshotFinal.Object)
 	{
-		Gunshot_FinalEffect = GunshotFinal.Object;// ->GeneratedClass;
+		Gunshot_FinalEffect = GunshotFinal.Object;
 	}
 
+	//to spawn blueprints always make sure to add a "_C" after the reference or it will break
 	ConstructorHelpers::FObjectFinder<UClass> BulletShell(TEXT("Class'/Game/UnrealShooter/Blueprint/M9/EmptyShell.EmptyShell_C'"));
 	if (BulletShell.Object)
 	{
-		Empty_Shell = BulletShell.Object;// ->GeneratedClass;
+		Empty_Shell = BulletShell.Object;
 	}
 
 	//Spawning a blueprint

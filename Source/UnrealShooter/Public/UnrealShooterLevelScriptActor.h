@@ -34,6 +34,7 @@ public:
 	virtual void BeginDestroy() override;
 
 	UClass* TargetBP;
+	UClass* TargetCylinderBP;
 
 #pragma region Sequences
 

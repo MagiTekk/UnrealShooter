@@ -3,6 +3,7 @@
 #include "UnrealShooter.h"
 #include "BasicSpawnPoint.h"
 #include "RotatableTarget.h"
+#include "Engine/DestructibleMesh.h"
 #include "UnrealShooterLevelScriptActor.h"
 
 
@@ -13,10 +14,10 @@ AUnrealShooterLevelScriptActor::AUnrealShooterLevelScriptActor()
 	//PrimaryActorTick.bCanEverTick = true;
 
 	ConstructorHelpers::FObjectFinder<UClass> Target(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Target/TargetDummyBP.TargetDummyBP_C'"));
-	if (Target.Object)
-	{
-		TargetBP = Target.Object;
-	}
+	TargetBP = Target.Object;
+
+	ConstructorHelpers::FObjectFinder<UClass> TargetCylinder(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Target/TargetCylinder_BP.TargetCylinder_BP_C'"));
+	TargetCylinderBP = TargetCylinder.Object;
 }
 
 // Called when the game starts or when spawned

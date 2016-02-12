@@ -24,6 +24,7 @@ void ARotatableTarget::InitTarget()
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
 	this->SetRootComponent(DefaultSceneRoot);
 
+	//I had to simulate physics and disable gravity because of a bug where the DM is not visible after being spawned by code
 	ConstructorHelpers::FObjectFinder<UDestructibleMesh> meshHead(TEXT("DestructibleMesh'/Game/UnrealShooter/Mesh/Target/TargetMesh_Cube_DM.TargetMesh_Cube_DM'"));
 	HeadMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("HeadMesh"));
 	HeadMesh->SetDestructibleMesh(meshHead.Object);
