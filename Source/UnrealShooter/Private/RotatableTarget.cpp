@@ -9,13 +9,6 @@ ARotatableTarget::ARotatableTarget()
 	ARotatableTarget::InitTarget();
 }
 
-// Sets default values
-ARotatableTarget::ARotatableTarget(ETargetType targetType) //TODO _nullBot: depending on the target type choose a material to dynamically instantiate
-{
-	TargetType = targetType;
-	ARotatableTarget::InitTarget();
-}
-
 void ARotatableTarget::InitTarget()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -67,17 +60,15 @@ void ARotatableTarget::InitMaterialInstance()
 void ARotatableTarget::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//start on the ground
 	ARotatableTarget::RaiseTarget();
-
-	//TEST, delete
-	//GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::RaiseTarget, 1.0f, false);
 }
 
 void ARotatableTarget::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	//by default all targets spawn on the ground
+	this->SetActorRotation(FRotator{ LOWERED_ROTATION, 0.0f, 0.0f });
 
 	//create dynamic instance and apply it to all the meshes
 	ARotatableTarget::UpdateMaterialInstance();
@@ -95,7 +86,7 @@ void ARotatableTarget::UpdateMaterialInstance(bool bisTranslucent)
 
 FLinearColor ARotatableTarget::GetMaterialColor()
 {
-	switch (TargetType)
+	switch (TargetProperties.TargetType)
 	{
 		case ETargetType::LowTarget:
 			return LOWTARGET_COLOR;
@@ -156,7 +147,7 @@ void ARotatableTarget::DoTargetUp()
 	else
 	{
 		bRaiseTarget = false;
-		GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::LowerTarget, 5.0f, false);
+		GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::LowerTarget, this->TargetProperties.TimeToLive, false);
 	}
 }
 
@@ -218,4 +209,16 @@ void ARotatableTarget::Die()
 
 	//destroy
 	Destroy();
+}
+
+void ARotatableTarget::OnPropertiesUpdated()
+{
+	ARotatableTarget::UpdateMaterialInstance();
+}
+
+// TODO nullBot: we should have a proper MVC structure, I'll try to find time for that later
+void ARotatableTarget::SetTargetProperties(FRotatableTargetStruct TargetProperties)
+{
+	this->TargetProperties = TargetProperties;
+	ARotatableTarget::OnPropertiesUpdated();
 }

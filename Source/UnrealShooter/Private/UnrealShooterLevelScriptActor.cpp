@@ -41,21 +41,40 @@ void AUnrealShooterLevelScriptActor::BeginDestroy()
 
 void AUnrealShooterLevelScriptActor::InitiateSequence_0()
 {
-	// Test spawn 4 targets
-	AActor* T1 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
-	T1->SetActorLocation(AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(2.0f, 0.0f, 0.0f)));
+	FVector InitialLocation;
+	FRotatableTargetStruct properties;
+	
+	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(1.0f, 0.0f, 0.0f));
+	properties.TimeToLive = 10.0f;
+	properties.TargetType = ETargetType::FalseTarget;
+	
+	ARotatableTarget* T1 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
+	T1->SetTargetProperties(properties);
+	T1->SetActorLocation(InitialLocation);
 
-	AActor* T2 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
-	T2->SetActorLocation(AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(1.0f, 1.0f, 0.0f)));
+	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(0.0f, 1.0f, 0.0f));
+	properties.TimeToLive = 4.0f;
+	properties.TargetType = ETargetType::MidTarget;
 
-	AActor* T3 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
-	T3->SetActorLocation(AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(0.0f, 2.0f, 0.0f)));
+	ARotatableTarget* T2 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
+	T2->SetTargetProperties(properties);
+	T2->SetActorLocation(InitialLocation);
 
-	AActor* T4 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
-	T4->SetActorLocation(AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(2.0f, 3.0f, 0.0f)));
+	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(2.0f, 1.0f, 0.0f));
+	properties.TimeToLive = 2.0f;
+	properties.TargetType = ETargetType::LowTarget;
 
-	AActor* T5 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
-	T5->SetActorLocation(AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(0.0f, 4.0f, 0.0f)));
+	ARotatableTarget* T3 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
+	T3->SetTargetProperties(properties);
+	T3->SetActorLocation(InitialLocation);
+
+	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(1.0f, 2.0f, 0.0f));
+	properties.TimeToLive = 5.0f;
+	properties.TargetType = ETargetType::FalseTarget;
+
+	ARotatableTarget* T4 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
+	T4->SetTargetProperties(properties);
+	T4->SetActorLocation(InitialLocation);
 }
 
 FVector AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector SpawnPosition)

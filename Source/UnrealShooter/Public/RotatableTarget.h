@@ -14,6 +14,54 @@ enum class ETargetType : uint8
 	LowTarget
 };
 
+USTRUCT()
+struct FRotatableTargetStruct
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	TArray<FVector> Locations;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	float Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	float TimeToLive;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	float Points;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	float HeadshotPoints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	bool bIsExplosive;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	ETargetType TargetType;
+
+	//For GC
+	void Destroy()
+	{
+	}
+
+	FRotatableTargetStruct()
+	{
+		this->TimeToLive = 5.0f;
+	}
+
+	FRotatableTargetStruct(float TimeToLive, ETargetType TargetType = ETargetType::DefaultTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed=1.0f, bool bIsExplosive = false)
+	{
+		this->Locations = Locations;
+		this->Speed = Speed;
+		this->TimeToLive = TimeToLive;
+		this->bIsExplosive = bIsExplosive;
+		this->TargetType = TargetType; //defines points rewarded per hit & target color
+	}
+};
+
 UCLASS()
 class UNREALSHOOTER_API ARotatableTarget : public AActor
 {
@@ -46,7 +94,6 @@ protected:
 public:	
 	// Sets default values for this actor's properties
 	ARotatableTarget();
-	ARotatableTarget(ETargetType targetType);
 
 	void InitTarget();
 
@@ -57,6 +104,10 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 	virtual void PostInitializeComponents() override;
+
+	void SetTargetProperties(FRotatableTargetStruct TargetProperties);
+
+	void OnPropertiesUpdated();
 
 	void UpdateMaterialInstance(bool bisTranslucent = false);
 
@@ -86,6 +137,9 @@ public:
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Target)
 	FVector CustomPosition;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	FRotatableTargetStruct TargetProperties;
 
 	//UFUNCTION()
 	//void OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection);
