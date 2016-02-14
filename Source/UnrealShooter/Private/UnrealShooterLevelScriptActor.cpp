@@ -43,34 +43,35 @@ void AUnrealShooterLevelScriptActor::InitiateSequence_0()
 {
 	FVector InitialLocation;
 	FRotatableTargetStruct properties;
+	TArray<FVector> customLocations;
 	
 	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(1.0f, 0.0f, 0.0f));
-	properties.TimeToLive = 10.0f;
-	properties.TargetType = ETargetType::FalseTarget;
+	FVector Arr[] = {	AUnrealShooterLevelScriptActor::GetSpawnPoint({ 0.0f, 0.0f, 0.0f }), AUnrealShooterLevelScriptActor::GetSpawnPoint({ 0.0f, 1.0f, 0.0f }),
+						AUnrealShooterLevelScriptActor::GetSpawnPoint({ 1.0f, 1.0f, 0.0f }) };
+
+	customLocations.Append(Arr, ARRAY_COUNT(Arr));
+	properties = FRotatableTargetStruct(1.0f, ETargetType::FalseTarget, customLocations);
 	
 	ARotatableTarget* T1 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
 	T1->SetTargetProperties(properties);
 	T1->SetActorLocation(InitialLocation);
 
-	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(0.0f, 1.0f, 0.0f));
-	properties.TimeToLive = 4.0f;
-	properties.TargetType = ETargetType::MidTarget;
+	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(0.0f, 2.0f, 0.0f));
+	properties = FRotatableTargetStruct(4.0f, ETargetType::MidTarget);
 
 	ARotatableTarget* T2 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
 	T2->SetTargetProperties(properties);
 	T2->SetActorLocation(InitialLocation);
 
 	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(2.0f, 1.0f, 0.0f));
-	properties.TimeToLive = 2.0f;
-	properties.TargetType = ETargetType::LowTarget;
+	properties = FRotatableTargetStruct(2.0f, ETargetType::LowTarget);
 
 	ARotatableTarget* T3 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
 	T3->SetTargetProperties(properties);
 	T3->SetActorLocation(InitialLocation);
 
 	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(1.0f, 2.0f, 0.0f));
-	properties.TimeToLive = 5.0f;
-	properties.TargetType = ETargetType::FalseTarget;
+	properties = FRotatableTargetStruct(5.0f, ETargetType::FalseTarget);
 
 	ARotatableTarget* T4 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
 	T4->SetTargetProperties(properties);

@@ -39,12 +39,15 @@ void ARotatableTarget::InitTarget()
 	//listen for my destructible's onFracture signal
 	//FScriptDelegate OnHeadFractured;
 	//OnHeadFractured.BindUFunction(this, "OnHeadFractured");
-	//HeadMesh->OnComponentFracture.AddUnique(OnHeadFractured);
+	//HeadMesh->OnComponentFracture.AddUnique(OnHeadFractured
 
-	//init bool vars
-	bRaiseTarget = false;
-	bLowerTarget = false;
-	bVanish = false;
+	//default bool
+	bool bRaiseTarget = false;
+	bool bLowerTarget = false;
+	bool bVanish = false;
+	bool bMoveTarget = false;
+
+	RotationalRate = DEFAULT_ROTATIONAL_RATE;
 }
 
 //load the desired material instance
@@ -61,6 +64,7 @@ void ARotatableTarget::BeginPlay()
 {
 	Super::BeginPlay();
 	ARotatableTarget::RaiseTarget();
+	ARotatableTarget::ApplyProperties();
 }
 
 void ARotatableTarget::PostInitializeComponents()
@@ -104,6 +108,11 @@ FLinearColor ARotatableTarget::GetMaterialColor()
 	}
 }
 
+void ARotatableTarget::ApplyProperties()
+{
+	ARotatableTarget::SetNewLocation();
+}
+
 // Called every frame
 void ARotatableTarget::Tick( float DeltaTime )
 {
@@ -120,6 +129,10 @@ void ARotatableTarget::Tick( float DeltaTime )
 	if (bVanish)
 	{
 		ARotatableTarget::Vanish();
+	}
+	if (bMoveTarget)
+	{
+		ARotatableTarget::UpdateTargetLocation();
 	}
 }
 
@@ -141,13 +154,12 @@ void ARotatableTarget::DoTargetUp()
 	FRotator actorRotation = GetActorRotation();
 	if (actorRotation.Pitch > RAISED_ROTATION)
 	{
-		FRotator newRotation = FRotator{ actorRotation.Pitch - ROTATIONAL_RATE, GetActorRotation().Yaw, GetActorRotation().Roll };
+		FRotator newRotation = FRotator{ actorRotation.Pitch - RotationalRate, GetActorRotation().Yaw, GetActorRotation().Roll };
 		SetActorRotation(newRotation);
 	}
 	else
 	{
 		bRaiseTarget = false;
-		GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::LowerTarget, this->TargetProperties.TimeToLive, false);
 	}
 }
 
@@ -156,13 +168,88 @@ void ARotatableTarget::DoTargetDown()
 	FRotator actorRotation = GetActorRotation();
 	if (actorRotation.Pitch < LOWERED_ROTATION)
 	{
-		FRotator newRotation = FRotator{ actorRotation.Pitch + ROTATIONAL_RATE, GetActorRotation().Yaw, GetActorRotation().Roll };
+		FRotator newRotation = FRotator{ actorRotation.Pitch + RotationalRate, GetActorRotation().Yaw, GetActorRotation().Roll };
 		SetActorRotation(newRotation);
 	}
 	else
 	{
 		bLowerTarget = false;
 		ARotatableTarget::Die();
+	}
+}
+
+//if we hold a location on our properties we will move there at a certain speed, after that the target goes down
+void ARotatableTarget::SetNewLocation()
+{
+	if (TargetProperties.Locations.Num() > 0)
+	{
+		NextLocation = TargetProperties.Locations[0];
+		TargetProperties.Locations.Remove(NextLocation);
+		bMoveTarget = true;
+	}
+	else
+	{
+		//no more locations to go? then lower our target
+		GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::LowerTarget, this->TargetProperties.TimeToLive, false);
+	}
+}
+
+void ARotatableTarget::UpdateTargetLocation()
+{
+	//shall we move on X or Y?
+	FVector actorLocation = this->GetActorLocation();
+	bool bMoveX = actorLocation.Y == NextLocation.Y;
+	bool bMoveY = actorLocation.X == NextLocation.X;
+
+	//in which direction are we moving?
+	float xMovementRate = actorLocation.X <= NextLocation.X ? TargetProperties.Speed : TargetProperties.Speed * -1;
+	float yMovementRate = actorLocation.Y <= NextLocation.Y ? TargetProperties.Speed : TargetProperties.Speed * -1;
+
+	//we must check if we arrived at our destination
+	if (bMoveX && xMovementRate > 0)
+	{
+		if (actorLocation.X >= NextLocation.X)
+		{
+			bMoveTarget = false;
+		}
+	}
+	else if (bMoveX && xMovementRate < 0)
+	{
+		if (actorLocation.X <= NextLocation.X)
+		{
+			bMoveTarget = false;
+		}
+	}
+	else if (bMoveY && yMovementRate > 0)
+	{
+		if (actorLocation.Y >= NextLocation.Y)
+		{
+			bMoveTarget = false;
+		}
+	}
+	else
+	{
+		if (actorLocation.Y <= NextLocation.Y)
+		{
+			bMoveTarget = false;
+		}
+	}
+
+	if (bMoveTarget)
+	{
+		FVector newLocation = { bMoveX ? actorLocation.X + xMovementRate : actorLocation.X,
+								bMoveY ? actorLocation.Y + yMovementRate : actorLocation.Y,
+								actorLocation.Z };
+
+		this->SetActorLocation(newLocation);
+	}
+	else
+	{
+		//just o be sure, set the location to exactly the target's location
+		this->SetActorLocation(NextLocation);
+
+		//get a new location and continue moving on
+		ARotatableTarget::SetNewLocation();
 	}
 }
 

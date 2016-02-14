@@ -70,18 +70,26 @@ class UNREALSHOOTER_API ARotatableTarget : public AActor
 	bool bRaiseTarget;
 	bool bLowerTarget;
 	bool bVanish;
+	bool bMoveTarget;
+
+	float RotationalRate = DEFAULT_ROTATIONAL_RATE;
+
+	FVector NextLocation;
+	void SetNewLocation();
 
 	void InitMaterialInstance();
 	FLinearColor GetMaterialColor();
 
+	void ApplyProperties();
 	void DoTargetUp();
 	void DoTargetDown();
 	void Vanish();
 	void Die();
+	void UpdateTargetLocation();
 
 protected:
 
-	const float ROTATIONAL_RATE =			1.0f;
+	const float DEFAULT_ROTATIONAL_RATE =			1.0f;
 	const float LOWERED_ROTATION =			90.0f;
 	const float RAISED_ROTATION =			0.0f;
 
