@@ -13,7 +13,6 @@ class UNREALSHOOTER_API ABasicSpawnPoint : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ABasicSpawnPoint();
-	ABasicSpawnPoint(FVector spawnPosition);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -24,5 +23,4 @@ public:
 	// This property is here to understand where this spawn is located within the grid
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Spawn)
 	FVector SpawnPosition;
-	
 };

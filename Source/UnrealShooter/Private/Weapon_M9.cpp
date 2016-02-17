@@ -143,23 +143,25 @@ void AWeapon_M9::OnHit(FHitResult hitResult)
 	//gunshot hit effect
 	GetWorld()->SpawnActor<AActor>(Gunshot_FinalEffect, LaserImpact->GetComponentLocation(), LaserImpact->GetComponentRotation());
 
-	ARotatableTarget* rotatableTarget = Cast<ARotatableTarget>(hitResult.GetActor());
-	UActorComponent* objectDestruct = hitResult.GetActor()->GetComponentByClass(UDestructibleComponent::StaticClass());
-
-	//did I hit a target?
-	if (rotatableTarget)
+	if (hitResult.GetActor())
 	{
+		ARotatableTarget* rotatableTarget = Cast<ARotatableTarget>(hitResult.GetActor());
+
+		//did I hit a target?
+		if (rotatableTarget)
+		{
+			UActorComponent* objectDestruct = hitResult.GetActor()->GetComponentByClass(UDestructibleComponent::StaticClass());
+			rotatableTarget->OnTargetHit();
+		}
+
+		//did I hit a destructible?
 		UActorComponent* objectDestruct = hitResult.GetActor()->GetComponentByClass(UDestructibleComponent::StaticClass());
-		rotatableTarget->OnTargetHit();
+		if (objectDestruct)
+		{
+			UDestructibleComponent* destructibleComponent = Cast<UDestructibleComponent>(objectDestruct);
+			destructibleComponent->ApplyDamage(1000.0f, hitResult.Location, FVector(1.0f, 1.0f, 1.0f), 100.0f);
+		}
 	}
-
-	//did I hit a destructible?
-	if (objectDestruct)
-	{
-		UDestructibleComponent* destructibleComponent = Cast<UDestructibleComponent>(objectDestruct);
-		destructibleComponent->ApplyDamage(1000.0f, hitResult.Location, FVector(1.0f, 1.0f, 1.0f), 100.0f);
-	}
-	
 }
 
 void AWeapon_M9::UpdateLaserPointer()

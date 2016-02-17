@@ -64,7 +64,6 @@ void ARotatableTarget::BeginPlay()
 {
 	Super::BeginPlay();
 	ARotatableTarget::RaiseTarget();
-	ARotatableTarget::ApplyProperties();
 }
 
 void ARotatableTarget::PostInitializeComponents()
@@ -108,9 +107,12 @@ FLinearColor ARotatableTarget::GetMaterialColor()
 	}
 }
 
-void ARotatableTarget::ApplyProperties()
+void ARotatableTarget::ApplyProperties(FRotatableTargetProperties TargetProperties)
 {
+	this->TargetProperties = TargetProperties;
+	this->SetActorLocation(TargetProperties.InitialLocation);
 	ARotatableTarget::SetNewLocation();
+	ARotatableTarget::UpdateMaterialInstance();
 }
 
 // Called every frame
@@ -296,16 +298,4 @@ void ARotatableTarget::Die()
 
 	//destroy
 	Destroy();
-}
-
-void ARotatableTarget::OnPropertiesUpdated()
-{
-	ARotatableTarget::UpdateMaterialInstance();
-}
-
-// TODO nullBot: we should have a proper MVC structure, I'll try to find time for that later
-void ARotatableTarget::SetTargetProperties(FRotatableTargetStruct TargetProperties)
-{
-	this->TargetProperties = TargetProperties;
-	ARotatableTarget::OnPropertiesUpdated();
 }

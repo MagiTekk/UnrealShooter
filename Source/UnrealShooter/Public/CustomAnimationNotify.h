@@ -4,16 +4,8 @@
 
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "MainCharacterAnimInstance.h"
+#include "UnrealShooterEnumData.h"
 #include "CustomAnimationNotify.generated.h"
-
-UENUM()
-enum class ECustomName : uint8
-{
-	PistolEquippedNotify,	//UMETA(DisplayName="PistolEquippedNotify"),
-	PistolUnequippedNotify,	//UMETA(DisplayName = "PistolUnequippedNotify"),
-	PistolReloadedNotify,	//UMETA(DisplayName = "PistolReloadedNotify")
-	StepSoundNotify
-};
 
 /**
  * 
@@ -32,7 +24,7 @@ public:
 	UCustomAnimationNotify();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AnimNotify)
-	ECustomName ENotifyCustomName;
+	ECustomNotifyName ENotifyCustomName;
 
 #pragma region Sound
 

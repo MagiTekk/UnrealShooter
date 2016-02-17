@@ -13,16 +13,16 @@ void UCustomAnimationNotify::Notify(USkeletalMeshComponent * MeshComp, UAnimSequ
 {
 	switch (ENotifyCustomName)
 	{
-		case ECustomName::PistolEquippedNotify:
-		case ECustomName::PistolUnequippedNotify:
+		case ECustomNotifyName::PistolEquippedNotify:
+		case ECustomNotifyName::PistolUnequippedNotify:
 			if (UCustomAnimationNotify::getMainCharAnimInstance(MeshComp))
 			{
 				UCustomAnimationNotify::getMainCharAnimInstance(MeshComp)->NotifyCallback_PistolEquipped();
 			}
 			break;
-		case ECustomName::PistolReloadedNotify:
+		case ECustomNotifyName::PistolReloadedNotify:
 			break;
-		case ECustomName::StepSoundNotify:
+		case ECustomNotifyName::StepSoundNotify:
 			if (UCustomAnimationNotify::getMainCharAnimInstance(MeshComp))
 			{
 				UCustomAnimationNotify::getMainCharAnimInstance(MeshComp)->PlayStepSound(Step_SoundCue);

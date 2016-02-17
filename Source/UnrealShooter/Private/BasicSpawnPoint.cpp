@@ -11,11 +11,6 @@ ABasicSpawnPoint::ABasicSpawnPoint()
 	//PrimaryActorTick.bCanEverTick = true;
 }
 
-ABasicSpawnPoint::ABasicSpawnPoint(FVector spawnPosition)
-{
-	SpawnPosition = spawnPosition;
-}
-
 
 // Called when the game starts or when spawned
 void ABasicSpawnPoint::BeginPlay()
