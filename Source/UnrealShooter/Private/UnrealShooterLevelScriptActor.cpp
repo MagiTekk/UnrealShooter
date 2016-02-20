@@ -51,14 +51,14 @@ void AUnrealShooterLevelScriptActor::InitiateSequence_0()
 						AUnrealShooterLevelScriptActor::GetSpawnPoint({ 1.0f, 1.0f, 0.0f }) };
 
 	customLocations.Append(Arr, ARRAY_COUNT(Arr));
-	properties = FRotatableTargetProperties(InitialLocation, 1.0f, ETargetType::FalseTarget, customLocations);
+	properties = FRotatableTargetProperties(InitialLocation, 1.0f, ETargetType::InnocentTarget, customLocations);
 	Sequence_0.Add(properties);
 	
 	ARotatableTarget* T1 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
 	T1->ApplyProperties(properties);
 
 	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(0.0f, 2.0f, 0.0f));
-	properties = FRotatableTargetProperties(InitialLocation, 4.0f, ETargetType::MidTarget);
+	properties = FRotatableTargetProperties(InitialLocation, 4.0f, ETargetType::FemaleTarget);
 	Sequence_0.Add(properties);
 
 	ARotatableTarget* T2 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
@@ -66,14 +66,14 @@ void AUnrealShooterLevelScriptActor::InitiateSequence_0()
 
 	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(2.0f, 1.0f, 0.0f));
 	//properties = FRotatableTargetStruct(InitialLocation, 2.0f, ETargetType::LowTarget);
-	Sequence_0.Add(FRotatableTargetProperties(InitialLocation, 2.0f, ETargetType::LowTarget));
+	Sequence_0.Add(FRotatableTargetProperties(InitialLocation, 2.0f, ETargetType::MaleTarget));
 
 	//ARotatableTarget* T3 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
 	//T3->ApplyProperties(properties);
 
 	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(1.0f, 2.0f, 0.0f));
 	//properties = FRotatableTargetStruct(InitialLocation, 5.0f, ETargetType::FalseTarget);
-	Sequence_0.Add(FRotatableTargetProperties(InitialLocation, 5.0f, ETargetType::FalseTarget));
+	Sequence_0.Add(FRotatableTargetProperties(InitialLocation, 5.0f, ETargetType::InnocentTarget));
 
 	//ARotatableTarget* T4 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
 	//T4->ApplyProperties(properties);

@@ -8,10 +8,10 @@
 UENUM()
 enum class ETargetType : uint8
 {
-	DefaultTarget,
-	FalseTarget,
-	MidTarget,
-	LowTarget
+	SpecialTarget,
+	InnocentTarget,
+	FemaleTarget,
+	MaleTarget
 };
 
 UENUM()

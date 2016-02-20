@@ -47,7 +47,7 @@ public:
 		this->TimeToLive = 5.0f;
 	}
 
-	FRotatableTargetProperties(FVector InitialLocation, float TimeToLive, ETargetType TargetType = ETargetType::DefaultTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, bool bIsExplosive = false)
+	FRotatableTargetProperties(FVector InitialLocation, float TimeToLive, ETargetType TargetType = ETargetType::SpecialTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, bool bIsExplosive = false)
 	{
 		this->InitialLocation = InitialLocation;
 		this->Locations = Locations;
@@ -66,7 +66,12 @@ struct FTargetWave
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
-	FRotatableTargetProperties TargetProperties;
+	TArray<FRotatableTargetProperties> Wave;
+
+	void SetWave(TArray<FRotatableTargetProperties> Wave)
+	{
+		this->Wave = Wave;
+	}
 
 	//For GC
 	void Destroy()
@@ -77,9 +82,9 @@ public:
 	{
 	}
 
-	FTargetWave(FRotatableTargetProperties TargetProperties)
+	FTargetWave(TArray<FRotatableTargetProperties> Wave)
 	{
-		this->TargetProperties = TargetProperties;
+		this->Wave = Wave;
 	}
 };
 

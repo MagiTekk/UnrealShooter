@@ -91,16 +91,16 @@ FLinearColor ARotatableTarget::GetMaterialColor()
 {
 	switch (TargetProperties.TargetType)
 	{
-		case ETargetType::LowTarget:
+		case ETargetType::MaleTarget:
 			return LOWTARGET_COLOR;
 			break;
-		case ETargetType::MidTarget:
+		case ETargetType::FemaleTarget:
 			return MIDTARGET_COLOR;
 			break;
-		case ETargetType::FalseTarget:
+		case ETargetType::InnocentTarget:
 			return FALSETARGET_COLOR;
 			break;
-		case ETargetType::DefaultTarget:
+		case ETargetType::SpecialTarget:
 		default:
 			return DEFAULTTARGET_COLOR;
 			break;

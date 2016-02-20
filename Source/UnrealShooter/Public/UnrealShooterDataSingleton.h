@@ -15,12 +15,23 @@ class UNREALSHOOTER_API UUnrealShooterDataSingleton : public UObject
 	GENERATED_BODY()
 
 	void InitSequenceData();
+	void InitSequenceA();
 	
 public:
 
 	UUnrealShooterDataSingleton();
 
+	FText OutErrorMessage;
+	int32 ErrorLineNumber;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetSequence")
-	TArray<FTargetSequence> Sequences;
-	
+	FTargetSequence SequenceA;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetSequence")
+	FTargetSequence SequenceB;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetSequence")
+	FTargetSequence SequenceC;
+
+	void ParseJSON();
 };
