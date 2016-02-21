@@ -3,7 +3,6 @@
 #include "UnrealShooter.h"
 #include "BasicSpawnPoint.h"
 #include "RotatableTarget.h"
-#include "UnrealShooterStructData.h"
 #include "Engine/DestructibleMesh.h"
 #include "UnrealShooterLevelScriptActor.h"
 
@@ -42,6 +41,7 @@ void AUnrealShooterLevelScriptActor::BeginDestroy()
 
 void AUnrealShooterLevelScriptActor::InitiateSequence_0()
 {
+	/*
 	FVector InitialLocation;
 	FRotatableTargetProperties properties;
 	TArray<FVector> customLocations;
@@ -74,6 +74,7 @@ void AUnrealShooterLevelScriptActor::InitiateSequence_0()
 	InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(1.0f, 2.0f, 0.0f));
 	//properties = FRotatableTargetStruct(InitialLocation, 5.0f, ETargetType::FalseTarget);
 	Sequence_0.Add(FRotatableTargetProperties(InitialLocation, 5.0f, ETargetType::InnocentTarget));
+	*/
 
 	//ARotatableTarget* T4 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
 	//T4->ApplyProperties(properties);

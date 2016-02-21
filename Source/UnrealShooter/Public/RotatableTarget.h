@@ -3,9 +3,91 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "UnrealShooterEnumData.h"
-#include "UnrealShooterStructData.h"
 #include "RotatableTarget.generated.h"
+
+UENUM()
+enum class ETargetType : uint8
+{
+	SpecialTarget,
+	InnocentTarget,
+	FemaleTarget,
+	MaleTarget
+};
+
+USTRUCT()
+struct FTargetLocation
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		int32 LocationID;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		FVector Location;
+
+	FTargetLocation()
+	{
+	}
+
+	FTargetLocation(int32 LocationID, FVector location)
+	{
+		this->LocationID = LocationID;
+		this->Location = location;
+	}
+};
+
+USTRUCT()
+struct FRotatableTargetProperties
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		FVector InitialLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		TArray<FVector> Locations;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		float Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		float TimeToLive;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		float Points;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		float HeadshotPoints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		bool bIsExplosive;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		ETargetType TargetType;
+
+	//For GC
+	void Destroy()
+	{
+	}
+
+	FRotatableTargetProperties()
+	{
+		this->TimeToLive = 5.0f;
+	}
+
+	FRotatableTargetProperties(FVector InitialLocation, float TimeToLive, ETargetType TargetType = ETargetType::SpecialTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, bool bIsExplosive = false)
+	{
+		this->InitialLocation = InitialLocation;
+		this->Locations = Locations;
+		this->Speed = Speed;
+		this->TimeToLive = TimeToLive;
+		this->bIsExplosive = bIsExplosive;
+		this->TargetType = TargetType; //defines points rewarded per hit & target color
+	}
+};
 
 UCLASS()
 class UNREALSHOOTER_API ARotatableTarget : public AActor

@@ -4,8 +4,16 @@
 
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "MainCharacterAnimInstance.h"
-#include "UnrealShooterEnumData.h"
 #include "CustomAnimationNotify.generated.h"
+
+UENUM()
+enum class ECustomNotifyName : uint8
+{
+	PistolEquippedNotify,
+	PistolUnequippedNotify,
+	PistolReloadedNotify,
+	StepSoundNotify
+};
 
 /**
  * 

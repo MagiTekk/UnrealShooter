@@ -13,11 +13,13 @@ UUnrealShooterDataSingleton::UUnrealShooterDataSingleton()
 
 void UUnrealShooterDataSingleton::InitSequenceData()
 {
+	/*
 	TArray<FTargetWave> Sequence;
 	TArray<FRotatableTargetProperties> WaveData;
 	TArray<FVector> customLocations;
 
 	UUnrealShooterDataSingleton::InitSequenceA();
+	*/
 
 	/*FVector targetMovement_0[] = { FVector{ 0.0f, 0.0f, 0.0f }, FVector{ 0.0f, 1.0f, 0.0f }, FVector{ 1.0f, 1.0f, 0.0f } };
 	customLocations.Append(targetMovement_0, ARRAY_COUNT(targetMovement_0));*/
@@ -28,7 +30,7 @@ void UUnrealShooterDataSingleton::InitSequenceData()
 	*/
 
 	//wave creation
-	WaveData.Add(FRotatableTargetProperties(FVector(1.0f, 1.0f, 0.0f), 2.0f, ETargetType::MaleTarget));
+	/*WaveData.Add(FRotatableTargetProperties(FVector(1.0f, 1.0f, 0.0f), 2.0f, ETargetType::MaleTarget));
 
 	//add this wave to sequence
 	Sequence.Add(FTargetWave(WaveData));
@@ -43,6 +45,7 @@ void UUnrealShooterDataSingleton::InitSequenceData()
 
 	//create my sequence out of all the waves
 	FTargetSequence SequenceA(FName(TEXT("SequenceA")), Sequence);
+	*/
 
 	//intitialize all data here, then create our library to access the singleton and from the level scrip actor instantiate the sequence!
 	//also create the multicast to "signal" when a target has been destroyed, we need to know when a wave has finished
@@ -57,6 +60,7 @@ void UUnrealShooterDataSingleton::InitSequenceData()
 
 void UUnrealShooterDataSingleton::InitSequenceA()
 {
+	/*
 	TArray<FTargetWave> Sequence;
 	for (int i = 0; i < 11; i++)
 	{
@@ -68,6 +72,7 @@ void UUnrealShooterDataSingleton::InitSequenceA()
 		//add this wave to sequence
 		Sequence.Add(FTargetWave(WaveData));
 	}
+	*/
 }
 
 void UUnrealShooterDataSingleton::ParseJSON()
@@ -82,10 +87,21 @@ void UUnrealShooterDataSingleton::ParseJSON()
 	{
 		const TArray<TSharedPtr<FJsonValue>> sequences = JsonObject->GetArrayField(TEXT("sequences"));
 		const TArray<TSharedPtr<FJsonValue>> waves = JsonObject->GetArrayField(TEXT("waves"));
+		const TArray<TSharedPtr<FJsonValue>> targets = JsonObject->GetArrayField(TEXT("targets"));
+		const TArray<TSharedPtr<FJsonValue>> locations = JsonObject->GetArrayField("locations");
 
-		for (int32 Index = 0; Index != waves.Num(); ++Index)
+		for (int32 i = 0; i != locations.Num(); ++i)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Lo lograste no joda!: %d"), Index);
+			int32 ID = locations[i]->AsObject()->GetIntegerField(TEXT("locationID"));
+
+			//locations[i]->AsObject()->GetStringField(TEXT("x"))
+
+			//FVector location = { FCString::Atof(), locations[i]->AsObject()->GetStringField(TEXT("y")), 0 };
+			
+				
+			//Locations.Add(FTargetLocation(ID, location));
+			//locations[i]->AsObject()->(TEXT("locationID"));
+			UE_LOG(LogTemp, Warning, TEXT("Lo lograste no joda!: %d"), i);
 		}
 
 		//iterate over the array to get every sequence node

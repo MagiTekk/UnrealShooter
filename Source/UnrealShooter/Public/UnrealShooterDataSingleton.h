@@ -3,7 +3,8 @@
 #pragma once
 
 #include "Object.h"
-#include "UnrealShooterStructData.h"
+#include "RotatableTarget.h"
+#include "TargetSequence.h"
 #include "UnrealShooterDataSingleton.generated.h"
 
 /**
@@ -24,14 +25,10 @@ public:
 	FText OutErrorMessage;
 	int32 ErrorLineNumber;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetSequence")
-	FTargetSequence SequenceA;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetSequence")
-	FTargetSequence SequenceB;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetSequence")
-	FTargetSequence SequenceC;
+	TArray<UTargetSequence> Sequences;
+	TArray<FTargetWave> Waves;
+	TArray<ARotatableTarget> Targets;
+	TArray<FVector> Locations;
 
 	void ParseJSON();
 };
