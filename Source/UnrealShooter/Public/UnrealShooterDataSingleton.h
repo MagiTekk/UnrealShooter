@@ -17,6 +17,14 @@ class UNREALSHOOTER_API UUnrealShooterDataSingleton : public UObject
 
 	void InitSequenceData();
 	void InitSequenceA();
+
+	void ParseJSON();
+	void ParseSequences(const TArray<TSharedPtr<FJsonValue>> &SequencesJSON);
+	void ParseWaves(const TArray<TSharedPtr<FJsonValue>> &WavesJSON);
+	void ParseTargets(const TArray<TSharedPtr<FJsonValue>> &TargetsJSON);
+	void ParseLocations(const TArray<TSharedPtr<FJsonValue>> &LocationsJSON);
+	ETargetType GetEnumByString(FString const& inString);
+	FTargetLocation GetTargetLocationByID(int32 locationID);
 	
 public:
 
@@ -27,8 +35,6 @@ public:
 
 	TArray<UTargetSequence> Sequences;
 	TArray<FTargetWave> Waves;
-	TArray<ARotatableTarget> Targets;
-	TArray<FVector> Locations;
-
-	void ParseJSON();
+	TArray<FRotatableTargetProperties> Targets;
+	TArray<FTargetLocation> Locations;
 };

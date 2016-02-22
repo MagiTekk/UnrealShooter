@@ -16,16 +16,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
 		TArray<FRotatableTargetProperties> Wave;
 
-	void SetWave(TArray<FRotatableTargetProperties> Wave)
-	{
-		this->Wave = Wave;
-	}
-
-	//For GC
-	void Destroy()
-	{
-	}
-
 	FTargetWave()
 	{
 	}

@@ -45,6 +45,9 @@ struct FRotatableTargetProperties
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		int32 TargetID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
 		FVector InitialLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
@@ -78,8 +81,9 @@ public:
 		this->TimeToLive = 5.0f;
 	}
 
-	FRotatableTargetProperties(FVector InitialLocation, float TimeToLive, ETargetType TargetType = ETargetType::SpecialTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, bool bIsExplosive = false)
+	FRotatableTargetProperties(int32 TargetID, FVector InitialLocation, float TimeToLive, ETargetType TargetType = ETargetType::SpecialTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, bool bIsExplosive = false)
 	{
+		this->TargetID = TargetID;
 		this->InitialLocation = InitialLocation;
 		this->Locations = Locations;
 		this->Speed = Speed;
