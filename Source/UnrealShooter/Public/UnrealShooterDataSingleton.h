@@ -15,9 +15,6 @@ class UNREALSHOOTER_API UUnrealShooterDataSingleton : public UObject
 {
 	GENERATED_BODY()
 
-	void InitSequenceData();
-	void InitSequenceA();
-
 	void ParseJSON();
 	void ParseSequences(const TArray<TSharedPtr<FJsonValue>> &SequencesJSON);
 	void ParseWaves(const TArray<TSharedPtr<FJsonValue>> &WavesJSON);
@@ -33,7 +30,8 @@ public:
 	FText OutErrorMessage;
 	int32 ErrorLineNumber;
 
-	TArray<UTargetSequence> Sequences;
+	//TArray<UTargetSequence*> Sequences;
+	TArray<FTargetSequenceStruct> Sequences;
 	TArray<FTargetWave> Waves;
 	TArray<FRotatableTargetProperties> Targets;
 	TArray<FTargetLocation> Locations;

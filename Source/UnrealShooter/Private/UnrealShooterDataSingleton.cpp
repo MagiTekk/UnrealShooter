@@ -8,71 +8,6 @@
 UUnrealShooterDataSingleton::UUnrealShooterDataSingleton()
 {
 	UUnrealShooterDataSingleton::ParseJSON();
-	//UUnrealShooterDataSingleton::InitSequenceData();
-}
-
-void UUnrealShooterDataSingleton::InitSequenceData()
-{
-	/*
-	TArray<FTargetWave> Sequence;
-	TArray<FRotatableTargetProperties> WaveData;
-	TArray<FVector> customLocations;
-
-	UUnrealShooterDataSingleton::InitSequenceA();
-	*/
-
-	/*FVector targetMovement_0[] = { FVector{ 0.0f, 0.0f, 0.0f }, FVector{ 0.0f, 1.0f, 0.0f }, FVector{ 1.0f, 1.0f, 0.0f } };
-	customLocations.Append(targetMovement_0, ARRAY_COUNT(targetMovement_0));*/
-
-	/*
-	FRotatableTargetProperties wave1[] = {	};
-	WaveData.Append(wave1, ARRAY_COUNT(wave1));
-	*/
-
-	//wave creation
-	/*WaveData.Add(FRotatableTargetProperties(FVector(1.0f, 1.0f, 0.0f), 2.0f, ETargetType::MaleTarget));
-
-	//add this wave to sequence
-	Sequence.Add(FTargetWave(WaveData));
-
-
-	WaveData.Empty();
-	WaveData.Add(FRotatableTargetProperties(FVector(0.0f, 1.0f, 0.0f), 2.0f, ETargetType::MaleTarget));
-
-	//add this wave to sequence
-	Sequence.Add(FTargetWave(WaveData));
-
-
-	//create my sequence out of all the waves
-	FTargetSequence SequenceA(FName(TEXT("SequenceA")), Sequence);
-	*/
-
-	//intitialize all data here, then create our library to access the singleton and from the level scrip actor instantiate the sequence!
-	//also create the multicast to "signal" when a target has been destroyed, we need to know when a wave has finished
-
-	//empty
-	//customLocations.Empty();
-
-	
-
-	//Sequences.Add(properties);
-}
-
-void UUnrealShooterDataSingleton::InitSequenceA()
-{
-	/*
-	TArray<FTargetWave> Sequence;
-	for (int i = 0; i < 11; i++)
-	{
-		TArray<FVector> customLocations;
-		TArray<FRotatableTargetProperties> WaveData;
-
-		WaveData.Add(FRotatableTargetProperties(FVector(1.0f, 1.0f, 0.0f), 2.0f, ETargetType::MaleTarget));
-
-		//add this wave to sequence
-		Sequence.Add(FTargetWave(WaveData));
-	}
-	*/
 }
 
 void UUnrealShooterDataSingleton::ParseJSON()
@@ -92,22 +27,50 @@ void UUnrealShooterDataSingleton::ParseJSON()
 
 		UUnrealShooterDataSingleton::ParseLocations(LocationsJSON);
 		UUnrealShooterDataSingleton::ParseTargets(TargetsJSON);
-
-		
-
-		//iterate over the array to get every sequence node
-		//UE_LOG(LogTemp, Warning, TEXT("%s"), *sequencesNode);
+		UUnrealShooterDataSingleton::ParseWaves(WavesJSON);
+		UUnrealShooterDataSingleton::ParseSequences(SequencesJSON);
 	}
 }
 
 void UUnrealShooterDataSingleton::ParseSequences(const TArray<TSharedPtr<FJsonValue>> &SequencesJSON)
 {
+	for (int32 i = 0; i != SequencesJSON.Num(); ++i)
+	{
+		FString sequenceName = SequencesJSON[i]->AsObject()->GetStringField(TEXT("sequenceName"));
 
+		TArray<int32> waveIDs;
+		TArray<TSharedPtr<FJsonValue>> waveIDsSubJSON = SequencesJSON[i]->AsObject()->GetArrayField(TEXT("waveIDs"));
+		for (int32 j = 0; j != waveIDsSubJSON.Num(); ++j)
+		{
+			int32 waveID = waveIDsSubJSON[j]->AsNumber();
+			waveIDs.Add(waveID);
+		}
+
+		//UTargetSequence* newSequence = Cast<UTargetSequence>(UTargetSequence::StaticClass()->GetDefaultObject());
+		//newSequence->ApplyProperties(sequenceName, waveIDs);
+		
+		Sequences.Add(FTargetSequenceStruct(sequenceName, waveIDs));
+		//UE_LOG(LogTemp, Warning, TEXT("Lo lograste no joda! -- sequenceName: %s, waveID[0]: %d"), *newSequence->sequenceName, newSequence->WaveIDs[0]);
+		//UE_LOG(LogTemp, Warning, TEXT("Lo lograste no joda! -- sequenceName: %s, waveID[0]: %d"), *sequenceName, waveIDs[1]);
+	}
 }
 
 void UUnrealShooterDataSingleton::ParseWaves(const TArray<TSharedPtr<FJsonValue>> &WavesJSON)
 {
-
+	for (int32 i = 0; i != WavesJSON.Num(); ++i)
+	{
+		int32 waveID = WavesJSON[i]->AsObject()->GetIntegerField(TEXT("waveID"));
+		
+		TArray<int32> targetIDs;
+		TArray<TSharedPtr<FJsonValue>> targetIDsSubJSON = WavesJSON[i]->AsObject()->GetArrayField(TEXT("targetIDs"));
+		for (int32 j = 0; j != targetIDsSubJSON.Num(); ++j)
+		{
+			int32 targetID = targetIDsSubJSON[j]->AsNumber();
+			targetIDs.Add(targetID);
+			//UE_LOG(LogTemp, Warning, TEXT("Lo lograste no joda! -- ID: %d, targetID(%d)"), waveID, targetID);
+		}
+		Waves.Add(FTargetWave(waveID, targetIDs));
+	}
 }
 
 void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValue>> &TargetsJSON)

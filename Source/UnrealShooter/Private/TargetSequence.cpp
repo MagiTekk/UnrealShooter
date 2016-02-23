@@ -8,4 +8,10 @@ UTargetSequence::UTargetSequence()
 
 }
 
+void UTargetSequence::ApplyProperties(FString sequenceName, TArray<int32> WaveIDs)
+{
+	this->sequenceName = sequenceName;
+	this->WaveIDs = WaveIDs;
+}
+
 
