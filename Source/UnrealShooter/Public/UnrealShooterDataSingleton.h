@@ -22,6 +22,7 @@ class UNREALSHOOTER_API UUnrealShooterDataSingleton : public UObject
 	void ParseLocations(const TArray<TSharedPtr<FJsonValue>> &LocationsJSON);
 	ETargetType GetEnumByString(FString const& inString);
 	FTargetLocation GetTargetLocationByID(int32 locationID);
+	FTargetWave GetTargetWaveByWaveID(int32 waveID);
 	
 public:
 

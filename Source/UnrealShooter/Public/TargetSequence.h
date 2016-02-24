@@ -7,31 +7,6 @@
 #include "TargetSequence.generated.h"
 
 USTRUCT()
-struct FTargetSequenceStruct
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
-		FString sequenceName;
-	
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
-		TArray<int32> WaveIDs;
-
-	FTargetSequenceStruct()
-	{
-	}
-
-	FTargetSequenceStruct(FString sequenceName, TArray<int32> WaveIDs)
-	{
-		this->sequenceName = sequenceName;
-		this->WaveIDs = WaveIDs;
-	}
-};
-
-USTRUCT()
 struct FTargetWave
 {
 	GENERATED_USTRUCT_BODY()
@@ -52,6 +27,31 @@ public:
 	{
 		this->WaveID = WaveID;
 		this->TargetIDs = TargetIDs;
+	}
+};
+
+USTRUCT()
+struct FTargetSequenceStruct
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		FString sequenceName;
+	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		TArray<FTargetWave> WaveIDs;
+
+	FTargetSequenceStruct()
+	{
+	}
+
+	FTargetSequenceStruct(FString sequenceName, TArray<FTargetWave> WaveIDs)
+	{
+		this->sequenceName = sequenceName;
+		this->WaveIDs = WaveIDs;
 	}
 };
 
