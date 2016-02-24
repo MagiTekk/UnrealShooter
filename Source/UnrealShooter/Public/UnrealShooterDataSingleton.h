@@ -7,6 +7,8 @@
 #include "TargetSequence.h"
 #include "UnrealShooterDataSingleton.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnTargetDestroyed);
+
 /**
  * 
  */
@@ -23,17 +25,20 @@ class UNREALSHOOTER_API UUnrealShooterDataSingleton : public UObject
 	ETargetType GetEnumByString(FString const& inString);
 	FTargetLocation GetTargetLocationByID(int32 locationID);
 	FTargetWave GetTargetWaveByWaveID(int32 waveID);
+	FRotatableTargetProperties GetTargetPropertiesByTargetID(int32 targetID);
+	
 	
 public:
 
 	UUnrealShooterDataSingleton();
 
-	FText OutErrorMessage;
-	int32 ErrorLineNumber;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Level Events")
+		FTargetDelegate_OnTargetDestroyed OnTargetDestroyed;
 
-	//TArray<UTargetSequence*> Sequences;
 	TArray<FTargetSequenceStruct> Sequences;
 	TArray<FTargetWave> Waves;
 	TArray<FRotatableTargetProperties> Targets;
 	TArray<FTargetLocation> Locations;
+
+	FTargetSequenceStruct GetSequenceBySequenceName(FString SequenceName);
 };

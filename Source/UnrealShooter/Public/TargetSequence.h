@@ -17,16 +17,16 @@ public:
 		int32 WaveID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
-		TArray<int32> TargetIDs;
+		TArray<FRotatableTargetProperties> Targets;
 
 	FTargetWave()
 	{
 	}
 
-	FTargetWave(int32 WaveID, TArray<int32> TargetIDs)
+	FTargetWave(int32 WaveID, TArray<FRotatableTargetProperties> Targets)
 	{
 		this->WaveID = WaveID;
-		this->TargetIDs = TargetIDs;
+		this->Targets = Targets;
 	}
 };
 
@@ -66,9 +66,15 @@ class UNREALSHOOTER_API UTargetSequence : public UObject
 public:
 
 	UTargetSequence();
-	
-	void ApplyProperties(FString sequenceName, TArray<int32> WaveIDs);
 
 	FString sequenceName;
-	TArray<int32> WaveIDs;
+	TArray<FTargetWave> Waves;
+
+	UClass* TargetBP;
+	//UClass* TargetCylinderBP;
+	
+	void ApplyProperties(FString sequenceName, TArray<FTargetWave> Waves);
+	void OnTargetDestroyedHandler();
+	void Play();
+	
 };

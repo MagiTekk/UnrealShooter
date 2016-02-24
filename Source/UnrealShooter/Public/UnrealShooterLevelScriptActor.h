@@ -14,9 +14,6 @@ class UNREALSHOOTER_API AUnrealShooterLevelScriptActor : public ALevelScriptActo
 {
 	GENERATED_BODY()
 
-	// Given the position in our grid, get the world location for the spawn
-	FVector GetSpawnPoint(FVector SpawnPosition);
-
 	TArray<FRotatableTargetProperties> Sequence_0;
 	
 public:
@@ -36,13 +33,8 @@ public:
 	// On remove from world
 	virtual void BeginDestroy() override;
 
-	UClass* TargetBP;
-	UClass* TargetCylinderBP;
-
 #pragma region Sequences
 
-	// Define each sequence of the level
-	void InitiateSequence_0();
 	void PlaySequence(int32 sequenceID=0);
 
 #pragma endregion

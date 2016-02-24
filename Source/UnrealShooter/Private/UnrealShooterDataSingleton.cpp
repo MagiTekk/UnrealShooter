@@ -38,14 +38,14 @@ void UUnrealShooterDataSingleton::ParseSequences(const TArray<TSharedPtr<FJsonVa
 	{
 		FString sequenceName = SequencesJSON[i]->AsObject()->GetStringField(TEXT("sequenceName"));
 
-		TArray<FTargetWave> waveIDs;
+		TArray<FTargetWave> waves;
 		TArray<TSharedPtr<FJsonValue>> waveIDsSubJSON = SequencesJSON[i]->AsObject()->GetArrayField(TEXT("waveIDs"));
 		for (int32 j = 0; j != waveIDsSubJSON.Num(); ++j)
 		{
 			int32 waveID = waveIDsSubJSON[j]->AsNumber();
-			waveIDs.Add(GetTargetWaveByWaveID(waveID));
+			waves.Add(GetTargetWaveByWaveID(waveID));
 		}
-		Sequences.Add(FTargetSequenceStruct(sequenceName, waveIDs));
+		Sequences.Add(FTargetSequenceStruct(sequenceName, waves));
 	}
 }
 
@@ -55,14 +55,14 @@ void UUnrealShooterDataSingleton::ParseWaves(const TArray<TSharedPtr<FJsonValue>
 	{
 		int32 waveID = WavesJSON[i]->AsObject()->GetIntegerField(TEXT("waveID"));
 		
-		TArray<int32> targetIDs;
+		TArray<FRotatableTargetProperties> targets;
 		TArray<TSharedPtr<FJsonValue>> targetIDsSubJSON = WavesJSON[i]->AsObject()->GetArrayField(TEXT("targetIDs"));
 		for (int32 j = 0; j != targetIDsSubJSON.Num(); ++j)
 		{
 			int32 targetID = targetIDsSubJSON[j]->AsNumber();
-			targetIDs.Add(targetID);
+			targets.Add(GetTargetPropertiesByTargetID(targetID));
 		}
-		Waves.Add(FTargetWave(waveID, targetIDs));
+		Waves.Add(FTargetWave(waveID, targets));
 	}
 }
 
@@ -126,6 +126,19 @@ FTargetLocation UUnrealShooterDataSingleton::GetTargetLocationByID(int32 locatio
 	return FTargetLocation();
 }
 
+FRotatableTargetProperties UUnrealShooterDataSingleton::GetTargetPropertiesByTargetID(int32 targetID)
+{
+	for (int32 i = 0; i != Targets.Num(); ++i)
+	{
+		int32 myTargetID = Targets[i].TargetID;
+		if (targetID == myTargetID)
+		{
+			return Targets[i];
+		}
+	}
+	return FRotatableTargetProperties();
+}
+
 FTargetWave UUnrealShooterDataSingleton::GetTargetWaveByWaveID(int32 waveID)
 {
 	for (int32 i = 0; i != Waves.Num(); ++i)
@@ -137,4 +150,17 @@ FTargetWave UUnrealShooterDataSingleton::GetTargetWaveByWaveID(int32 waveID)
 		}
 	}
 	return FTargetWave();
+}
+
+FTargetSequenceStruct UUnrealShooterDataSingleton::GetSequenceBySequenceName(FString SequenceName)
+{
+	for (int32 i = 0; i != Sequences.Num(); ++i)
+	{
+		FString mySequence = Sequences[i].sequenceName;
+		if (SequenceName == mySequence)
+		{
+			return Sequences[i];
+		}
+	}
+	return FTargetSequenceStruct();
 }

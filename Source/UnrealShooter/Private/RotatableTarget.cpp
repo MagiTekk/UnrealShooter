@@ -2,6 +2,7 @@
 
 #include "UnrealShooter.h"
 #include "RotatableTarget.h"
+#include "UnrealShooterDataSingleton.h"
 #include "Engine/DestructibleMesh.h"
 
 ARotatableTarget::ARotatableTarget()
@@ -295,6 +296,10 @@ void ARotatableTarget::Die()
 {
 	//clear timer
 	GetWorld()->GetTimerManager().ClearTimer(TargetTimerHandle);
+
+	//launch a signal to update our sequence
+	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+	DataInstance->OnTargetDestroyed.Broadcast();
 
 	//destroy
 	Destroy();
