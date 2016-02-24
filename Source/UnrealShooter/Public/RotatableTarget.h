@@ -111,6 +111,7 @@ class UNREALSHOOTER_API ARotatableTarget : public AActor
 	void InitMaterialInstance();
 	FLinearColor GetMaterialColor();
 
+	FVector GetSpawnPoint(FVector SpawnPosition);
 	
 	void DoTargetUp();
 	void DoTargetDown();

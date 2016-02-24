@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UnrealShooter.h"
+#include "BasicSpawnPoint.h"
 #include "RotatableTarget.h"
 #include "UnrealShooterDataSingleton.h"
 #include "Engine/DestructibleMesh.h"
@@ -111,7 +112,7 @@ FLinearColor ARotatableTarget::GetMaterialColor()
 void ARotatableTarget::ApplyProperties(FRotatableTargetProperties TargetProperties)
 {
 	this->TargetProperties = TargetProperties;
-	this->SetActorLocation(TargetProperties.InitialLocation);
+	this->SetActorLocation(GetSpawnPoint(TargetProperties.InitialLocation));
 	ARotatableTarget::SetNewLocation();
 	ARotatableTarget::UpdateMaterialInstance();
 }
@@ -179,6 +180,18 @@ void ARotatableTarget::DoTargetDown()
 		bLowerTarget = false;
 		ARotatableTarget::Die();
 	}
+}
+
+FVector ARotatableTarget::GetSpawnPoint(FVector SpawnPosition)
+{
+	for (TActorIterator<ABasicSpawnPoint> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->SpawnPosition == SpawnPosition)
+		{
+			return ActorItr->GetActorLocation();
+		}
+	}
+	return FVector();
 }
 
 //if we hold a location on our properties we will move there at a certain speed, after that the target goes down

@@ -18,10 +18,11 @@ UTargetSequence::UTargetSequence()
 	*/
 }
 
-void UTargetSequence::ApplyProperties(FString sequenceName, TArray<FTargetWave> Waves)
+void UTargetSequence::ApplyProperties(FString sequenceName, TArray<FTargetWave> Waves, UWorld* World)
 {
 	this->sequenceName = sequenceName;
 	this->Waves = Waves;
+	this->World = World;
 
 	//event handler
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
@@ -30,8 +31,7 @@ void UTargetSequence::ApplyProperties(FString sequenceName, TArray<FTargetWave> 
 
 void UTargetSequence::OnTargetDestroyedHandler()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), *animName);
-	//GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Yellow, FString::FString("STEP_SOUND"));
+	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Yellow, FString::FString("ERICK_YOU_ARE_FUCKING_AWESOME!!!!"));
 }
 
 void UTargetSequence::Play()
@@ -40,8 +40,14 @@ void UTargetSequence::Play()
 	//FRotatableTargetProperties properties = FRotatableTargetProperties(InitialLocation, 4.0f, ETargetType::FemaleTarget);
 	//FRotatableTargetProperties properties = Cast<FRotatableTargetProperties>(Waves[0].Targets[0]);
 
-	ARotatableTarget* T2 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
-	T2->ApplyProperties(Waves[0].Targets[0]);
+	//ARotatableTarget* T2 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
+	//T2->ApplyProperties(Waves[0].Targets[0]);
+
+	if (World)
+	{
+		ARotatableTarget* T1 = World->SpawnActor<ARotatableTarget>(TargetBP);
+		T1->ApplyProperties(Waves[0].Targets[0]);
+	}
 }
 
 

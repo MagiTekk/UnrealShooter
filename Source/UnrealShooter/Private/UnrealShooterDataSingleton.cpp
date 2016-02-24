@@ -77,7 +77,7 @@ void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValu
 		int32 speed = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("speed"));
 		bool isExplosive = TargetsJSON[i]->AsObject()->GetBoolField(TEXT("isExplosive"));
 		
-		FVector initialLocation = GetTargetLocationByID(initialLocationID).Location;
+		FVector spawnPointLocation = GetTargetLocationByID(initialLocationID).Location;
 		TArray<FVector> movementLocations;
 
 		TArray<TSharedPtr<FJsonValue>> movementLocationsSubJSON = TargetsJSON[i]->AsObject()->GetArrayField(TEXT("movementLocations"));
@@ -86,7 +86,7 @@ void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValu
 			int32 locationID = movementLocationsSubJSON[i]->AsNumber();
 			movementLocations.Add(GetTargetLocationByID(locationID).Location);
 		}
-		Targets.Add(FRotatableTargetProperties(targetID, initialLocation, timeToLive, UUnrealShooterDataSingleton::GetEnumByString(targetType), movementLocations, speed, isExplosive));
+		Targets.Add(FRotatableTargetProperties(targetID, spawnPointLocation, timeToLive, UUnrealShooterDataSingleton::GetEnumByString(targetType), movementLocations, speed, isExplosive));
 	}
 }
 

@@ -13,8 +13,6 @@ UCLASS()
 class UNREALSHOOTER_API AUnrealShooterLevelScriptActor : public ALevelScriptActor
 {
 	GENERATED_BODY()
-
-	TArray<FRotatableTargetProperties> Sequence_0;
 	
 public:
 

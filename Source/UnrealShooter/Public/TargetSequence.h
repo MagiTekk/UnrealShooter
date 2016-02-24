@@ -42,16 +42,16 @@ public:
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
-		TArray<FTargetWave> WaveIDs;
+		TArray<FTargetWave> Waves;
 
 	FTargetSequenceStruct()
 	{
 	}
 
-	FTargetSequenceStruct(FString sequenceName, TArray<FTargetWave> WaveIDs)
+	FTargetSequenceStruct(FString sequenceName, TArray<FTargetWave> Waves)
 	{
 		this->sequenceName = sequenceName;
-		this->WaveIDs = WaveIDs;
+		this->Waves = Waves;
 	}
 };
 
@@ -70,11 +70,14 @@ public:
 	FString sequenceName;
 	TArray<FTargetWave> Waves;
 
+	UWorld* World;
 	UClass* TargetBP;
 	//UClass* TargetCylinderBP;
 	
-	void ApplyProperties(FString sequenceName, TArray<FTargetWave> Waves);
+	UFUNCTION()
 	void OnTargetDestroyedHandler();
+
+	void ApplyProperties(FString sequenceName, TArray<FTargetWave> Waves, UWorld* World);
 	void Play();
 	
 };
