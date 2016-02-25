@@ -29,24 +29,56 @@ void UTargetSequence::ApplyProperties(FString sequenceName, TArray<FTargetWave> 
 	DataInstance->OnTargetDestroyed.AddDynamic(this, &UTargetSequence::OnTargetDestroyedHandler);
 }
 
-void UTargetSequence::OnTargetDestroyedHandler()
+void UTargetSequence::OnTargetDestroyedHandler(int32 TargetID)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Yellow, FString::FString("ERICK_YOU_ARE_FUCKING_AWESOME!!!!"));
+	/*GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Yellow, FString::FString("ERICK_YOU_ARE_FUCKING_AWESOME!!!!"));
+
+	UE_LOG(LogTemp, Warning, TEXT("TargetID: %d --- The current amount of targets in this wave are: %d"), TargetID, _currentWave.Targets.Num());
+	RemoveTargetFromCurrentWave(TargetID);
+	UE_LOG(LogTemp, Warning, TEXT("After removal: %d"), _currentWave.Targets.Num());*/
 }
 
 void UTargetSequence::Play()
 {
-	//FVector InitialLocation = AUnrealShooterLevelScriptActor::GetSpawnPoint(FVector(0.0f, 2.0f, 0.0f));
-	//FRotatableTargetProperties properties = FRotatableTargetProperties(InitialLocation, 4.0f, ETargetType::FemaleTarget);
-	//FRotatableTargetProperties properties = Cast<FRotatableTargetProperties>(Waves[0].Targets[0]);
-
-	//ARotatableTarget* T2 = GetWorld()->SpawnActor<ARotatableTarget>(TargetBP);
-	//T2->ApplyProperties(Waves[0].Targets[0]);
-
 	if (World)
 	{
-		ARotatableTarget* T1 = World->SpawnActor<ARotatableTarget>(TargetBP);
-		T1->ApplyProperties(Waves[0].Targets[0]);
+		GetNextWave();
+		ARotatableTarget* spawnedTarget;
+		for (int32 i = 0; i != _currentWave.Targets.Num(); ++i)
+		{
+			FRotatableTargetProperties myTargetProps = _currentWave.Targets[i];
+			spawnedTarget = World->SpawnActor<ARotatableTarget>(TargetBP);
+			spawnedTarget->ApplyProperties(myTargetProps);
+		}
+	}
+}
+
+void UTargetSequence::GetNextWave()
+{
+	if (Waves.Num() > 0)
+	{
+		_currentWave = Waves[0];
+		Waves.RemoveAt(0);
+	}
+}
+
+/*
+	Working on this method, this one is causing errors since many
+	targets access the function at the same time and modify the array,
+	find a better way to handle the removal from the array
+*/
+void UTargetSequence::RemoveTargetFromCurrentWave(int32 TargetID)
+{
+	for (int32 i = 0; i != _currentWave.Targets.Num(); ++i)
+	{
+		if (i >= 0 && i < _currentWave.Targets.Num())
+		{
+			const FRotatableTargetProperties myTargetProps = _currentWave.Targets[i];
+			if (TargetID == myTargetProps.TargetID)
+			{
+				_currentWave.Targets.RemoveAt(i);
+			}
+		}
 	}
 }
 

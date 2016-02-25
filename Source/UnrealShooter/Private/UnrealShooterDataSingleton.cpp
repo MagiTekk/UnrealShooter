@@ -45,7 +45,7 @@ void UUnrealShooterDataSingleton::ParseSequences(const TArray<TSharedPtr<FJsonVa
 			int32 waveID = waveIDsSubJSON[j]->AsNumber();
 			waves.Add(GetTargetWaveByWaveID(waveID));
 		}
-		Sequences.Add(FTargetSequenceStruct(sequenceName, waves));
+		Sequences.Emplace(FTargetSequenceStruct(sequenceName, waves));
 	}
 }
 
@@ -62,7 +62,7 @@ void UUnrealShooterDataSingleton::ParseWaves(const TArray<TSharedPtr<FJsonValue>
 			int32 targetID = targetIDsSubJSON[j]->AsNumber();
 			targets.Add(GetTargetPropertiesByTargetID(targetID));
 		}
-		Waves.Add(FTargetWave(waveID, targets));
+		Waves.Emplace(FTargetWave(waveID, targets));
 	}
 }
 
@@ -83,10 +83,10 @@ void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValu
 		TArray<TSharedPtr<FJsonValue>> movementLocationsSubJSON = TargetsJSON[i]->AsObject()->GetArrayField(TEXT("movementLocations"));
 		for (int32 j = 0; j != movementLocationsSubJSON.Num(); ++j)
 		{
-			int32 locationID = movementLocationsSubJSON[i]->AsNumber();
+			int32 locationID = movementLocationsSubJSON[j]->AsNumber();
 			movementLocations.Add(GetTargetLocationByID(locationID).Location);
 		}
-		Targets.Add(FRotatableTargetProperties(targetID, spawnPointLocation, timeToLive, UUnrealShooterDataSingleton::GetEnumByString(targetType), movementLocations, speed, isExplosive));
+		Targets.Emplace(FRotatableTargetProperties(targetID, spawnPointLocation, timeToLive, UUnrealShooterDataSingleton::GetEnumByString(targetType), movementLocations, speed, isExplosive));
 	}
 }
 
@@ -100,7 +100,7 @@ void UUnrealShooterDataSingleton::ParseLocations(const TArray<TSharedPtr<FJsonVa
 		float z = LocationsJSON[i]->AsObject()->GetIntegerField(TEXT("z"));
 		FVector targetLocation = { x, y, z };
 
-		Locations.Add(FTargetLocation(ID, targetLocation));
+		Locations.Emplace(FTargetLocation(ID, targetLocation));
 	}
 }
 

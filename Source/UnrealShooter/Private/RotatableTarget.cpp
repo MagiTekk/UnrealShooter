@@ -199,8 +199,9 @@ void ARotatableTarget::SetNewLocation()
 {
 	if (TargetProperties.Locations.Num() > 0)
 	{
-		NextLocation = TargetProperties.Locations[0];
-		TargetProperties.Locations.Remove(NextLocation);
+		FVector location = TargetProperties.Locations[0];
+		NextLocation = GetSpawnPoint(location);
+		TargetProperties.Locations.Remove(location);
 		bMoveTarget = true;
 	}
 	else
@@ -312,7 +313,7 @@ void ARotatableTarget::Die()
 
 	//launch a signal to update our sequence
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	DataInstance->OnTargetDestroyed.Broadcast();
+	DataInstance->OnTargetDestroyed.Broadcast(TargetProperties.TargetID);
 
 	//destroy
 	Destroy();
