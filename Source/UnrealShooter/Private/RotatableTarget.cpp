@@ -313,7 +313,7 @@ void ARotatableTarget::Die()
 
 	//launch a signal to update our sequence
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	DataInstance->OnTargetDestroyed.Broadcast(TargetProperties.TargetID);
+	DataInstance->OnTargetDestroyed.Broadcast();
 
 	//destroy
 	Destroy();

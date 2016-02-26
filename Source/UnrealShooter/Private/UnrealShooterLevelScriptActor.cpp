@@ -28,7 +28,7 @@ void AUnrealShooterLevelScriptActor::BeginPlay()
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 	FTargetSequenceStruct sequenceProps = DataInstance->GetSequenceBySequenceName(TEXT("SequenceA"));
 	Sequence_A->ApplyProperties(sequenceProps.sequenceName, sequenceProps.Waves, GetWorld());
-	Sequence_A->Play();
+	Sequence_A->PlayNextWave();
 }
 
 // Called every frame

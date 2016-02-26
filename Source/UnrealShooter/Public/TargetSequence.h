@@ -64,8 +64,9 @@ class UNREALSHOOTER_API UTargetSequence : public UObject
 	GENERATED_BODY()
 
 	FTargetWave _currentWave;
-	void GetNextWave();
-	void RemoveTargetFromCurrentWave(int32 TargetID);
+	TArray<ARotatableTarget*> _currentWaveTargets;
+	int32 TargetsAvailable;
+	FTargetWave GetNextWave();
 	
 public:
 
@@ -79,9 +80,9 @@ public:
 	//UClass* TargetCylinderBP;
 	
 	UFUNCTION()
-	void OnTargetDestroyedHandler(int32 TargetID);
+	void OnTargetDestroyedHandler();
 
 	void ApplyProperties(FString sequenceName, TArray<FTargetWave> Waves, UWorld* World);
-	void Play();
+	void PlayNextWave();
 	
 };
