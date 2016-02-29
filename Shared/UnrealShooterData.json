@@ -1,6 +1,6 @@
 {
   "sequences": [
-    {"sequenceName": "SequenceA","waveIDs": [0,1,2,3,4,5,6,-1,7,8,9,10,11]},
+    {"sequenceName": "SequenceA","waveIDs": [0,1,2,3,4,5,6,-1,7,8,9]},
     {"sequenceName": "SequenceB","waveIDs": [5,15,22,23,24,6,9,11,33,21]}
   ],
   "waves": [
@@ -14,19 +14,18 @@
     {"waveID": -1,"targetIDs": []},
     {"waveID": 7,"targetIDs": [1,4]},
     {"waveID": 8,"targetIDs": [7,2]},
-    {"waveID": 9,"targetIDs": [7,2]},
-    {"waveID": 10,"targetIDs": [8,0,5]}
+    {"waveID": 9,"targetIDs": [8,0,5]}
   ],
   "targets": [
-    {"targetID": 0, "initialLocation": 4, "ttl": 4, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
-    {"targetID": 1, "initialLocation": 3, "ttl": 4, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
-    {"targetID": 2, "initialLocation": 5, "ttl": 4, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
-    {"targetID": 3, "initialLocation": 6, "ttl": 2, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
-    {"targetID": 4, "initialLocation": 8, "ttl": 2, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
-    {"targetID": 5, "initialLocation": 7, "ttl": 2, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
-    {"targetID": 6, "initialLocation": 4, "ttl": 2, "targetType": "FemaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
-    {"targetID": 7, "initialLocation": 6, "ttl": 2, "targetType": "FemaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
-    {"targetID": 8, "initialLocation": 1, "ttl": 2, "targetType": "FemaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0}
+    {"targetID": 0, "initialLocation": 4, "ttl": 8, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
+    {"targetID": 1, "initialLocation": 3, "ttl": 8, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
+    {"targetID": 2, "initialLocation": 5, "ttl": 8, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
+    {"targetID": 3, "initialLocation": 6, "ttl": 8, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
+    {"targetID": 4, "initialLocation": 8, "ttl": 8, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
+    {"targetID": 5, "initialLocation": 7, "ttl": 8, "targetType": "MaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
+    {"targetID": 6, "initialLocation": 4, "ttl": 8, "targetType": "FemaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
+    {"targetID": 7, "initialLocation": 6, "ttl": 8, "targetType": "FemaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0},
+    {"targetID": 8, "initialLocation": 1, "ttl": 8, "targetType": "FemaleTarget","movementLocations": [], "speed": 1, "isExplosive":  0}
   ],
   "locations": [
     {"locationID": 0, "x": 0, "y": 0, "z": 0},
