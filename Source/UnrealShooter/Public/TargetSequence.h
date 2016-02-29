@@ -85,4 +85,6 @@ public:
 	void ApplyProperties(FString sequenceName, TArray<FTargetWave> Waves, UWorld* World);
 	void PlayNextWave();
 	
+
+	FTimerHandle TimerHandle;
 };

@@ -55,13 +55,20 @@ void UTargetSequence::PlayNextWave()
 			spawnedTarget->ApplyProperties(props);
 			TargetsAvailable++;
 		}
+		if (_currentWave.WaveID == -1.0f)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 3.0, FColor::Magenta, FString::FString("RELOAD TIME"));
+
+			//this is because the wave is simply a "reload time" wave
+			World->GetTimerManager().SetTimer(TimerHandle, this, &UTargetSequence::PlayNextWave, 3.0f, false);
+		}
 	}
 }
 
 FTargetWave UTargetSequence::GetNextWave()
 {
 	//first wave not set
-	if (_currentWave.Targets.Num() == 0)
+	if (_currentWave.WaveID != -1.0f && _currentWave.Targets.Num() == 0)
 	{
 		return Waves[0];
 	}
