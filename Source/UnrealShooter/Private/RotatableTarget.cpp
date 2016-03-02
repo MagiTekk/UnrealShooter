@@ -298,7 +298,7 @@ void ARotatableTarget::Vanish()
 	
 	if (opacityVal > 0.0f)
 	{
-		DynamicInstance->SetScalarParameterValue("OpacityModifier", opacityVal - 0.01f); //0.005f
+		DynamicInstance->SetScalarParameterValue("OpacityModifier", opacityVal - 0.01f);
 	}
 	else
 	{

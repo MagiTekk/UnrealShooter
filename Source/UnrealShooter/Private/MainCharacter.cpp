@@ -5,6 +5,7 @@
 #include "TimelineHelper.h"
 #include "MainCharacterAnimInstance.h"
 #include "Weapon_M9.h"
+#include "UnrealShooterLevelScriptActor.h"
 #include "RotatableTarget.h"
 
 

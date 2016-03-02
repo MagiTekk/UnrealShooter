@@ -1,12 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-//#include "BasicSpawnPoint.h"
-//#include "RotatableTarget.h"
-//#include "Engine/DestructibleMesh.h"
-
 #include "UnrealShooter.h"
-#include "TargetSequence.h"
 #include "UnrealShooterDataSingleton.h"
 #include "UnrealShooterLevelScriptActor.h"
 
@@ -24,12 +18,12 @@ void AUnrealShooterLevelScriptActor::BeginPlay()
 	Super::BeginPlay();
 
 	
-	UTargetSequence* Sequence_A = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
+	CurrentSequence = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
 	
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	FTargetSequenceStruct sequenceProps = DataInstance->GetSequenceBySequenceName(TEXT("SequenceA"));
-	Sequence_A->ApplyProperties(sequenceProps.sequenceName, sequenceProps.Waves, GetWorld());
-	Sequence_A->PlayNextWave();
+	FTargetSequenceStruct sequenceProps = DataInstance->GetSequenceBySequenceName(TEXT("SequenceB"));
+	CurrentSequence->ApplyProperties(sequenceProps.sequenceName, sequenceProps.Waves, GetWorld());
+	CurrentSequence->PlayNextWave();
 	
 	/*
 	UTargetSequence* Sequence_B = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
