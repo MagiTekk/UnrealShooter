@@ -35,7 +35,7 @@ void UTargetSequence::OnTargetDestroyedHandler()
 {
 	//check if all the targets on this wave were destroyed
 	TargetsAvailable--;
-	//UE_LOG(LogTemp, Warning, TEXT("We still have: -- %d -- targets on the level"), TargetsAvailable);
+	UE_LOG(LogTemp, Warning, TEXT("We still have: -- %d -- targets on the level"), TargetsAvailable);
 	if (TargetsAvailable == 0)
 	{
 		//spawn the next wave
@@ -48,19 +48,22 @@ void UTargetSequence::PlayNextWave()
 	if (World)
 	{
 		_currentWave = GetNextWave();
-		ARotatableTarget* spawnedTarget;
-		for (auto& props : _currentWave.Targets)
-		{
-			spawnedTarget = World->SpawnActor<ARotatableTarget>(TargetBP);
-			spawnedTarget->ApplyProperties(props);
-			TargetsAvailable++;
-		}
 		if (_currentWave.WaveID == -1.0f)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 3.0, FColor::Magenta, FString::FString("RELOAD TIME"));
 
 			//this is because the wave is simply a "reload time" wave
 			World->GetTimerManager().SetTimer(TimerHandle, this, &UTargetSequence::PlayNextWave, 3.0f, false);
+		}
+		else
+		{
+			ARotatableTarget* spawnedTarget;
+			for (auto& props : _currentWave.Targets)
+			{
+				spawnedTarget = World->SpawnActor<ARotatableTarget>(TargetBP);
+				spawnedTarget->ApplyProperties(props, _currentWave.TimeToLive);
+				TargetsAvailable++;
+			}
 		}
 	}
 }

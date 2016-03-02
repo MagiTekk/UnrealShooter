@@ -109,10 +109,11 @@ FLinearColor ARotatableTarget::GetMaterialColor()
 	}
 }
 
-void ARotatableTarget::ApplyProperties(FRotatableTargetProperties TargetProperties)
+void ARotatableTarget::ApplyProperties(FRotatableTargetProperties TargetProperties, int32 TimeToLive)
 {
 	this->TargetProperties = TargetProperties;
 	this->SetActorLocation(GetSpawnPoint(TargetProperties.InitialLocation));
+	this->TimeToLive = TimeToLive;
 	ARotatableTarget::SetNewLocation();
 	ARotatableTarget::UpdateMaterialInstance();
 }
@@ -207,7 +208,7 @@ void ARotatableTarget::SetNewLocation()
 	else
 	{
 		//no more locations to go? then lower our target
-		GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::LowerTarget, this->TargetProperties.TimeToLive, false);
+		GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ARotatableTarget::LowerTarget, this->TimeToLive, false);
 	}
 }
 

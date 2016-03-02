@@ -19,14 +19,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
 		TArray<FRotatableTargetProperties> Targets;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		int32 TimeToLive;
+
 	FTargetWave()
 	{
 	}
 
-	FTargetWave(int32 WaveID, TArray<FRotatableTargetProperties> Targets)
+	FTargetWave(int32 WaveID, TArray<FRotatableTargetProperties> Targets, int32 TimeToLive)
 	{
 		this->WaveID = WaveID;
 		this->Targets = Targets;
+		this->TimeToLive = TimeToLive;
 	}
 };
 

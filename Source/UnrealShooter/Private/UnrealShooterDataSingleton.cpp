@@ -54,6 +54,7 @@ void UUnrealShooterDataSingleton::ParseWaves(const TArray<TSharedPtr<FJsonValue>
 	for (int32 i = 0; i != WavesJSON.Num(); ++i)
 	{
 		int32 waveID = WavesJSON[i]->AsObject()->GetIntegerField(TEXT("waveID"));
+		int32 timeToLive = WavesJSON[i]->AsObject()->GetIntegerField(TEXT("timeToLive"));
 		
 		TArray<FRotatableTargetProperties> targets;
 		TArray<TSharedPtr<FJsonValue>> targetIDsSubJSON = WavesJSON[i]->AsObject()->GetArrayField(TEXT("targetIDs"));
@@ -62,7 +63,7 @@ void UUnrealShooterDataSingleton::ParseWaves(const TArray<TSharedPtr<FJsonValue>
 			int32 targetID = targetIDsSubJSON[j]->AsNumber();
 			targets.Add(GetTargetPropertiesByTargetID(targetID));
 		}
-		Waves.Emplace(FTargetWave(waveID, targets));
+		Waves.Emplace(FTargetWave(waveID, targets, timeToLive));
 	}
 }
 
@@ -74,7 +75,7 @@ void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValu
 		int32 initialLocationID = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("initialLocation"));
 		int32 timeToLive = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("ttl"));
 		FString targetType = TargetsJSON[i]->AsObject()->GetStringField(TEXT("targetType"));
-		int32 speed = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("speed"));
+		float speed = TargetsJSON[i]->AsObject()->GetNumberField(TEXT("speed"));
 		bool isExplosive = TargetsJSON[i]->AsObject()->GetBoolField(TEXT("isExplosive"));
 		
 		FVector spawnPointLocation = GetTargetLocationByID(initialLocationID).Location;

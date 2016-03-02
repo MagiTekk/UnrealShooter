@@ -145,39 +145,42 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
-	void ApplyProperties(FRotatableTargetProperties TargetProperties);
+	void ApplyProperties(FRotatableTargetProperties TargetProperties, int32 TimeToLive);
 
 	void UpdateMaterialInstance(bool bisTranslucent = false);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
-	USceneComponent* DefaultSceneRoot;
+		USceneComponent* DefaultSceneRoot;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
-	UDestructibleComponent* HeadMesh;
+		UDestructibleComponent* HeadMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
-	UStaticMeshComponent* BodyMesh;
+		UStaticMeshComponent* BodyMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
-	UStaticMeshComponent* BaseMesh;
+		UStaticMeshComponent* BaseMesh;
 
 	UPROPERTY(EditDefaultsOnly, Category = Material)
-	UMaterialInstanceConstant* DefaultMaterialInst;
+		UMaterialInstanceConstant* DefaultMaterialInst;
 
 	UPROPERTY(EditDefaultsOnly, Category = Material)
-	UMaterialInstanceConstant* TransparentMaterialInst;
+		UMaterialInstanceConstant* TransparentMaterialInst;
 
 	UPROPERTY(BlueprintReadOnly, Category = Material)
-	UMaterialInstanceDynamic* DynamicInstance;
+		UMaterialInstanceDynamic* DynamicInstance;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Target)
-	ETargetType TargetType;
+		ETargetType TargetType;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Target)
-	FVector CustomPosition;
+		FVector CustomPosition;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
-	FRotatableTargetProperties TargetProperties;
+		FRotatableTargetProperties TargetProperties;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+		int32 TimeToLive;
 
 	//UFUNCTION()
 	//void OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection);
