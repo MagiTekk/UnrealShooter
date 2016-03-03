@@ -35,7 +35,7 @@ AWeapon_M9::AWeapon_M9()
 	LaserSource->AttachTo(Mesh);
 
 	LaserImpact = CreateDefaultSubobject<UPointLightComponent>(TEXT("LaserImpact"));
-	LaserImpact->SetIntensity(20.0f);
+	LaserImpact->SetIntensity(150.0f);
 	LaserImpact->SetLightColor(FLinearColor(255, 0, 0));
 	LaserImpact->SetAttenuationRadius(20.0f);
 	LaserImpact->AttachTo(LaserSource);

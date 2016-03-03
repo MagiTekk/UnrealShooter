@@ -51,6 +51,7 @@ void UTargetSequence::PlayNextWave()
 		if (_currentWave.WaveID == -1.0f)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("PlayNextWave() - RELOAD TIME"));
+			GEngine->AddOnScreenDebugMessage(-1, 3.0, FColor::Magenta, FString::FString("RELOAD TIME"));
 
 			//this is because the wave is simply a "reload time" wave
 			FTimerHandle THandle;
