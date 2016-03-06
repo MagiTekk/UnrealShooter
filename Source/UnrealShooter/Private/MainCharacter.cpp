@@ -39,7 +39,7 @@ void AMainCharacter::BeginPlay()
 	bBrangCameraPitch = false;
 	bBrangCameraYaw = false;
 	bBrangCharacterYaw = false;
-	bEquipPistol = false;
+	bEquipPistol = true;
 	bUnEquipPistol = false;
 	bCameraZoomIn = false;
 	bCameraZoomOut = false;
