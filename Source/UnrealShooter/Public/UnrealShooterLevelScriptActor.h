@@ -4,8 +4,8 @@
 
 #include "Engine/LevelScriptActor.h"
 #include "TargetSequence.h"
+#include "UnrealShooterDataSingleton.h"
 #include "UnrealShooterLevelScriptActor.generated.h"
-
 
 /**
  * 
@@ -44,7 +44,7 @@ public:
 
 #pragma region Sequences
 
-	void PlaySequence(int32 sequenceID=0);
+	void PlaySequence(ESequenceEnum sequenceType);
 
 #pragma endregion
 };

@@ -145,11 +145,13 @@ void ARotatableTarget::Tick( float DeltaTime )
 void ARotatableTarget::RaiseTarget()
 {
 	bRaiseTarget = true;
+	bLowerTarget = false;
 }
 
 //activates the lower target animation
 void ARotatableTarget::LowerTarget()
 {
+	bRaiseTarget = false;
 	bLowerTarget = true;
 }
 

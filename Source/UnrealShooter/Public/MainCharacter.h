@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "BasicButton.h"
 #include "GameFramework/Character.h"
 #include "MainCharacter.generated.h"
 
@@ -133,6 +134,7 @@ protected:
 	void ReloadWeapon();
 	void ShootWeapon();
 	void RecoilAnimation();
+	void ExecuteContextAction();
 
 #pragma endregion
 
@@ -153,5 +155,18 @@ public:
 private:
 	USoundCue* TurnBack_SoundCue;
 
+#pragma endregion
+
+#pragma region IteractiveActor
+	/* Listerner to Action Events */
+	UPROPERTY()
+		ABasicButton* ActionListener;
+
+	UFUNCTION()
+	void OnRegisterActorAsListener(AActor* IteractiveActor);
+
+	UFUNCTION()
+	void OnUnregisterActorAsListener();
+	
 #pragma endregion
 };

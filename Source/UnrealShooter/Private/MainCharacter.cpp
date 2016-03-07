@@ -46,6 +46,13 @@ void AMainCharacter::BeginPlay()
 	bIsWalkingBackwards = false;
 	bIsRunning = false;
 	bTurnBack = false;
+
+	//delegate handler
+	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+	DataInstance->OnActorBeginOverlap.AddDynamic(this, &AMainCharacter::OnRegisterActorAsListener);
+	DataInstance->OnActorEndOverlap.AddDynamic(this, &AMainCharacter::OnUnregisterActorAsListener);
+
+	ActionListener = nullptr;
 }
 
 void AMainCharacter::initCameraComponents()
@@ -131,6 +138,8 @@ void AMainCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 	InputComponent->BindAction("Run", IE_Pressed, this, &AMainCharacter::Run);
 	InputComponent->BindAction("Run", IE_Released, this, &AMainCharacter::DoNotRun);
+
+	InputComponent->BindAction("ExecuteAction", IE_Pressed, this, &AMainCharacter::ExecuteContextAction);
 }
 
 void AMainCharacter::MoveForward(float value)
@@ -397,7 +406,7 @@ create a timeline and do the animation here, maybe create a timeline helper clas
 */
 void AMainCharacter::Trigger_Aim_In()
 {
-	if (bEquipPistol)
+	if (ActiveWeapon)
 	{
 		bCameraZoomIn = true;
 		bCameraZoomOut = false;
@@ -461,7 +470,8 @@ void AMainCharacter::Aim_Out()
 
 void AMainCharacter::ReloadWeapon()
 {
-	if (bEquipPistol)
+	//only reload when you are aiming
+	if (ActiveWeapon && bCameraZoomIn)
 	{
 		//goes back to false on the animation blueprint
 		bReloadPistol = true;
@@ -510,4 +520,25 @@ void AMainCharacter::AttachOrDetachWeapon()
 			//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Yellow, FString::FString("Weapon Destroyed"));
 		}
 	}
+}
+
+void AMainCharacter::ExecuteContextAction()
+{
+	if (ActionListener)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0, FColor::Magenta, FString::FString("EXECUTE CONTEXT ACTION"));
+		ActionListener->OnContextAction();
+	}
+}
+
+void AMainCharacter::OnRegisterActorAsListener(AActor * IteractiveActor)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Character - Enter Overlap"));
+	ActionListener = Cast<ABasicButton>(IteractiveActor);
+}
+
+void AMainCharacter::OnUnregisterActorAsListener()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Character - Exit Overlap"));
+	ActionListener = nullptr;
 }

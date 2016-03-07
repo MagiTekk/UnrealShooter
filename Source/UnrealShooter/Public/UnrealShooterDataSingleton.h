@@ -7,7 +7,16 @@
 #include "TargetSequence.h"
 #include "UnrealShooterDataSingleton.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnActorEndOverlap);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnTargetDestroyed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTargetDelegate_OnActorBeginOverlap, AActor*, ContextActor);
+
+UENUM()
+enum class ESequenceEnum : uint8
+{
+	SequenceA,
+	SequenceB
+};
 
 /**
  * 
@@ -33,6 +42,12 @@ public:
 	UUnrealShooterDataSingleton();
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Level Events")
+		FTargetDelegate_OnActorBeginOverlap OnActorBeginOverlap;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Level Events")
+		FTargetDelegate_OnActorEndOverlap OnActorEndOverlap;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Level Events")
 		FTargetDelegate_OnTargetDestroyed OnTargetDestroyed;
 
 	TArray<FTargetSequenceStruct> Sequences;
@@ -41,4 +56,5 @@ public:
 	TArray<FTargetLocation> Locations;
 
 	FTargetSequenceStruct GetSequenceBySequenceName(FString SequenceName);
+	FTargetSequenceStruct GetSequenceBySequenceEnum(ESequenceEnum SequenceEnum);
 };

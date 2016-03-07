@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UnrealShooter.h"
-#include "UnrealShooterDataSingleton.h"
 #include "UnrealShooterLevelScriptActor.h"
 
 
@@ -18,12 +17,12 @@ void AUnrealShooterLevelScriptActor::BeginPlay()
 	Super::BeginPlay();
 
 	
-	CurrentSequence = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
+	/*CurrentSequence = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
 	
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 	FTargetSequenceStruct sequenceProps = DataInstance->GetSequenceBySequenceName(TEXT("SequenceB"));
 	CurrentSequence->ApplyProperties(sequenceProps.sequenceName, sequenceProps.Waves, GetWorld());
-	CurrentSequence->PlayNextWave();
+	CurrentSequence->PlayNextWave();*/
 	
 	/*
 	UTargetSequence* Sequence_B = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
@@ -47,7 +46,11 @@ void AUnrealShooterLevelScriptActor::BeginDestroy()
 	Super::BeginDestroy();
 }
 
-void AUnrealShooterLevelScriptActor::PlaySequence(int32 sequenceID)
+void AUnrealShooterLevelScriptActor::PlaySequence(ESequenceEnum sequenceType)
 {
-	
+	CurrentSequence = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
+	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+	FTargetSequenceStruct sequenceProps = DataInstance->GetSequenceBySequenceEnum(sequenceType);
+	CurrentSequence->ApplyProperties(sequenceProps.sequenceName, sequenceProps.Waves, GetWorld());
+	CurrentSequence->PlayNextWave();
 }

@@ -83,6 +83,10 @@ public:
 	UClass* TargetBP;
 	//UClass* TargetCylinderBP;
 	
+	/*
+	* Important, to add a callBack to a MultiCast delegate you must
+	* make this an UFUNCTION() or it will not fire
+	*/
 	UFUNCTION()
 	void OnTargetDestroyedHandler();
 

@@ -165,3 +165,28 @@ FTargetSequenceStruct UUnrealShooterDataSingleton::GetSequenceBySequenceName(FSt
 	}
 	return FTargetSequenceStruct();
 }
+
+FTargetSequenceStruct UUnrealShooterDataSingleton::GetSequenceBySequenceEnum(ESequenceEnum SequenceEnum)
+{
+	FString SequenceName;
+
+	switch (SequenceEnum)
+	{
+		case ESequenceEnum::SequenceA:
+			SequenceName = TEXT("SequenceA");
+			break;
+		case ESequenceEnum::SequenceB:
+			SequenceName = TEXT("SequenceB");
+			break;
+	}
+
+	for (int32 i = 0; i != Sequences.Num(); ++i)
+	{
+		FString mySequence = Sequences[i].sequenceName;
+		if (SequenceName == mySequence)
+		{
+			return Sequences[i];
+		}
+	}
+	return FTargetSequenceStruct();
+}
