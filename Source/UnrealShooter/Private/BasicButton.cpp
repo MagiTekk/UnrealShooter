@@ -13,6 +13,11 @@ ABasicButton::ABasicButton()
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
 	this->SetRootComponent(DefaultSceneRoot);
 
+	TextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRender"));
+	TextRenderComponent->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+	TextRenderComponent->SetVisibility(false);
+	TextRenderComponent->AttachTo(DefaultSceneRoot);
+
 	ConstructorHelpers::FObjectFinder<UStaticMesh> meshBody(TEXT("StaticMesh'/Game/DemoRoom/Meshes/SM_Button.SM_Button'"));
 	ButtonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ButtonMesh"));
 	ButtonMesh->SetStaticMesh(meshBody.Object);
@@ -21,13 +26,17 @@ ABasicButton::ABasicButton()
 	TriggerCollission = CreateDefaultSubobject<UCapsuleComponent>(TEXT("TriggerCollission"));
 	TriggerCollission->AttachTo(ButtonMesh);
 	TriggerCollission->SetCapsuleSize(156.53f, 156.53f);
+
+	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> DefaultMaterialObj(TEXT("MaterialInstanceConstant'/Game/DemoRoom/Materials/M_Button_Inst.M_Button_Inst'"));
+	DynamicInstanceConstant = DefaultMaterialObj.Object;
+
+	bIsActive = false;
 }
 
 // Called when the game starts or when spawned
 void ABasicButton::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -37,11 +46,19 @@ void ABasicButton::Tick( float DeltaTime )
 
 }
 
+void ABasicButton::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	DynamicMaterialInstance = UMaterialInstanceDynamic::Create(DynamicInstanceConstant, this);
+	DynamicMaterialInstance->SetScalarParameterValue("State", 1);
+	ButtonMesh->SetMaterial(2, DynamicMaterialInstance);
+}
+
 void ABasicButton::NotifyActorBeginOverlap(AActor * OtherActor)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Button - Enter Overlap"));
-	//set material instance state to active
-	//ButtonMesh->
+	TextRenderComponent->SetVisibility(true);
 
 	//fire signal
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
@@ -51,7 +68,11 @@ void ABasicButton::NotifyActorBeginOverlap(AActor * OtherActor)
 void ABasicButton::NotifyActorEndOverlap(AActor * OtherActor)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Button - Exit Overlap"));
-	//set material instance state to inactive
+	TextRenderComponent->SetVisibility(false);
+
+	//set material instance state to active
+	DynamicMaterialInstance->SetScalarParameterValue("State", 1);
+	bIsActive = false;
 
 	//fire signal
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
@@ -60,9 +81,17 @@ void ABasicButton::NotifyActorEndOverlap(AActor * OtherActor)
 
 void ABasicButton::OnContextAction()
 {
-	AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
+	if (!bIsActive)
+	{
+		//set material instance state to active
+		DynamicMaterialInstance->SetScalarParameterValue("State", 0);
 
-	if (!MyLvlBP) return;
-	MyLvlBP->PlaySequence(SequenceType);
+		AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
+
+		if (!MyLvlBP) return;
+		MyLvlBP->PlaySequence(SequenceType);
+
+		bIsActive = true;
+	}
 }
 

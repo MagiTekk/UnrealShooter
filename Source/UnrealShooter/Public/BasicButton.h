@@ -15,6 +15,9 @@ private:
 
 	UPROPERTY()
 		UMaterialInstanceDynamic* MaterialInstanceButton;
+
+	UPROPERTY()
+		bool bIsActive;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -28,6 +31,7 @@ public:
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
+	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		USceneComponent* DefaultSceneRoot;
@@ -38,8 +42,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
 		UCapsuleComponent* TriggerCollission;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Text")
+		UTextRenderComponent* TextRenderComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence")
 		ESequenceEnum SequenceType;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Material")
+		UMaterialInstanceDynamic* DynamicMaterialInstance;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Material")
+		UMaterialInstanceConstant* DynamicInstanceConstant;
 
 	UFUNCTION()
 		virtual void OnContextAction();
