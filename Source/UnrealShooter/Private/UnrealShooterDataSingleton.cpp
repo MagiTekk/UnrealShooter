@@ -13,8 +13,9 @@ UUnrealShooterDataSingleton::UUnrealShooterDataSingleton()
 void UUnrealShooterDataSingleton::ParseJSON()
 {
 	FString JsonString;
-	const FString fileName = "D:/Projects/UnrealProjects/UnrealShooter/Shared/UnrealShooterData.json";
-	FFileHelper::LoadFileToString(JsonString, *fileName);
+	const FString path = FPaths::GameContentDir() + "/UnrealShooter/Data/UnrealShooterData.json";
+
+	FFileHelper::LoadFileToString(JsonString, *path);
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
 
