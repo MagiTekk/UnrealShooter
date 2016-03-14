@@ -75,8 +75,9 @@ void UMainCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 	}
 
 	//** Reload pistol animation
-	if (MainCharacter->bReloadPistol)
+	if (MainCharacter->bReloadPistol && !bIsReloading)
 	{
+		bIsReloading = true;
 		UMainCharacterAnimInstance::ReloadPistol();
 	}
 }
@@ -94,6 +95,14 @@ void UMainCharacterAnimInstance::NotifyCallback_PistolEquipped()
 {
 	bIsPistolEquipped = !bIsPistolEquipped;
 	UMainCharacterAnimInstance::AttachOrDetachWeapon();
+}
+
+void UMainCharacterAnimInstance::NotifyCallback_WeaponReloaded()
+{
+	AMainCharacter* MainCharacter = Cast<AMainCharacter>(OwningPawn);
+	MainCharacter->ReloadWeapon();
+	MainCharacter->bReloadPistol = false;
+	bIsReloading = false;
 }
 
 void UMainCharacterAnimInstance::UnequipPistol()
@@ -117,7 +126,6 @@ void UMainCharacterAnimInstance::ReloadPistol()
 	{
 		Montage_Play(Reload_Pistol_Montage);
 		AMainCharacter* MainCharacter = Cast<AMainCharacter>(OwningPawn);
-		MainCharacter->bReloadPistol = false;
 		UGameplayStatics::PlaySoundAtLocation(this, Reload_SoundCue, MainCharacter->GetActorLocation());
 	}
 }

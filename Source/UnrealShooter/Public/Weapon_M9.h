@@ -9,16 +9,17 @@ UCLASS()
 class UNREALSHOOTER_API AWeapon_M9 : public AActor
 {
 	GENERATED_BODY()
+
+	UFUNCTION()
+		void MyOverlapFunction(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 	UFUNCTION()
-	void MyOverlapFunction(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
-	UFUNCTION()
-	void UpdateLaserPointer();
+		void UpdateLaserPointer();
 
 public:
 
-	bool bIsWeaponAttached;
+	UPROPERTY()
+		bool bIsWeaponAttached;
 
 	// Sets default values for this actor's properties
 	AWeapon_M9();
@@ -29,26 +30,38 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
+		int32 Ammo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
+		int32 AmmoCapacity;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USceneComponent* DefaultSceneRoot;
+		USceneComponent* DefaultSceneRoot;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon)
-	UStaticMeshComponent* Mesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+		UStaticMeshComponent* Mesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LaserSight)
-	UChildActorComponent* LaserSource;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LaserSight")
+		UChildActorComponent* LaserSource;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LaserSight)
-	UPointLightComponent* LaserImpact;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LaserSight")
+		UPointLightComponent* LaserImpact;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LaserSight)
-	UParticleSystemComponent* LaserBeam;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LaserSight")
+		UParticleSystemComponent* LaserBeam;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = LaserSight)
-	FVector LaserTargetLocation;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "LaserSight")
+		FVector LaserTargetLocation;
 
 	UFUNCTION()
-	void AddWeapon(USkeletalMeshComponent* MeshComponent, FName SocketName);
+		void AddWeapon(USkeletalMeshComponent* MeshComponent, FName SocketName);
+
+	UFUNCTION()
+		void DestroyWeapon();
+
+	UFUNCTION()
+		void Reload(int32 AmmoToReload);
 
 #pragma region Shooting
 

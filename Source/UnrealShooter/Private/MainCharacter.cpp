@@ -24,10 +24,20 @@ AMainCharacter::AMainCharacter()
 	bUseControllerRotationPitch = 0;
 	bUseControllerRotationRoll = 0;
 
-	AMainCharacter::initCameraComponents();
+	initCameraComponents();
 
 	ConstructorHelpers::FObjectFinder<USoundCue> TurnBack_Cue(TEXT("SoundCue'/Game/UnrealShooter/Audio/TurnBackSound_Cue.TurnBackSound_Cue'"));
 	TurnBack_SoundCue = TurnBack_Cue.Object;
+
+	InitBasicValues();
+}
+
+void AMainCharacter::InitBasicValues()
+{
+	//initial player values
+	Health = 100.0f;
+	Stamina = 100.0f;
+	AmmoAvailable = 60;
 }
 
 /**
@@ -39,7 +49,7 @@ void AMainCharacter::BeginPlay()
 	bBrangCameraPitch = false;
 	bBrangCameraYaw = false;
 	bBrangCharacterYaw = false;
-	bEquipPistol = true;
+	bEquipPistol = false;
 	bUnEquipPistol = false;
 	bCameraZoomIn = false;
 	bCameraZoomOut = false;
@@ -51,6 +61,9 @@ void AMainCharacter::BeginPlay()
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 	DataInstance->OnActorBeginOverlap.AddDynamic(this, &AMainCharacter::OnRegisterActorAsListener);
 	DataInstance->OnActorEndOverlap.AddDynamic(this, &AMainCharacter::OnUnregisterActorAsListener);
+
+	//by default have the pistol equipped
+	MakePistolEquipped();
 
 	ActionListener = nullptr;
 }
@@ -77,32 +90,32 @@ void AMainCharacter::Tick( float DeltaTime )
 
 	if (bBrangCameraPitch)
 	{
-		AMainCharacter::BRangCameraPitch();
+		BRangCameraPitch();
 	}
 
 	if (bBrangCameraYaw)
 	{
-		AMainCharacter::BRangCameraYaw();
+		BRangCameraYaw();
 	}
 
 	if (bCameraZoomIn)
 	{
-		AMainCharacter::Aim_In();
+		Aim_In();
 	}
 
 	if (bCameraZoomOut)
 	{
-		AMainCharacter::Aim_Out();
+		Aim_Out();
 	}
 
 	if (bBrangCharacterYaw)
 	{
-		AMainCharacter::BRangCharacterYaw();
+		BRangCharacterYaw();
 	}
 
 	if (bTurnBack)
 	{
-		AMainCharacter::TurnBack();
+		TurnBack();
 	}
 }
 
@@ -132,7 +145,7 @@ void AMainCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	InputComponent->BindAction("Aim", IE_Pressed, this, &AMainCharacter::Trigger_Aim_In);
 	InputComponent->BindAction("Aim", IE_Released, this, &AMainCharacter::Trigger_Aim_Out);
 
-	InputComponent->BindAction("Reload", IE_Pressed, this, &AMainCharacter::ReloadWeapon);
+	InputComponent->BindAction("Reload", IE_Pressed, this, &AMainCharacter::StartReloading);
 
 	InputComponent->BindAction("Shoot", IE_Pressed, this, &AMainCharacter::ShootWeapon);
 
@@ -140,6 +153,8 @@ void AMainCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	InputComponent->BindAction("Run", IE_Released, this, &AMainCharacter::DoNotRun);
 
 	InputComponent->BindAction("ExecuteAction", IE_Pressed, this, &AMainCharacter::ExecuteContextAction);
+
+	InputComponent->BindAction("Pause", IE_Pressed, this, &AMainCharacter::PauseGame);
 }
 
 void AMainCharacter::MoveForward(float value)
@@ -229,11 +244,11 @@ void AMainCharacter::LookRight(float rate)
 		//in this case we are aiming
 		if (bCameraZoomIn)
 		{
-			AMainCharacter::AimRight(rate);
+			AimRight(rate);
 		}
 		else if (rate < -0.4f || rate > 0.4f)
 		{
-			AMainCharacter::CameraLookRight(rate * 0.8f);
+			CameraLookRight(rate * 0.8f);
 		}
 	}
 	else if (rate == 0 && CameraBoom->RelativeRotation.Yaw != 0 && !bBrangCameraYaw && !bCameraZoomIn)
@@ -244,12 +259,7 @@ void AMainCharacter::LookRight(float rate)
 
 void AMainCharacter::AimRight(float rate)
 {
-	if (!GetMesh()) return;
-
-	UMainCharacterAnimInstance * Animation = Cast<UMainCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-
-	//No Anim Instance Acquired?
-	if (!Animation) return;
+	UMainCharacterAnimInstance * Animation = GetAnimationInstance();
 
 	const FRotator YawRotation(0, rate, 0);
 
@@ -261,7 +271,7 @@ void AMainCharacter::AimRight(float rate)
 	}
 	else
 	{
-		AMainCharacter::AddYawRotation(rate * 0.5f, true);
+		AddYawRotation(rate * 0.5f, true);
 	}
 }
 
@@ -289,11 +299,11 @@ void AMainCharacter::LookUp(float rate)
 		//in this case we are aiming
 		if (bCameraZoomIn)
 		{
-			AMainCharacter::AimUp(rate);
+			AimUp(rate);
 		}
 		else if (rate < -0.5f || rate > 0.5f)
 		{
-			AMainCharacter::CameraLookUp(rate);
+			CameraLookUp(rate);
 		}
 	}
 	else if (rate == 0 && CameraBoom->RelativeRotation.Pitch != 0 && !bBrangCameraPitch && !bCameraZoomIn)
@@ -406,7 +416,7 @@ create a timeline and do the animation here, maybe create a timeline helper clas
 */
 void AMainCharacter::Trigger_Aim_In()
 {
-	if (ActiveWeapon)
+	if (ActiveWeapon && GetSpawndedM9()->bIsWeaponAttached)
 	{
 		bCameraZoomIn = true;
 		bCameraZoomOut = false;
@@ -468,25 +478,44 @@ void AMainCharacter::Aim_Out()
 	}
 }
 
-void AMainCharacter::ReloadWeapon()
+void AMainCharacter::StartReloading()
 {
 	//only reload when you are aiming
-	if (ActiveWeapon && bCameraZoomIn)
+	if (ActiveWeapon && bCameraZoomIn && AmmoAvailable > 0)
 	{
 		//goes back to false on the animation blueprint
 		bReloadPistol = true;
 	}
 }
 
+void AMainCharacter::ReloadWeapon()
+{
+	//only reload when you are aiming
+	if (ActiveWeapon)
+	{
+		AWeapon_M9* SpawnedWeapon = GetSpawndedM9();
+
+		int32 AmmoMissing = SpawnedWeapon->AmmoCapacity - SpawnedWeapon->Ammo;
+		int32 AmmoAfterReload = AmmoAvailable - AmmoMissing;
+		int32 AmmoToReload = AmmoAfterReload < 0 ? AmmoAvailable : AmmoMissing;
+		
+		SpawnedWeapon->Reload(AmmoToReload);
+		AmmoAvailable = AmmoAfterReload < 0 ? 0 : AmmoAfterReload;
+	}
+}
+
 void AMainCharacter::ShootWeapon()
 {
-	if (ActiveWeapon && bCameraZoomIn)
+	if (ActiveWeapon && bCameraZoomIn && !bReloadPistol && GetSpawndedM9()->Ammo > 0)
 	{
-		AWeapon_M9* SpawnedWeapon = Cast<AWeapon_M9>(ActiveWeapon);
-		SpawnedWeapon->ShootWeapon();
+		GetSpawndedM9()->ShootWeapon();
 
 		//Do Recoil on the player
-		AMainCharacter::RecoilAnimation();
+		RecoilAnimation();
+	}
+	else
+	{
+		//TODO: 
 	}
 }
 
@@ -500,6 +529,23 @@ void AMainCharacter::RecoilAnimation()
 	Animation->RecoilAnimation();
 }
 
+UMainCharacterAnimInstance* AMainCharacter::GetAnimationInstance()
+{
+	if (!GetMesh()) return new UMainCharacterAnimInstance();
+
+	UMainCharacterAnimInstance * Animation = Cast<UMainCharacterAnimInstance>(GetMesh()->GetAnimInstance());
+
+	//No Anim Instance Acquired?
+	if (!Animation) return new UMainCharacterAnimInstance();
+	return Animation;
+}
+
+AWeapon_M9* AMainCharacter::GetSpawndedM9()
+{
+	AWeapon_M9* SpawnedWeapon = Cast<AWeapon_M9>(ActiveWeapon);
+	return SpawnedWeapon;
+}
+
 //TODO nullBot: add a parameter, enum maybe for weapon types
 void AMainCharacter::AttachOrDetachWeapon()
 {
@@ -510,16 +556,22 @@ void AMainCharacter::AttachOrDetachWeapon()
 		if (bEquipPistol)
 		{
 			ActiveWeapon = GetWorld()->SpawnActor<AWeapon_M9>(AWeapon_M9::StaticClass());
-			AWeapon_M9* SpawnedWeapon = Cast<AWeapon_M9>(ActiveWeapon);
-
-			SpawnedWeapon->AddWeapon(GetMesh(), "hand_rPistolSocket");
+			GetSpawndedM9()->AddWeapon(GetMesh(), "hand_rPistolSocket");
 		}
 		else
 		{
-			ActiveWeapon->Destroy();
+			GetSpawndedM9()->DestroyWeapon();
 			//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Yellow, FString::FString("Weapon Destroyed"));
 		}
 	}
+}
+
+void AMainCharacter::MakePistolEquipped()
+{
+	GetAnimationInstance()->bEquipPistolAnimation = true;
+	bEquipPistol = true;
+	GetAnimationInstance()->bIsPistolEquipped = true;
+	AttachOrDetachWeapon();
 }
 
 void AMainCharacter::ExecuteContextAction()
@@ -541,4 +593,9 @@ void AMainCharacter::OnUnregisterActorAsListener()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Character - Exit Overlap"));
 	ActionListener = nullptr;
+}
+
+void AMainCharacter::PauseGame()
+{
+
 }

@@ -21,6 +21,10 @@ void UCustomAnimationNotify::Notify(USkeletalMeshComponent * MeshComp, UAnimSequ
 			}
 			break;
 		case ECustomNotifyName::PistolReloadedNotify:
+			if (UCustomAnimationNotify::getMainCharAnimInstance(MeshComp))
+			{
+				UCustomAnimationNotify::getMainCharAnimInstance(MeshComp)->NotifyCallback_WeaponReloaded();
+			}
 			break;
 		case ECustomNotifyName::StepSoundNotify:
 			if (UCustomAnimationNotify::getMainCharAnimInstance(MeshComp))

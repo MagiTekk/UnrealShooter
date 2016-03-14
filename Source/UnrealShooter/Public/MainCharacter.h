@@ -11,6 +11,8 @@ class UNREALSHOOTER_API AMainCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+		void InitBasicValues();
+
 public:
 	// Sets default values for this character's properties
 	AMainCharacter();
@@ -24,27 +26,43 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	//components
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	USpringArmComponent* CameraBoom;
+#pragma region Properties
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Basic Properties")
+		float Health;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Basic Properties")
+		float Stamina;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Basic Properties")
+		int32 AmmoAvailable;
+
+#pragma endregion
+
+#pragma region Components
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	UCameraComponent* ThirdPersonCamera;
+		USpringArmComponent* CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		UCameraComponent* ThirdPersonCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation)
-	bool bEquipPistol;
+		bool bEquipPistol;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation)
-	bool bUnEquipPistol;
+		bool bUnEquipPistol;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Animation)
-	bool bReloadPistol;
+		bool bReloadPistol;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation)
-	bool bCameraZoomIn;
+		bool bCameraZoomIn;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation)
-	bool bCameraZoomOut;
+		bool bCameraZoomOut;
+
+#pragma endregion
 
 #pragma region Constants
 
@@ -64,6 +82,20 @@ protected:
 	const float BASE_CAMERA_ZOOMED_ARM_LEGNTH = 60.f;
 	const float CAMERA_BRANG_CLAMP_RATE = 10.0f;
 	const float ZOOM_RATE = 1.5f;
+
+#pragma endregion
+
+#pragma region Actions
+public:
+
+	UFUNCTION()
+		void ExecuteContextAction();
+	
+	UFUNCTION()
+		void PauseGame();
+
+	UFUNCTION()
+		void ReloadWeapon();
 
 #pragma endregion
 	
@@ -131,10 +163,10 @@ protected:
 	void Trigger_Aim_Out();
 	void Aim_In();
 	void Aim_Out();
-	void ReloadWeapon();
+	void StartReloading();
 	void ShootWeapon();
 	void RecoilAnimation();
-	void ExecuteContextAction();
+	class UMainCharacterAnimInstance* GetAnimationInstance();
 
 #pragma endregion
 
@@ -142,11 +174,19 @@ protected:
 
 protected:
 
-	AActor* ActiveWeapon;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation)
+		AActor* ActiveWeapon;
+
+	UFUNCTION()
+		class AWeapon_M9* GetSpawndedM9();
 
 public:
 
-	void AttachOrDetachWeapon();
+	UFUNCTION()
+		void AttachOrDetachWeapon();
+	
+	UFUNCTION()
+		void MakePistolEquipped();
 
 #pragma endregion
 
@@ -163,10 +203,10 @@ private:
 		ABasicButton* ActionListener;
 
 	UFUNCTION()
-	void OnRegisterActorAsListener(AActor* IteractiveActor);
+		void OnRegisterActorAsListener(AActor* IteractiveActor);
 
 	UFUNCTION()
-	void OnUnregisterActorAsListener();
+		void OnUnregisterActorAsListener();
 	
 #pragma endregion
 };

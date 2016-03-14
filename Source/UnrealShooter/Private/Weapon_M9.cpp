@@ -11,7 +11,7 @@ AWeapon_M9::AWeapon_M9()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	bIsWeaponAttached = false;
+	Ammo = AmmoCapacity = 10;
 
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
 	this->SetRootComponent(DefaultSceneRoot);
@@ -104,9 +104,21 @@ void AWeapon_M9::AddWeapon(USkeletalMeshComponent* MeshComponent, FName SocketNa
 	{
 		// snap to the socket
 		AttachRootComponentTo(MeshComponent, SocketName, EAttachLocation::SnapToTarget);
+		bIsWeaponAttached = true;
 		//UE_LOG(LogTemp, Warning, TEXT("AWeapon_M9::AddWeapon says: Spawn Complete!"));
 		//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Yellow, FString::FString("Spawn Complete"));
 	}
+}
+
+void AWeapon_M9::DestroyWeapon()
+{
+	Destroy();
+	bIsWeaponAttached = false;
+}
+
+void AWeapon_M9::Reload(int32 AmmoToReload)
+{
+	Ammo += AmmoToReload;
 }
 
 void AWeapon_M9::ShootWeapon()
@@ -120,21 +132,31 @@ void AWeapon_M9::ShootWeapon()
 	
 	if (LaserBeam->IsVisible())
 	{
-		FHitResult RV_Hit(ForceInit);
-		AWeapon_M9::singleLineTrace(RV_Hit);
-		const FRotator perperndicularRotation = { 0.0f, 90.0f, 0.0f };
-
-		//gunshot effect
-		GetWorld()->SpawnActor<AActor>(Gunshot_InitialEffect, LaserSource->GetComponentLocation(), LaserSource->GetComponentRotation());
-
-		//empty shell
-		GetWorld()->SpawnActor<AActor>(Empty_Shell, Mesh->GetComponentLocation() + (0.0f, 0.0f, 4.0f), LaserSource->GetComponentRotation() + perperndicularRotation);
-
-		//on hit!
-		if (RV_Hit.bBlockingHit)
+		if (Ammo > 0)
 		{
-			AWeapon_M9::OnHit(RV_Hit);
+			FHitResult RV_Hit(ForceInit);
+			AWeapon_M9::singleLineTrace(RV_Hit);
+			const FRotator perperndicularRotation = { 0.0f, 90.0f, 0.0f };
+
+			Ammo--;
+
+			//gunshot effect
+			GetWorld()->SpawnActor<AActor>(Gunshot_InitialEffect, LaserSource->GetComponentLocation(), LaserSource->GetComponentRotation());
+
+			//empty shell
+			GetWorld()->SpawnActor<AActor>(Empty_Shell, Mesh->GetComponentLocation() + (0.0f, 0.0f, 4.0f), LaserSource->GetComponentRotation() + perperndicularRotation);
+
+			//on hit!
+			if (RV_Hit.bBlockingHit)
+			{
+				AWeapon_M9::OnHit(RV_Hit);
+			}
 		}
+		else
+		{
+			//gunshot effect no ammo
+		}
+		
 	}
 }
 

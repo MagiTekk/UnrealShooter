@@ -23,6 +23,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UnrealShooterLevel)
 		FName UnrealShooterLevelName;
 
+	UPROPERTY()
+		UWorld* WorldReference;
+
 	/*
 	* **If you don't specify this UPROPERTY then the GC will get rid of this UObject**
 	* please remember this, also you could set this as a root object since we keep

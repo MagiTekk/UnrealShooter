@@ -32,7 +32,7 @@ public:
 	UCustomAnimationNotify();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AnimNotify)
-	ECustomNotifyName ENotifyCustomName;
+		ECustomNotifyName ENotifyCustomName;
 
 #pragma region Sound
 
