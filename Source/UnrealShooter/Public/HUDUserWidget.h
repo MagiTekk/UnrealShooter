@@ -20,5 +20,26 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
 		class AMainCharacter* MyCharacter;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+		int32 WeaponAmmoAvailable;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+		int32 WeaponAmmoCapacity;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
+		int32 AmmoStored;
+
+	UFUNCTION(Category = "Bindings")
+		void UpdateWeaponAmmoAvailable();
+
+	UFUNCTION(Category = "Bindings")
+		void UpdateWeaponAmmoCapacity();
+
+	UFUNCTION(Category = "Bindings")
+		void UpdateAmmoStored();
+
+	UFUNCTION(Category = "Bindings")
+		void UpdateHUD();
 	
 };

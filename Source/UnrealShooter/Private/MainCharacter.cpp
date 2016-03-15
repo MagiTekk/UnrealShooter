@@ -6,6 +6,7 @@
 #include "MainCharacterAnimInstance.h"
 #include "Weapon_M9.h"
 #include "UnrealShooterLevelScriptActor.h"
+#include "UnrealShooterDataSingleton.h"
 #include "RotatableTarget.h"
 
 
@@ -563,6 +564,8 @@ void AMainCharacter::AttachOrDetachWeapon()
 			GetSpawndedM9()->DestroyWeapon();
 			//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Yellow, FString::FString("Weapon Destroyed"));
 		}
+		UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+		DataInstance->OnWeaponEquipped.Broadcast();
 	}
 }
 

@@ -172,7 +172,7 @@ protected:
 
 #pragma region Weapon
 
-protected:
+public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation)
 		AActor* ActiveWeapon;

@@ -9,6 +9,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnActorEndOverlap);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnTargetDestroyed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnWeaponShot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnWeaponReloaded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnWeaponEquipped);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTargetDelegate_OnActorBeginOverlap, AActor*, ContextActor);
 
 UENUM()
@@ -49,6 +52,15 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Level Events")
 		FTargetDelegate_OnTargetDestroyed OnTargetDestroyed;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player Events")
+		FTargetDelegate_OnWeaponShot OnWeaponShot;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player Events")
+		FTargetDelegate_OnWeaponReloaded OnWeaponReloaded;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Player Events")
+		FTargetDelegate_OnWeaponEquipped OnWeaponEquipped;
 
 	TArray<FTargetSequenceStruct> Sequences;
 	TArray<FTargetWave> Waves;

@@ -3,6 +3,7 @@
 #include "UnrealShooter.h"
 #include "Weapon_M9.h"
 #include "MainCharacter.h"
+#include "UnrealShooterDataSingleton.h"
 #include "RotatableTarget.h"
 
 // Sets default values
@@ -119,6 +120,9 @@ void AWeapon_M9::DestroyWeapon()
 void AWeapon_M9::Reload(int32 AmmoToReload)
 {
 	Ammo += AmmoToReload;
+
+	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+	DataInstance->OnWeaponReloaded.Broadcast();
 }
 
 void AWeapon_M9::ShootWeapon()
@@ -151,6 +155,9 @@ void AWeapon_M9::ShootWeapon()
 			{
 				AWeapon_M9::OnHit(RV_Hit);
 			}
+
+			UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+			DataInstance->OnWeaponShot.Broadcast();
 		}
 		else
 		{
