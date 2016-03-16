@@ -25,7 +25,32 @@ void AUnrealPlayerController::BeginPlay()
 		{
 			//let add it to the view port
 			HUDReference->AddToViewport();
-			HUDReference->InitWidget(GetWorld());
+			HUDReference->InitWidget();
+		}
+
+		//Show the Cursor.
+		//bShowMouseCursor = true;
+	}
+}
+
+void AUnrealPlayerController::ShowPauseMenu()
+{
+	if (wPauseMenu) // Check if the Asset is assigned in the blueprint.
+	{
+		// Create the widget and store it.
+		PauseMenuReference = CreateWidget<UUserWidget>(this, wPauseMenu);
+
+		// now you can use the widget directly since you have a referance for it.
+		// Extra check to  make sure the pointer holds the widget.
+		if (PauseMenuReference)
+		{
+			FInputModeUIOnly Mode;
+			Mode.SetWidgetToFocus(PauseMenuReference->GetCachedWidget());
+			SetInputMode(Mode);
+
+			//let add it to the view port
+			PauseMenuReference->AddToViewport();
+			SetPause(true);
 		}
 
 		//Show the Cursor.

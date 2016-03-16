@@ -12,9 +12,9 @@ void UHUDUserWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UHUDUserWidget::InitWidget(UWorld* World)
+void UHUDUserWidget::InitWidget()
 {
-	MyCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(World, 0));
+	MyCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	UpdateHUD();
 
 	//event handler

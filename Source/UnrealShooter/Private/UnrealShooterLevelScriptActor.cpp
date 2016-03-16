@@ -17,23 +17,6 @@ AUnrealShooterLevelScriptActor::AUnrealShooterLevelScriptActor()
 void AUnrealShooterLevelScriptActor::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
-	/*CurrentSequence = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
-	
-	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	FTargetSequenceStruct sequenceProps = DataInstance->GetSequenceBySequenceName(TEXT("SequenceB"));
-	CurrentSequence->ApplyProperties(sequenceProps.sequenceName, sequenceProps.Waves, GetWorld());
-	CurrentSequence->PlayNextWave();*/
-	
-	/*
-	UTargetSequence* Sequence_B = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
-
-	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	FTargetSequenceStruct sequenceProps = DataInstance->GetSequenceBySequenceName(TEXT("SequenceB"));
-	Sequence_B->ApplyProperties(sequenceProps.sequenceName, sequenceProps.Waves, GetWorld());
-	Sequence_B->PlayNextWave();
-	*/
 }
 
 // Called every frame

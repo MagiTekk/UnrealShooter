@@ -5,6 +5,7 @@
 #include "TimelineHelper.h"
 #include "MainCharacterAnimInstance.h"
 #include "Weapon_M9.h"
+#include "UnrealPlayerController.h"
 #include "UnrealShooterLevelScriptActor.h"
 #include "UnrealShooterDataSingleton.h"
 #include "RotatableTarget.h"
@@ -600,5 +601,6 @@ void AMainCharacter::OnUnregisterActorAsListener()
 
 void AMainCharacter::PauseGame()
 {
-
+	AUnrealPlayerController* const PC = CastChecked<AUnrealPlayerController>(Controller);
+	PC->ShowPauseMenu();
 }

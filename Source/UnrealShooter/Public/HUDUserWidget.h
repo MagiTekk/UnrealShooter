@@ -16,7 +16,7 @@ class UNREALSHOOTER_API UHUDUserWidget : public UUserWidget
 public:
 
 	virtual void NativeConstruct() override;
-	virtual void InitWidget(UWorld* World);
+	virtual void InitWidget();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
 		class AMainCharacter* MyCharacter;
