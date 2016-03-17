@@ -44,7 +44,7 @@ void AUnrealPlayerController::ShowPauseMenu()
 		// Extra check to  make sure the pointer holds the widget.
 		if (PauseMenuReference)
 		{
-			FInputModeUIOnly Mode;
+			FInputModeGameAndUI Mode;
 			Mode.SetWidgetToFocus(PauseMenuReference->GetCachedWidget());
 			SetInputMode(Mode);
 

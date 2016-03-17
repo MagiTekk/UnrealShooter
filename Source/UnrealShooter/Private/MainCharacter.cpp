@@ -48,16 +48,6 @@ Called when the game starts or when spawned
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	bBrangCameraPitch = false;
-	bBrangCameraYaw = false;
-	bBrangCharacterYaw = false;
-	bEquipPistol = false;
-	bUnEquipPistol = false;
-	bCameraZoomIn = false;
-	bCameraZoomOut = false;
-	bIsWalkingBackwards = false;
-	bIsRunning = false;
-	bTurnBack = false;
 
 	//delegate handler
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
