@@ -195,13 +195,17 @@ void AWeapon_M9::OnHit(FHitResult hitResult)
 
 void AWeapon_M9::UpdateLaserPointer()
 {
+	bool bIsAiming = false;
+
 	// create a pointer on the player character
 	ACharacter *player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	AMainCharacter* mainChar = Cast<AMainCharacter>(player);
 
-	bool bIsAiming = mainChar->bCameraZoomIn;
-	LaserBeam->SetVisibility(bIsAiming);
-	LaserImpact->SetVisibility(bIsAiming);
+	if (mainChar)
+	{
+		bIsAiming = mainChar->bCameraZoomIn;
+	}
+	
 	if (bIsAiming)
 	{
 		FHitResult RV_Hit(ForceInit);
@@ -212,6 +216,9 @@ void AWeapon_M9::UpdateLaserPointer()
 		LaserBeam->SetBeamTargetPoint(0, LaserTargetLocation, 0);
 		LaserImpact->SetWorldLocation(LaserTargetLocation - LaserImpact->GetForwardVector());
 	}
+
+	LaserBeam->SetVisibility(bIsAiming);
+	LaserImpact->SetVisibility(bIsAiming);
 }
 
 bool AWeapon_M9::singleLineTrace(FHitResult &RV_Hit)
