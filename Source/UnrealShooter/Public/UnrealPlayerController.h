@@ -44,6 +44,9 @@ public:
 		UUserWidget* PauseMenuReference;
 
 	UFUNCTION()
+		void AddHUD();
+
+	UFUNCTION()
 		void ShowPauseMenu();
 
 #pragma endregion

@@ -21,9 +21,9 @@ struct FTargetLocation
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		int32 LocationID;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		FVector Location;
 
 	FTargetLocation()
@@ -44,31 +44,31 @@ struct FRotatableTargetProperties
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		int32 TargetID;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		FVector InitialLocation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		TArray<FVector> Locations;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		float Speed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		float TimeToLive;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		float Points;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		float HeadshotPoints;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		bool bIsExplosive;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		ETargetType TargetType;
 
 	//For GC
@@ -149,37 +149,37 @@ public:
 
 	void UpdateMaterialInstance(bool bisTranslucent = false);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		USceneComponent* DefaultSceneRoot;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		UDestructibleComponent* HeadMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		UStaticMeshComponent* BodyMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		UStaticMeshComponent* BaseMesh;
 
-	UPROPERTY(EditDefaultsOnly, Category = Material)
+	UPROPERTY(EditDefaultsOnly, Category = "Material")
 		UMaterialInstanceConstant* DefaultMaterialInst;
 
-	UPROPERTY(EditDefaultsOnly, Category = Material)
+	UPROPERTY(EditDefaultsOnly, Category = "Material")
 		UMaterialInstanceConstant* TransparentMaterialInst;
 
-	UPROPERTY(BlueprintReadOnly, Category = Material)
+	UPROPERTY(BlueprintReadOnly, Category = "Material")
 		UMaterialInstanceDynamic* DynamicInstance;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Target)
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Target")
 		ETargetType TargetType;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Target)
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Target")
 		FVector CustomPosition;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		FRotatableTargetProperties TargetProperties;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		int32 TimeToLive;
 
 	//UFUNCTION()

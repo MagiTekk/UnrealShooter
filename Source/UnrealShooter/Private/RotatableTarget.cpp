@@ -36,18 +36,12 @@ void ARotatableTarget::InitTarget()
 	BaseMesh->SetStaticMesh(meshBase.Object);
 	BaseMesh->AttachTo(DefaultSceneRoot);
 
-	ARotatableTarget::InitMaterialInstance();
+	InitMaterialInstance();
 
 	//listen for my destructible's onFracture signal
 	//FScriptDelegate OnHeadFractured;
 	//OnHeadFractured.BindUFunction(this, "OnHeadFractured");
 	//HeadMesh->OnComponentFracture.AddUnique(OnHeadFractured
-
-	//default bool
-	bool bRaiseTarget = false;
-	bool bLowerTarget = false;
-	bool bVanish = false;
-	bool bMoveTarget = false;
 
 	RotationalRate = DEFAULT_ROTATIONAL_RATE;
 }
@@ -65,7 +59,7 @@ void ARotatableTarget::InitMaterialInstance()
 void ARotatableTarget::BeginPlay()
 {
 	Super::BeginPlay();
-	ARotatableTarget::RaiseTarget();
+	RaiseTarget();
 }
 
 void ARotatableTarget::PostInitializeComponents()
@@ -76,7 +70,7 @@ void ARotatableTarget::PostInitializeComponents()
 	this->SetActorRotation(FRotator{ LOWERED_ROTATION, 0.0f, 0.0f });
 
 	//create dynamic instance and apply it to all the meshes
-	ARotatableTarget::UpdateMaterialInstance();
+	UpdateMaterialInstance();
 }
 
 void ARotatableTarget::UpdateMaterialInstance(bool bisTranslucent)
@@ -114,8 +108,8 @@ void ARotatableTarget::ApplyProperties(FRotatableTargetProperties TargetProperti
 	this->TargetProperties = TargetProperties;
 	this->SetActorLocation(GetSpawnPoint(TargetProperties.InitialLocation));
 	this->TimeToLive = TimeToLive;
-	ARotatableTarget::SetNewLocation();
-	ARotatableTarget::UpdateMaterialInstance();
+	SetNewLocation();
+	UpdateMaterialInstance();
 }
 
 // Called every frame
@@ -125,19 +119,19 @@ void ARotatableTarget::Tick( float DeltaTime )
 
 	if (bRaiseTarget)
 	{
-		ARotatableTarget::DoTargetUp();
+		DoTargetUp();
 	}
 	if (bLowerTarget)
 	{
-		ARotatableTarget::DoTargetDown();
+		DoTargetDown();
 	}
 	if (bVanish)
 	{
-		ARotatableTarget::Vanish();
+		Vanish();
 	}
 	if (bMoveTarget)
 	{
-		ARotatableTarget::UpdateTargetLocation();
+		UpdateTargetLocation();
 	}
 }
 
@@ -181,7 +175,7 @@ void ARotatableTarget::DoTargetDown()
 	else
 	{
 		bLowerTarget = false;
-		ARotatableTarget::Die();
+		Die();
 	}
 }
 
@@ -269,7 +263,7 @@ void ARotatableTarget::UpdateTargetLocation()
 		this->SetActorLocation(NextLocation);
 
 		//get a new location and continue moving on
-		ARotatableTarget::SetNewLocation();
+		SetNewLocation();
 	}
 }
 
@@ -281,9 +275,9 @@ void ARotatableTarget::UpdateTargetLocation()
 
 void ARotatableTarget::OnTargetHit()
 {
-	ARotatableTarget::UpdateMaterialInstance(true);
-	ARotatableTarget::LowerTarget();
-	ARotatableTarget::startVanish();
+	UpdateMaterialInstance(true);
+	LowerTarget();
+	startVanish();
 }
 
 void ARotatableTarget::startVanish()

@@ -2,6 +2,7 @@
 
 #include "UnrealShooter.h"
 #include "HUDUserWidget.h"
+#include "MainMenuWidget.h"
 #include "UnrealPlayerController.h"
 
 
@@ -13,7 +14,11 @@ AUnrealPlayerController::AUnrealPlayerController()
 void AUnrealPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	AddHUD();
+}
 
+void AUnrealPlayerController::AddHUD()
+{
 	if (wHUD) // Check if the Asset is assigned in the blueprint.
 	{
 		// Create the widget and store it.
