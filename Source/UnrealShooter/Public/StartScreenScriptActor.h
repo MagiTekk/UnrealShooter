@@ -21,6 +21,7 @@ public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/*
 	// Reference UMG Asset in the Editor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		TSubclassOf<class UMainMenuWidget> wStartScreen;
@@ -28,5 +29,5 @@ public:
 	// Variable to hold the widget After Creating it.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		UMainMenuWidget* StartScreenReference;
-	
+	*/
 };

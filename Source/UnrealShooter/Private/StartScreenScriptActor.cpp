@@ -18,15 +18,23 @@ AStartScreenScriptActor::AStartScreenScriptActor()
 void AStartScreenScriptActor::BeginPlay()
 {
 	Super::BeginPlay();
-
+	/*
 	if (wStartScreen) // Check if the Asset is assigned in the blueprint.
 	{
-		APlayerController* const PC = GetWorld()->GetFirstPlayerController();
+		APlayerController* PC = GetWorld()->GetFirstPlayerController();
 		if (PC)
 		{
 			//let add it to the view port
 			StartScreenReference = CreateWidget<UMainMenuWidget>(PC, wStartScreen);
 			StartScreenReference->AddToViewport();
+
+			FInputModeUIOnly InputMode;
+			InputMode.SetWidgetToFocus(StartScreenReference->GetCachedWidget());
+			PC->SetInputMode(InputMode);
+
+			EnableInput(PC);
+
+			StartScreenReference->SetKeyboardFocus();
 
 			//Show the Cursor.
 			PC->bShowMouseCursor = true;
@@ -42,4 +50,5 @@ void AStartScreenScriptActor::BeginPlay()
 			MyMatinee->SetLoopingState(true);
 		}
 	}
+	*/
 }

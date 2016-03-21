@@ -3,6 +3,8 @@
 #include "UnrealShooter.h"
 #include "HUDUserWidget.h"
 #include "MainMenuWidget.h"
+#include "UnrealShooterDataSingleton.h"
+#include "Runtime/Engine/Classes/Matinee/MatineeActor.h"
 #include "UnrealPlayerController.h"
 
 
@@ -15,6 +17,7 @@ void AUnrealPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	AddHUD();
+	AddStartScreen();
 }
 
 void AUnrealPlayerController::AddHUD()
@@ -32,9 +35,36 @@ void AUnrealPlayerController::AddHUD()
 			HUDReference->AddToViewport();
 			HUDReference->InitWidget();
 		}
+	}
+}
+
+void AUnrealPlayerController::AddStartScreen()
+{
+	if (wStartScreen) // Check if the Asset is assigned in the blueprint.
+	{
+		//let add it to the view port
+		StartScreenReference = CreateWidget<UMainMenuWidget>(this, wStartScreen);
+		StartScreenReference->AddToViewport();
+		bIsWidgetShown = true;
+
+		FInputModeGameAndUI InputMode;
+		InputMode.SetWidgetToFocus(StartScreenReference->GetCachedWidget());
+		SetInputMode(InputMode);
+
+		StartScreenReference->SetKeyboardFocus();
 
 		//Show the Cursor.
-		//bShowMouseCursor = true;
+		bShowMouseCursor = true;
+		//EnableInput(this);
+
+		TArray<AMatineeActor*> OutMatineeActors;
+		GetWorld()->GetMatineeActors(OutMatineeActors);
+		AMatineeActor* MyMatinee = OutMatineeActors[0];
+		if (MyMatinee)
+		{
+			MyMatinee->Play();
+			MyMatinee->SetLoopingState(true);
+		}
 	}
 }
 
@@ -56,9 +86,62 @@ void AUnrealPlayerController::ShowPauseMenu()
 			//let add it to the view port
 			PauseMenuReference->AddToViewport();
 			SetPause(true);
+			bIsWidgetShown = true;
 		}
 
 		//Show the Cursor.
 		bShowMouseCursor = true;
+	}
+}
+
+void AUnrealPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction("UINavigationUp", IE_Pressed, this, &AUnrealPlayerController::UINavigationUp);
+	InputComponent->BindAction("UINavigationDown", IE_Pressed, this, &AUnrealPlayerController::UINavigationDown);
+	InputComponent->BindAction("UINavigationLeft", IE_Pressed, this, &AUnrealPlayerController::UINavigationLeft);
+	InputComponent->BindAction("UINavigationRight", IE_Pressed, this, &AUnrealPlayerController::UINavigationRight);
+
+	InputComponent->BindAction("UISelectElement", IE_Pressed, this, &AUnrealPlayerController::UISelectElement);
+}
+
+void AUnrealPlayerController::UINavigationUp()
+{
+	UINavigation(FVector2D(0.0f, 1.0f));
+}
+
+void AUnrealPlayerController::UINavigationDown()
+{
+	UINavigation(FVector2D(0.0f, -1.0f));
+}
+
+void AUnrealPlayerController::UINavigationLeft()
+{
+	UINavigation(FVector2D(-1.0f, 0.0f));
+}
+
+void AUnrealPlayerController::UINavigationRight()
+{
+	UINavigation(FVector2D(1.0f, 0.0f));
+}
+
+void AUnrealPlayerController::UINavigation(FVector2D direction)
+{
+	if (bIsWidgetShown)
+	{
+		UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+		DataInstance->OnUINavigation.Broadcast(direction);
+		UE_LOG(LogTemp, Warning, TEXT("UINavigationRight, valueX: %f __ valueY: %f"), direction.X, direction.Y);
+	}
+}
+
+void AUnrealPlayerController::UISelectElement()
+{
+	if (bIsWidgetShown)
+	{
+		UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+		DataInstance->OnUISelection.Broadcast();
+		UE_LOG(LogTemp, Warning, TEXT("UISelectElement"));
 	}
 }

@@ -16,6 +16,7 @@ void UMainMenuWidget::ExecuteConsoleCommand(FString cmd)
 	if (PController)
 	{
 		//PController->ConsoleCommand(TEXT("stat fps"), true);
+		//PController->ConsoleCommand(TEXT("stat unit"), true);
 		PController->ConsoleCommand(*cmd, true);
 	}
 }

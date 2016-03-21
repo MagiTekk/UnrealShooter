@@ -18,37 +18,70 @@ public:
 	AUnrealPlayerController();
 
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 
 #pragma region Widgets
 
 public:
 
-	/*
-	note that "class" in front UWidget, this is called forward declaration and it makes the compiler know this is a class
-	even withot having the included header, but you need to make sure to include the header on the .cpp or it will break.
-	*This prevents circular dependecies* :)
-	*/
+	// Reference UMG Asset in the Editor
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+		TSubclassOf<class UMainMenuWidget> wStartScreen;
+
+	// Variable to hold the widget After Creating it.
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Widgets")
+		UMainMenuWidget* StartScreenReference;
 
 	// Reference UMG Asset in the Editor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		TSubclassOf<class UHUDUserWidget> wHUD;
 
 	// Variable to hold the widget After Creating it.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Widgets")
 		UHUDUserWidget* HUDReference;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		TSubclassOf<class UUserWidget> wPauseMenu;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Widgets")
 		UUserWidget* PauseMenuReference;
+
+	/* Make sure this is set to true every time a selectable widget is shown */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+		bool bIsWidgetShown;
 
 	UFUNCTION()
 		void AddHUD();
 
 	UFUNCTION()
+		void AddStartScreen();
+
+	UFUNCTION()
 		void ShowPauseMenu();
 
-#pragma endregion
 	
+
+#pragma endregion
+#pragma region ActionMappings
+
+public:
+	UFUNCTION()
+		void UINavigationUp();
+
+	UFUNCTION()
+		void UINavigationDown();
+
+	UFUNCTION()
+		void UINavigationLeft();
+
+	UFUNCTION()
+		void UINavigationRight();
+
+	UFUNCTION()
+		void UINavigation(FVector2D direction);
+
+	UFUNCTION()
+		void UISelectElement();
+	
+#pragma endregion
 };
