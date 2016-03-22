@@ -147,6 +147,13 @@ void AMainCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	InputComponent->BindAction("ExecuteAction", IE_Pressed, this, &AMainCharacter::ExecuteContextAction);
 
 	InputComponent->BindAction("Pause", IE_Pressed, this, &AMainCharacter::PauseGame);
+
+	/* UI Mappings */
+	InputComponent->BindAction("UINavigationUp", IE_Pressed, this, &AMainCharacter::UINavigationUp).bExecuteWhenPaused = true;
+	InputComponent->BindAction("UINavigationDown", IE_Pressed, this, &AMainCharacter::UINavigationDown).bExecuteWhenPaused = true;
+	InputComponent->BindAction("UINavigationLeft", IE_Pressed, this, &AMainCharacter::UINavigationLeft).bExecuteWhenPaused = true;
+	InputComponent->BindAction("UINavigationRight", IE_Pressed, this, &AMainCharacter::UINavigationRight).bExecuteWhenPaused = true;
+	InputComponent->BindAction("UISelectElement", IE_Pressed, this, &AMainCharacter::UISelectElement).bExecuteWhenPaused = true;
 }
 
 void AMainCharacter::MoveForward(float value)
@@ -589,8 +596,56 @@ void AMainCharacter::OnUnregisterActorAsListener()
 	ActionListener = nullptr;
 }
 
+void AMainCharacter::UINavigationUp()
+{
+	AUnrealPlayerController* const PC = CastChecked<AUnrealPlayerController>(Controller);
+	if (PC)
+	{
+		PC->UINavigation(FVector2D(0.0f, 1.0f));
+	}
+}
+
+void AMainCharacter::UINavigationDown()
+{
+	AUnrealPlayerController* const PC = CastChecked<AUnrealPlayerController>(Controller);
+	if (PC)
+	{
+		PC->UINavigation(FVector2D(0.0f, -1.0f));
+	}
+}
+
+void AMainCharacter::UINavigationLeft()
+{
+	AUnrealPlayerController* const PC = CastChecked<AUnrealPlayerController>(Controller);
+	if (PC)
+	{
+		PC->UINavigation(FVector2D(-1.0f, 0.0f));
+	}
+}
+
+void AMainCharacter::UINavigationRight()
+{
+	AUnrealPlayerController* const PC = CastChecked<AUnrealPlayerController>(Controller);
+	if (PC)
+	{
+		PC->UINavigation(FVector2D(1.0f, 0.0f));
+	}
+}
+
+void AMainCharacter::UISelectElement()
+{
+	AUnrealPlayerController* const PC = CastChecked<AUnrealPlayerController>(Controller);
+	if (PC)
+	{
+		PC->UISelectElement();
+	}
+}
+
 void AMainCharacter::PauseGame()
 {
 	AUnrealPlayerController* const PC = CastChecked<AUnrealPlayerController>(Controller);
-	PC->ShowPauseMenu();
+	if (PC)
+	{
+		PC->ShowPauseMenu();
+	}
 }

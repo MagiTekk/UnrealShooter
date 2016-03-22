@@ -48,14 +48,13 @@ void AUnrealPlayerController::AddStartScreen()
 		bIsWidgetShown = true;
 
 		FInputModeGameAndUI InputMode;
-		InputMode.SetWidgetToFocus(StartScreenReference->GetCachedWidget());
+		//InputMode.SetWidgetToFocus(StartScreenReference->GetCachedWidget());
 		SetInputMode(InputMode);
 
-		StartScreenReference->SetKeyboardFocus();
+		//StartScreenReference->SetKeyboardFocus();
 
 		//Show the Cursor.
 		bShowMouseCursor = true;
-		//EnableInput(this);
 
 		TArray<AMatineeActor*> OutMatineeActors;
 		GetWorld()->GetMatineeActors(OutMatineeActors);
@@ -79,14 +78,16 @@ void AUnrealPlayerController::ShowPauseMenu()
 		// Extra check to  make sure the pointer holds the widget.
 		if (PauseMenuReference)
 		{
-			FInputModeGameAndUI Mode;
-			Mode.SetWidgetToFocus(PauseMenuReference->GetCachedWidget());
-			SetInputMode(Mode);
-
 			//let add it to the view port
 			PauseMenuReference->AddToViewport();
 			SetPause(true);
 			bIsWidgetShown = true;
+
+			FInputModeGameAndUI Mode;
+			//Mode.SetWidgetToFocus(PauseMenuReference->GetCachedWidget());
+			SetInputMode(Mode);
+
+			PauseMenuReference->SetKeyboardFocus();
 		}
 
 		//Show the Cursor.
@@ -98,12 +99,14 @@ void AUnrealPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("UINavigationUp", IE_Pressed, this, &AUnrealPlayerController::UINavigationUp);
-	InputComponent->BindAction("UINavigationDown", IE_Pressed, this, &AUnrealPlayerController::UINavigationDown);
-	InputComponent->BindAction("UINavigationLeft", IE_Pressed, this, &AUnrealPlayerController::UINavigationLeft);
-	InputComponent->BindAction("UINavigationRight", IE_Pressed, this, &AUnrealPlayerController::UINavigationRight);
-
-	InputComponent->BindAction("UISelectElement", IE_Pressed, this, &AUnrealPlayerController::UISelectElement);
+	if (!bIsControllerPossesed)
+	{
+		InputComponent->BindAction("UINavigationUp", IE_Pressed, this, &AUnrealPlayerController::UINavigationUp);
+		InputComponent->BindAction("UINavigationDown", IE_Pressed, this, &AUnrealPlayerController::UINavigationDown);
+		InputComponent->BindAction("UINavigationLeft", IE_Pressed, this, &AUnrealPlayerController::UINavigationLeft);
+		InputComponent->BindAction("UINavigationRight", IE_Pressed, this, &AUnrealPlayerController::UINavigationRight);
+		InputComponent->BindAction("UISelectElement", IE_Pressed, this, &AUnrealPlayerController::UISelectElement);
+	}
 }
 
 void AUnrealPlayerController::UINavigationUp()

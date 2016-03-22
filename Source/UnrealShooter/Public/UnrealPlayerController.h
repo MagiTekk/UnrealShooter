@@ -50,6 +50,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		bool bIsWidgetShown;
 
+	/* Is this blueprint going to be possesed by an actor? then that pawn should take care of input bindings */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Possesion")
+		bool bIsControllerPossesed;
+
 	UFUNCTION()
 		void AddHUD();
 
@@ -58,8 +62,6 @@ public:
 
 	UFUNCTION()
 		void ShowPauseMenu();
-
-	
 
 #pragma endregion
 #pragma region ActionMappings

@@ -209,4 +209,24 @@ private:
 		void OnUnregisterActorAsListener();
 	
 #pragma endregion
+
+#pragma region ActionMappings
+
+public:
+	UFUNCTION()
+		void UINavigationUp();
+
+	UFUNCTION()
+		void UINavigationDown();
+
+	UFUNCTION()
+		void UINavigationLeft();
+
+	UFUNCTION()
+		void UINavigationRight();
+
+	UFUNCTION()
+		void UISelectElement();
+
+#pragma endregion
 };
