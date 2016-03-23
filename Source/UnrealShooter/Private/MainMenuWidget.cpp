@@ -2,6 +2,7 @@
 
 #include "UnrealShooter.h"
 #include <string>
+#include "UnrealShooterDataSingleton.h"
 #include "MainMenuWidget.h"
 
 
@@ -9,6 +10,67 @@ void UMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	PController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+	DataInstance->OnUINavigation.AddDynamic(this, &UMainMenuWidget::UINavigate_Callback);
+	DataInstance->OnUISelection.AddDynamic(this, &UMainMenuWidget::UIClicked);
+}
+
+void UMainMenuWidget::UINavigate_Implementation()
+{
+}
+
+void UMainMenuWidget::UIClicked_Implementation()
+{
+}
+
+void UMainMenuWidget::SetMainStateForButtons(TArray<UButton*> buttons)
+{
+	for (auto& btn : buttons)
+	{
+		btn->SetBackgroundColor(NORMAL_STATE_COLOR);
+	}
+}
+
+void UMainMenuWidget::SetHoverStateForMainButtons()
+{
+	int32 val = UIIndex.Y;
+	UButton* btn = wMainMenuButtons[val];
+	btn->SetBackgroundColor(HOVER_STATE_COLOR);
+}
+
+void UMainMenuWidget::CapLowUIIndexValue()
+{
+	if (UIIndex.X < 0.0f)
+	{
+		UIIndex.X = 0.0f;
+	}
+	if (UIIndex.Y < 0.0f)
+	{
+		UIIndex.Y = 0.0f;
+	}
+}
+
+void UMainMenuWidget::UINavigate_Callback(FVector2D direction)
+{
+	UIIndex += direction;
+	CapLowUIIndexValue();
+
+	if (bIsMainMenuVisible)
+	{
+		CapUIIndexValue(0, 2);
+		SetMainStateForButtons(wMainMenuButtons);
+		SetHoverStateForMainButtons();
+	}
+
+	//call the blueprint native event
+	//UMainMenuWidget::UINavigate();
+}
+
+void UMainMenuWidget::CapUIIndexValue(int32 Xcap, int32 Ycap)
+{
+	UIIndex.X = UIIndex.X > Xcap ? Xcap : UIIndex.X;
+	UIIndex.Y = UIIndex.Y > Ycap ? Ycap : UIIndex.Y;
 }
 
 void UMainMenuWidget::ExecuteConsoleCommand(FString cmd)

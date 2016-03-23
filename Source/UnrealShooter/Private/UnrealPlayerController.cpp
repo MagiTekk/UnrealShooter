@@ -84,10 +84,7 @@ void AUnrealPlayerController::ShowPauseMenu()
 			bIsWidgetShown = true;
 
 			FInputModeGameAndUI Mode;
-			//Mode.SetWidgetToFocus(PauseMenuReference->GetCachedWidget());
 			SetInputMode(Mode);
-
-			PauseMenuReference->SetKeyboardFocus();
 		}
 
 		//Show the Cursor.
@@ -111,12 +108,12 @@ void AUnrealPlayerController::SetupInputComponent()
 
 void AUnrealPlayerController::UINavigationUp()
 {
-	UINavigation(FVector2D(0.0f, 1.0f));
+	UINavigation(FVector2D(0.0f, -1.0f));
 }
 
 void AUnrealPlayerController::UINavigationDown()
 {
-	UINavigation(FVector2D(0.0f, -1.0f));
+	UINavigation(FVector2D(0.0f, 1.0f));
 }
 
 void AUnrealPlayerController::UINavigationLeft()

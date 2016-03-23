@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Blueprint/UserWidget.h"
+#include "UMG.h"
 #include "MainMenuWidget.generated.h"
 
 /**
@@ -115,6 +116,53 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EffectsQuality")
 		FString EFFECTS_EPIC = "sg.EffectsQuality 3";
 
+
+	//OTHER PROPERTIES
+
+	const FLinearColor NORMAL_STATE_COLOR = FLinearColor(0.536f, 1.0f, 0.0f, 1.0f);
+	const FLinearColor HOVER_STATE_COLOR = FLinearColor(1.0f, 0.09f, 0.0f, 1.0f);
+	const FLinearColor PRESSED_STATE_COLOR = FLinearColor(1.0f, 0.0f, 0.0f, 1.0f);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIVisibility")
+		bool bIsMainMenuVisible = true;
+
+	//OTHER PROPERTIES
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIVisibility")
+		bool bIsOptionsMenuVisible;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
+		TArray<UButton*> wMainMenuButtons;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
+		TArray<UButton*> wOptionsMenuButtons;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UINavigation")
+		FVector2D UIIndex = FVector2D(0.0f, 0.0f);
+	
+	
+	//FUNCTIONS
+
+	UFUNCTION(Category = "UINavigation")
+		void SetMainStateForButtons(TArray<UButton*> buttons);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
+		void UINavigate();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
+		void UIClicked();
+
+	UFUNCTION(Category = "UINavigation")
+		void SetHoverStateForMainButtons();
+
+	UFUNCTION(Category = "UINavigation")
+		void CapLowUIIndexValue();
+
+	UFUNCTION(Category = "UINavigation")
+		void UINavigate_Callback(FVector2D direction);
+
+	/* Given the X and Y values we cap the UIndex for smooth navigation */
+	UFUNCTION(BlueprintCallable, Category = "UINavigation")
+		void CapUIIndexValue(int32 Xcap, int32 Ycap);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "World")
 		UWorld* WorldReference;
