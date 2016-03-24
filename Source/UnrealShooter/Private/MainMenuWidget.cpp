@@ -2,7 +2,6 @@
 
 #include "UnrealShooter.h"
 #include <string>
-//#include "UIButton.h"
 #include "UnrealShooterDataSingleton.h"
 #include "MainMenuWidget.h"
 
@@ -17,105 +16,79 @@ void UMainMenuWidget::NativeConstruct()
 	DataInstance->OnUISelection.AddDynamic(this, &UMainMenuWidget::UIClicked);
 }
 
-void UMainMenuWidget::SetMainState(TArray<UUIButton*> buttons)
+void UMainMenuWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
-	for (auto& btn : buttons)
-	{
-		btn->SetBackgroundColor(NORMAL_STATE_COLOR);
-	}
-}
+	Super::NativeTick(MyGeometry, DeltaTime);
 
-void UMainMenuWidget::SetHoverState(TArray<UUIButton*> buttons)
-{
-	for (auto& btn : buttons)
-	{
-		if (UIIndex == btn->UIIndex)
-		{
-			btn->SetBackgroundColor(HOVER_STATE_COLOR);
-		}
-	}
-}
-
-void UMainMenuWidget::ClickButton(TArray<UUIButton*> buttons)
-{
-	for (auto& btn : buttons)
-	{
-		if (UIIndex == btn->UIIndex)
-		{
-			//btn
-			//TODO epombo: how do I know which function to call??
-		}
-	}
-}
-
-
-void UMainMenuWidget::UINavigate(FVector2D direction)
-{
-	FVector2D currentIndex = UIIndex;
-	UIIndex += !bIsNavigationActive ? FVector2D(0.0f,0.0f) : direction;
-	CapLowUIIndexValue();
-
-	if (bIsMainMenuVisible)
-	{
-		CapUIIndexValue(wMainMenuButtons);
-		SetMainState(wMainMenuButtons);
-		SetHoverState(wMainMenuButtons);
-	}
-	else if (bIsOptionsMenuVisible)
-	{
-		CapUIIndexValue(wOptionsMenuButtons);
-		SetMainState(wOptionsMenuButtons);
-		SetHoverState(wOptionsMenuButtons);
-	}
-
-	bIsNavigationActive = true;
+	UINativeNavigation();
 }
 
 void UMainMenuWidget::UIClicked_Implementation()
 {
-	if (bIsMainMenuVisible)
-	{
-
-	}
-	else if (bIsOptionsMenuVisible)
-	{
-
-	}
 }
 
-void UMainMenuWidget::CapUIIndexValue(TArray<UUIButton*> buttons)
+void UMainMenuWidget::UINavigate_Implementation(FVector2D direction)
 {
-	for (int32 i = UIIndex.X; i > 0; --i)
+}
+
+void UMainMenuWidget::SetHoverState(TArray<UButton*> buttons)
+{
+	for (auto& btn : buttons)
 	{
-		for (auto& btn : buttons)
+		if (btn->HasKeyboardFocus())
 		{
-			if (i == btn->UIIndex.X && UIIndex.Y == btn->UIIndex.Y)
-			{
-				UIIndex = FVector2D(i, UIIndex.Y);
-			}
+			btn->SetBackgroundColor(HOVER_STATE_COLOR);
+		}
+		else
+		{
+			btn->SetBackgroundColor(NORMAL_STATE_COLOR);
 		}
 	}
 }
 
-void UMainMenuWidget::PlayButtonPressed_test()
+
+
+
+void UMainMenuWidget::UINativeNavigation()
 {
-	UGameplayStatics::OpenLevel(this, "UnrealtrainingGrounds");
-	PController->bShowMouseCursor = false;
-	this->RemoveFromParent();
-	FInputModeGameOnly Mode;
-	PController->SetInputMode(Mode);
+	//FVector2D currentIndex = UIIndex;
+	//UIIndex += !bIsNavigationActive ? FVector2D(0.0f,0.0f) : direction;
+	//CapLowUIIndexValue();
+
+	if (bIsMainMenuVisible)
+	{
+		//CapUIIndexValue(wMainMenuButtons);
+		//SetMainState(wMainMenuButtons);
+		SetHoverState(wMainMenuButtons);
+	}
+	else if (bIsOptionsMenuVisible)
+	{
+		//CapUIIndexValue(wOptionsMenuButtons);
+		//SetMainState(wOptionsMenuButtons);
+		SetHoverState(wOptionsMenuButtons);
+	}
+
+	//bIsNavigationActive = true;
 }
 
-void UMainMenuWidget::CapLowUIIndexValue()
+bool UMainMenuWidget::SupportKeyboardFocus()
 {
-	if (UIIndex.X < 0.0f)
+	//on click makes the current element loose the focus :S
+	/*for (auto& btn : wMainMenuButtons)
 	{
-		UIIndex.X = 0.0f;
+		if (btn->HasKeyboardFocus())
+		{
+			return true;
+		}
 	}
-	if (UIIndex.Y < 0.0f)
+	for (auto& btn : wOptionsMenuButtons)
 	{
-		UIIndex.Y = 0.0f;
-	}
+		if (btn->HasKeyboardFocus())
+		{
+			return true;
+		}
+	}*/
+	return false;
 }
 
 void UMainMenuWidget::ExecuteConsoleCommand(FString cmd)
@@ -182,4 +155,62 @@ void UMainMenuWidget::ShowMouseCursor(bool value)
 		PController->bShowMouseCursor = value;
 	}
 }
+
+#pragma region Unused
+/*void UMainMenuWidget::SetMainState(TArray<UButton*> buttons)
+{
+for (auto& btn : buttons)
+{
+btn->SetBackgroundColor(NORMAL_STATE_COLOR);
+}
+}*/
+
+/*void UMainMenuWidget::ClickButton(TArray<UButton*> buttons)
+{
+for (auto& btn : buttons)
+{
+if (UIIndex == btn->UIIndex)
+{
+//btn
+//TODO epombo: how do I know which function to call??
+}
+}
+}*/
+
+/*void UMainMenuWidget::CapUIIndexValue(TArray<UButton*> buttons)
+{
+for (int32 i = UIIndex.X; i > 0; --i)
+{
+for (auto& btn : buttons)
+{
+if (i == btn->UIIndex.X && UIIndex.Y == btn->UIIndex.Y)
+{
+UIIndex = FVector2D(i, UIIndex.Y);
+}
+}
+}
+}*/
+
+/*void UMainMenuWidget::PlayButtonPressed_test()
+{
+UGameplayStatics::OpenLevel(this, "UnrealtrainingGrounds");
+PController->bShowMouseCursor = false;
+this->RemoveFromParent();
+FInputModeGameOnly Mode;
+PController->SetInputMode(Mode);
+}*/
+
+/*void UMainMenuWidget::CapLowUIIndexValue()
+{
+if (UIIndex.X < 0.0f)
+{
+UIIndex.X = 0.0f;
+}
+if (UIIndex.Y < 0.0f)
+{
+UIIndex.Y = 0.0f;
+}
+}*/
+
+#pragma endregion
 

@@ -11,7 +11,9 @@
 #include "UIButton.generated.h"
 
 /**
- * 
+ * UIButton is an extension of UButton only that it contains an index,
+ * with this index you can control the way we navigate the widget according
+ * to a gamepad or keyboard input
  */
 UCLASS()
 class UNREALSHOOTER_API UUIButton : public UButton

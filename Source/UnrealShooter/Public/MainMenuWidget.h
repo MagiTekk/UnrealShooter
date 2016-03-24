@@ -4,7 +4,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "UMG.h"
-#include "UIButton.h"
+#include "Components/Button.h"
 #include "MainMenuWidget.generated.h"
 
 /**
@@ -15,12 +15,14 @@ class UNREALSHOOTER_API UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-	APlayerController* PController;
-	bool bIsNavigationActive;
+		APlayerController* PController;
 	
 public:
 
 	virtual void NativeConstruct() override;
+
+	// Called every frame
+	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ResolutionScale")
 		FString WINDOW_BIG = "r.SetRes 1920x1080";
@@ -120,7 +122,6 @@ public:
 
 
 	//OTHER PROPERTIES
-
 	const FLinearColor NORMAL_STATE_COLOR = FLinearColor(0.536f, 1.0f, 0.0f, 1.0f);
 	const FLinearColor HOVER_STATE_COLOR = FLinearColor(1.0f, 0.09f, 0.0f, 1.0f);
 	const FLinearColor PRESSED_STATE_COLOR = FLinearColor(1.0f, 0.0f, 0.0f, 1.0f);
@@ -133,46 +134,28 @@ public:
 		bool bIsOptionsMenuVisible;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
-		TArray<UUIButton*> wMainMenuButtons;
+		TArray<UButton*> wMainMenuButtons;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
-		TArray<UUIButton*> wOptionsMenuButtons;
+		TArray<UButton*> wOptionsMenuButtons;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UINavigation")
-		FVector2D UIIndex = FVector2D(0.0f, 0.0f);
-	
-	
 	//UI NAV
-
-	UFUNCTION(Category = "UINavigation")
-		void SetMainState(TArray<UUIButton*> buttons);
-
 	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
 		void UIClicked();
 
-	UFUNCTION(Category = "UINavigation")
-		void SetHoverState(TArray<UUIButton*> buttons);
-
-	UFUNCTION(Category = "UINavigation")
-		void ClickButton(TArray<UUIButton*> buttons);
-
-	UFUNCTION(Category = "UINavigation")
-		void CapLowUIIndexValue();
-
-	UFUNCTION(Category = "UINavigation")
+	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
 		void UINavigate(FVector2D direction);
 
 	UFUNCTION(Category = "UINavigation")
-		void CapUIIndexValue(TArray<UUIButton*> buttons);
+		void SetHoverState(TArray<UButton*> buttons);
 
 	UFUNCTION(Category = "UINavigation")
-		void PlayButtonPressed_test();
+		void UINativeNavigation();
+
+	UFUNCTION(BlueprintCallable, Category = "Bindings")
+		bool SupportKeyboardFocus();
 
 	//OTHER PROPERTIES
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "World")
-		UWorld* WorldReference;
-
 	UFUNCTION(BlueprintCallable, Category = "Bindings")
 		void ExecuteConsoleCommand(FString cmd);
 
@@ -184,4 +167,28 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Bindings")
 		void ShowMouseCursor(bool value);
+
+#pragma region Unused
+	//UNUSED BUT LIFE SAVER
+
+	//bool bIsNavigationActive;
+
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UINavigation")
+	//FVector2D UIIndex = FVector2D(0.0f, 0.0f);
+
+	//UFUNCTION(Category = "UINavigation")
+	//void SetMainState(TArray<UButton*> buttons);
+
+	//UFUNCTION(Category = "UINavigation")
+	//void ClickButton(TArray<UButton*> buttons);
+
+	//UFUNCTION(Category = "UINavigation")
+	//void CapLowUIIndexValue();
+
+	//UFUNCTION(Category = "UINavigation")
+	//void CapUIIndexValue(TArray<UButton*> buttons);
+
+	//UFUNCTION(Category = "UINavigation")
+	//void PlayButtonPressed_test();
+#pragma endregion
 };

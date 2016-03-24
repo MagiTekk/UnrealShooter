@@ -53,6 +53,8 @@ void AUnrealPlayerController::AddStartScreen()
 
 		//StartScreenReference->SetKeyboardFocus();
 
+		//FSlateApplication::Get().SetFocusToGameViewport();
+
 		//Show the Cursor.
 		bShowMouseCursor = true;
 
