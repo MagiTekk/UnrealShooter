@@ -4,6 +4,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "UMG.h"
+#include "UIButton.h"
 #include "MainMenuWidget.generated.h"
 
 /**
@@ -14,7 +15,8 @@ class UNREALSHOOTER_API UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-		APlayerController* PController;
+	APlayerController* PController;
+	bool bIsNavigationActive;
 	
 public:
 
@@ -131,38 +133,42 @@ public:
 		bool bIsOptionsMenuVisible;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
-		TArray<UButton*> wMainMenuButtons;
+		TArray<UUIButton*> wMainMenuButtons;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
-		TArray<UButton*> wOptionsMenuButtons;
+		TArray<UUIButton*> wOptionsMenuButtons;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UINavigation")
 		FVector2D UIIndex = FVector2D(0.0f, 0.0f);
 	
 	
-	//FUNCTIONS
+	//UI NAV
 
 	UFUNCTION(Category = "UINavigation")
-		void SetMainStateForButtons(TArray<UButton*> buttons);
-
-	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
-		void UINavigate();
+		void SetMainState(TArray<UUIButton*> buttons);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
 		void UIClicked();
 
 	UFUNCTION(Category = "UINavigation")
-		void SetHoverStateForMainButtons();
+		void SetHoverState(TArray<UUIButton*> buttons);
+
+	UFUNCTION(Category = "UINavigation")
+		void ClickButton(TArray<UUIButton*> buttons);
 
 	UFUNCTION(Category = "UINavigation")
 		void CapLowUIIndexValue();
 
 	UFUNCTION(Category = "UINavigation")
-		void UINavigate_Callback(FVector2D direction);
+		void UINavigate(FVector2D direction);
 
-	/* Given the X and Y values we cap the UIndex for smooth navigation */
-	UFUNCTION(BlueprintCallable, Category = "UINavigation")
-		void CapUIIndexValue(int32 Xcap, int32 Ycap);
+	UFUNCTION(Category = "UINavigation")
+		void CapUIIndexValue(TArray<UUIButton*> buttons);
+
+	UFUNCTION(Category = "UINavigation")
+		void PlayButtonPressed_test();
+
+	//OTHER PROPERTIES
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "World")
 		UWorld* WorldReference;

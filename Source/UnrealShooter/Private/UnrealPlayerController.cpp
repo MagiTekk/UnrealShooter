@@ -132,7 +132,7 @@ void AUnrealPlayerController::UINavigation(FVector2D direction)
 	{
 		UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 		DataInstance->OnUINavigation.Broadcast(direction);
-		UE_LOG(LogTemp, Warning, TEXT("UINavigationRight, valueX: %f __ valueY: %f"), direction.X, direction.Y);
+		//UE_LOG(LogTemp, Warning, TEXT("UINavigationRight, valueX: %f __ valueY: %f"), direction.X, direction.Y);
 	}
 }
 

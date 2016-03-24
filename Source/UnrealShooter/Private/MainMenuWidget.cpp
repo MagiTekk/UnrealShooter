@@ -2,6 +2,7 @@
 
 #include "UnrealShooter.h"
 #include <string>
+//#include "UIButton.h"
 #include "UnrealShooterDataSingleton.h"
 #include "MainMenuWidget.h"
 
@@ -12,19 +13,11 @@ void UMainMenuWidget::NativeConstruct()
 	PController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	DataInstance->OnUINavigation.AddDynamic(this, &UMainMenuWidget::UINavigate_Callback);
+	DataInstance->OnUINavigation.AddDynamic(this, &UMainMenuWidget::UINavigate);
 	DataInstance->OnUISelection.AddDynamic(this, &UMainMenuWidget::UIClicked);
 }
 
-void UMainMenuWidget::UINavigate_Implementation()
-{
-}
-
-void UMainMenuWidget::UIClicked_Implementation()
-{
-}
-
-void UMainMenuWidget::SetMainStateForButtons(TArray<UButton*> buttons)
+void UMainMenuWidget::SetMainState(TArray<UUIButton*> buttons)
 {
 	for (auto& btn : buttons)
 	{
@@ -32,11 +25,85 @@ void UMainMenuWidget::SetMainStateForButtons(TArray<UButton*> buttons)
 	}
 }
 
-void UMainMenuWidget::SetHoverStateForMainButtons()
+void UMainMenuWidget::SetHoverState(TArray<UUIButton*> buttons)
 {
-	int32 val = UIIndex.Y;
-	UButton* btn = wMainMenuButtons[val];
-	btn->SetBackgroundColor(HOVER_STATE_COLOR);
+	for (auto& btn : buttons)
+	{
+		if (UIIndex == btn->UIIndex)
+		{
+			btn->SetBackgroundColor(HOVER_STATE_COLOR);
+		}
+	}
+}
+
+void UMainMenuWidget::ClickButton(TArray<UUIButton*> buttons)
+{
+	for (auto& btn : buttons)
+	{
+		if (UIIndex == btn->UIIndex)
+		{
+			//btn
+			//TODO epombo: how do I know which function to call??
+		}
+	}
+}
+
+
+void UMainMenuWidget::UINavigate(FVector2D direction)
+{
+	FVector2D currentIndex = UIIndex;
+	UIIndex += !bIsNavigationActive ? FVector2D(0.0f,0.0f) : direction;
+	CapLowUIIndexValue();
+
+	if (bIsMainMenuVisible)
+	{
+		CapUIIndexValue(wMainMenuButtons);
+		SetMainState(wMainMenuButtons);
+		SetHoverState(wMainMenuButtons);
+	}
+	else if (bIsOptionsMenuVisible)
+	{
+		CapUIIndexValue(wOptionsMenuButtons);
+		SetMainState(wOptionsMenuButtons);
+		SetHoverState(wOptionsMenuButtons);
+	}
+
+	bIsNavigationActive = true;
+}
+
+void UMainMenuWidget::UIClicked_Implementation()
+{
+	if (bIsMainMenuVisible)
+	{
+
+	}
+	else if (bIsOptionsMenuVisible)
+	{
+
+	}
+}
+
+void UMainMenuWidget::CapUIIndexValue(TArray<UUIButton*> buttons)
+{
+	for (int32 i = UIIndex.X; i > 0; --i)
+	{
+		for (auto& btn : buttons)
+		{
+			if (i == btn->UIIndex.X && UIIndex.Y == btn->UIIndex.Y)
+			{
+				UIIndex = FVector2D(i, UIIndex.Y);
+			}
+		}
+	}
+}
+
+void UMainMenuWidget::PlayButtonPressed_test()
+{
+	UGameplayStatics::OpenLevel(this, "UnrealtrainingGrounds");
+	PController->bShowMouseCursor = false;
+	this->RemoveFromParent();
+	FInputModeGameOnly Mode;
+	PController->SetInputMode(Mode);
 }
 
 void UMainMenuWidget::CapLowUIIndexValue()
@@ -51,34 +118,10 @@ void UMainMenuWidget::CapLowUIIndexValue()
 	}
 }
 
-void UMainMenuWidget::UINavigate_Callback(FVector2D direction)
-{
-	UIIndex += direction;
-	CapLowUIIndexValue();
-
-	if (bIsMainMenuVisible)
-	{
-		CapUIIndexValue(0, 2);
-		SetMainStateForButtons(wMainMenuButtons);
-		SetHoverStateForMainButtons();
-	}
-
-	//call the blueprint native event
-	//UMainMenuWidget::UINavigate();
-}
-
-void UMainMenuWidget::CapUIIndexValue(int32 Xcap, int32 Ycap)
-{
-	UIIndex.X = UIIndex.X > Xcap ? Xcap : UIIndex.X;
-	UIIndex.Y = UIIndex.Y > Ycap ? Ycap : UIIndex.Y;
-}
-
 void UMainMenuWidget::ExecuteConsoleCommand(FString cmd)
 {
 	if (PController)
 	{
-		//PController->ConsoleCommand(TEXT("stat fps"), true);
-		//PController->ConsoleCommand(TEXT("stat unit"), true);
 		PController->ConsoleCommand(*cmd, true);
 	}
 }
