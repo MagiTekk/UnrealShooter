@@ -498,8 +498,8 @@ void AMainCharacter::ReloadWeapon()
 		int32 AmmoAfterReload = AmmoAvailable - AmmoMissing;
 		int32 AmmoToReload = AmmoAfterReload < 0 ? AmmoAvailable : AmmoMissing;
 		
-		SpawnedWeapon->Reload(AmmoToReload);
 		AmmoAvailable = AmmoAfterReload < 0 ? 0 : AmmoAfterReload;
+		SpawnedWeapon->Reload(AmmoToReload);
 	}
 }
 
@@ -512,9 +512,9 @@ void AMainCharacter::ShootWeapon()
 		//Do Recoil on the player
 		RecoilAnimation();
 	}
-	else
+	else if (GetSpawndedM9()->Ammo == 0)
 	{
-		//TODO: 
+		//TODO nullbot: add no ammo sound
 	}
 }
 

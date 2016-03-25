@@ -144,6 +144,6 @@ void AUnrealPlayerController::UISelectElement()
 	{
 		UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 		DataInstance->OnUISelection.Broadcast();
-		UE_LOG(LogTemp, Warning, TEXT("UISelectElement"));
+		//UE_LOG(LogTemp, Warning, TEXT("UISelectElement"));
 	}
 }
