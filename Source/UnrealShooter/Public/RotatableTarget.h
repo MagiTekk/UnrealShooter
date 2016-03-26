@@ -161,6 +161,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		UStaticMeshComponent* BaseMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
+		UChildActorComponent* Dynamite;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Material")
 		UMaterialInstanceConstant* DefaultMaterialInst;
 

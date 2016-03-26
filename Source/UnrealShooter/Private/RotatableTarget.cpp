@@ -3,6 +3,7 @@
 #include "UnrealShooter.h"
 #include "BasicSpawnPoint.h"
 #include "RotatableTarget.h"
+#include "ExplosiveActor.h"
 #include "UnrealShooterDataSingleton.h"
 #include "Engine/DestructibleMesh.h"
 
@@ -35,6 +36,11 @@ void ARotatableTarget::InitTarget()
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	BaseMesh->SetStaticMesh(meshBase.Object);
 	BaseMesh->AttachTo(DefaultSceneRoot);
+
+	//ConstructorHelpers::FObjectFinder<AActor> dynamiteBP(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Target/ExplosiveTarget.ExplosiveTarget_C'"));
+	Dynamite = CreateDefaultSubobject<UChildActorComponent>(TEXT("Dynamite"));
+	Dynamite->SetChildActorClass(AExplosiveActor::StaticClass());
+	Dynamite->AttachTo(DefaultSceneRoot);
 
 	InitMaterialInstance();
 
@@ -108,6 +114,7 @@ void ARotatableTarget::ApplyProperties(FRotatableTargetProperties TargetProperti
 	this->TargetProperties = TargetProperties;
 	this->SetActorLocation(GetSpawnPoint(TargetProperties.InitialLocation));
 	this->TimeToLive = TimeToLive;
+	//Dynamite->DestroyComponent();
 	SetNewLocation();
 	UpdateMaterialInstance();
 }
