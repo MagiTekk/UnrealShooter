@@ -43,12 +43,15 @@ public:
 	UFUNCTION(Category = "Properties")
 		void ApplyProperties(EExplosiveType explosiveType);
 
+	UFUNCTION(Category = "Destroy")
+		void Die();
+
+	UFUNCTION()
+		void OnDynamiteFractured(const FVector& HitPoint, const FVector& HitDirection);
+
 #pragma region ColorCodes
 
-	const FLinearColor FIRE_ELEMENT =		{ 0.335f, 0.081f, 0.019f, 0.02f };
-	const FLinearColor ICE_ELEMENT =		{ 0.0f, 1.0f, 0.335f, 0.323f };
-	const FLinearColor LIGHTNING_ELEMENT =	{ 0.283f, 0.3f, 1.0f, 0.335f };
-	const FLinearColor DEFAULT_ELEMENT = { 0.335f, 0.335f, 0.019f, 0.02f };
+	const FLinearColor DEFAULT_ELEMENT_COLOR = { 0.335f, 0.335f, 0.019f, 0.02f };
 
 #pragma endregion
 
@@ -56,6 +59,15 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Material")
 		UMaterialInstanceConstant* DefaultMaterialInst;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Material")
+		UMaterialInstanceConstant* FireMaterialInst;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Material")
+		UMaterialInstanceConstant* IceMaterialInst;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Material")
+		UMaterialInstanceConstant* LightningMaterialInst;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Material")
 		UMaterialInstanceDynamic* DynamicInstance;
@@ -67,13 +79,12 @@ public:
 private:
 
 	UParticleSystem* FireParticleEffectReference;
-	//UParticleSystem FireBlastEffectReference;
-	
-	/*ConstructorHelpers::FObjectFinder<UParticleSystem> IceParticleEffectReference;
-	ConstructorHelpers::FObjectFinder<UParticleSystem> IceBlastEffectReference;
+	UParticleSystem* IceParticleEffectReference;
+	UParticleSystem* LightningParticleEffectReference;
 
-	ConstructorHelpers::FObjectFinder<UParticleSystem> LightningParticleEffectReference;
-	ConstructorHelpers::FObjectFinder<UParticleSystem> LightningBlastEffectReference;*/
+	UParticleSystem* FireBlastEffectReference;
+	UParticleSystem* IceBlastEffectReference;
+	UParticleSystem* LightningBlastEffectReference;
 
 public:
 
@@ -85,6 +96,13 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Particle System")
 		UParticleSystemComponent* BlastParticleEffect;
+
+#pragma endregion
+
+#pragma region Timer
+public:
+	/* Handle to manage the timer */
+	FTimerHandle ActorTimerHandle;
 
 #pragma endregion
 

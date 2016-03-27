@@ -175,12 +175,17 @@ void AWeapon_M9::OnHit(FHitResult hitResult)
 	if (hitResult.GetActor())
 	{
 		ARotatableTarget* rotatableTarget = Cast<ARotatableTarget>(hitResult.GetActor());
+		ARotatableTarget* rotatableTargetParent = Cast<ARotatableTarget>(hitResult.GetActor()->GetAttachParentActor());
+		//bool bParentIsRotatableTarget = hitResult.GetActor()->GetAttachParentActor()->GetClass()->IsChildOf(ARotatableTarget::StaticClass());
 
 		//did I hit a target?
 		if (rotatableTarget)
 		{
-			UActorComponent* objectDestruct = hitResult.GetActor()->GetComponentByClass(UDestructibleComponent::StaticClass());
 			rotatableTarget->OnTargetHit();
+		}
+		else if (rotatableTargetParent) //target may have child actor components
+		{
+			rotatableTargetParent->OnTargetHit();
 		}
 
 		//did I hit a destructible?
