@@ -37,9 +37,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		UDestructibleComponent* DynamiteMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
-		USphereComponent* CollisionSphere;
-
 	UFUNCTION(Category = "Properties")
 		void ApplyProperties(EExplosiveType explosiveType);
 
@@ -81,10 +78,6 @@ private:
 	UParticleSystem* FireParticleEffectReference;
 	UParticleSystem* IceParticleEffectReference;
 	UParticleSystem* LightningParticleEffectReference;
-
-	UParticleSystem* FireBlastEffectReference;
-	UParticleSystem* IceBlastEffectReference;
-	UParticleSystem* LightningBlastEffectReference;
 
 public:
 

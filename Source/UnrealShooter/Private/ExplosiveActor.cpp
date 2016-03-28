@@ -19,10 +19,6 @@ AExplosiveActor::AExplosiveActor()
 	DynamiteMesh->SetMobility(EComponentMobility::Movable);
 	DynamiteMesh->AttachTo(DefaultSceneRoot);
 
-	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
-	CollisionSphere->SetSphereRadius(365.0f);
-	CollisionSphere->AttachTo(RootComponent);
-
 	ConstructorHelpers::FObjectFinder<UParticleSystem> igniterEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/IgniterEffect.IgniterEffect'"));
 	IgniterParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("IgniterParticleEffect"));
 	IgniterParticleEffect->SetTemplate(igniterEmitter.Object);
@@ -123,7 +119,7 @@ void AExplosiveActor::OnDynamiteFractured(const FVector& HitPoint, const FVector
 
 	//spawn a blast particle effect on the location this actor was when the mesh fracture happened
 
-	GetWorld()->GetTimerManager().SetTimer(ActorTimerHandle, this, &AExplosiveActor::Die, 5.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(ActorTimerHandle, this, &AExplosiveActor::Die, 2.0f, false);
 }
 
 void AExplosiveActor::Die()
