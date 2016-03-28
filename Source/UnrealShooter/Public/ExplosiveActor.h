@@ -69,6 +69,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Material")
 		UMaterialInstanceDynamic* DynamicInstance;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Effects")
+		UClass* ExplosionBP;
+
 #pragma endregion
 
 #pragma region Particle System

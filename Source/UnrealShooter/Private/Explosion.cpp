@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UnrealShooter.h"
+#include "RotatableTarget.h"
 #include "Explosion.h"
 
 
@@ -57,30 +58,99 @@ void AExplosion::PostInitializeComponents()
 	ApplyProperties(EExplosiveType::Default);
 }
 
-void AExplosion::ApplyProperties(EExplosiveType explosiveType)
+void AExplosion::ApplyProperties(EExplosiveType type)
 {
-	switch (explosiveType)
+	explosiveType = type;
+
+	/*switch (explosiveType) //use sound component to set the explosion sound
 	{
 		case EExplosiveType::Fire:
+			BlastParticleEffect->SetTemplate(FireBlastEffectReference);
 			break;
 		case EExplosiveType::Ice:
+			BlastParticleEffect->SetTemplate(IceBlastEffectReference);
 			break;
 		case EExplosiveType::Lightning:
+			BlastParticleEffect->SetTemplate(LightningBlastEffectReference);
 			break;
 		default:
+			BlastParticleEffect->SetTemplate(FireBlastEffectReference);
 			break;
-	}
-	Explode();
+	}*/
+
+	//Explode();
 }
 
 void AExplosion::Explode()
 {
-	BlastParticleEffect->SetTemplate(FireBlastEffectReference);
+	//play particle effect
+	SpawnParticleEffect();
 
 	//play sound
 	UGameplayStatics::PlaySoundAtLocation(this, ExplosionSoundCue, GetActorLocation());
 
+	//get all affected targets and apply explosion
+	ApplyExplosionEffect();
+
+	//set a timer for destruction
 	GetWorld()->GetTimerManager().SetTimer(ActorTimerHandle, this, &AExplosion::Die, 4.0f, false);
+}
+
+void AExplosion::SpawnParticleEffect()
+{
+	switch (explosiveType)
+	{
+		case EExplosiveType::Fire:
+			BlastParticleEffect->SetTemplate(FireBlastEffectReference);
+			break;
+		case EExplosiveType::Ice:
+			BlastParticleEffect->SetTemplate(IceBlastEffectReference);
+			break;
+		case EExplosiveType::Lightning:
+			BlastParticleEffect->SetTemplate(LightningBlastEffectReference);
+			break;
+		default:
+			BlastParticleEffect->SetTemplate(FireBlastEffectReference);
+			break;
+	}
+}
+
+void AExplosion::ApplyExplosionEffect()
+{
+	//Get all overlapping actors and store them in a CollectedActors array
+	TArray<AActor*> CollectedActors;
+	CollisionSphere->GetOverlappingActors(CollectedActors);
+
+	//for each Actor collected
+	for (int32 i = 0; i < CollectedActors.Num(); i++)
+	{
+		AActor * ACollected = CollectedActors[i];
+
+		//Cast the collected Actor to ABatteryPickup
+		ARotatableTarget * const Target = Cast<ARotatableTarget>(ACollected);
+
+		//if the cast is succesful
+		if (Target)
+		{
+			//apply explosion effect to target, fire target blows them up, ice freezes them, lightning spawns a ray to each target's head
+			
+			switch (explosiveType)
+			{
+				case EExplosiveType::Fire:
+					Target->OnTargetHit();
+					break;
+				case EExplosiveType::Ice:
+					//BlastParticleEffect->SetTemplate(IceBlastEffectReference);
+					break;
+				case EExplosiveType::Lightning:
+					//BlastParticleEffect->SetTemplate(LightningBlastEffectReference);
+					break;
+				default:
+					Target->OnTargetHit();
+					break;
+			}
+		}
+	}
 }
 
 void AExplosion::Die()

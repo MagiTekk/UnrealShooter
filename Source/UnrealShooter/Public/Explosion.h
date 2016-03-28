@@ -12,6 +12,7 @@ class UNREALSHOOTER_API AExplosion : public AActor
 	GENERATED_BODY()
 
 	USoundCue* ExplosionSoundCue;
+	EExplosiveType explosiveType;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -32,10 +33,16 @@ public:
 		USphereComponent* CollisionSphere;
 
 	UFUNCTION(Category = "Properties")
-		void ApplyProperties(EExplosiveType explosiveType);
+		void ApplyProperties(EExplosiveType type);
 
 	UFUNCTION(Category = "Execution")
 		void Explode();
+
+	UFUNCTION(Category = "Execution")
+		void SpawnParticleEffect();
+
+	UFUNCTION(Category = "Execution")
+		void ApplyExplosionEffect();
 
 	UFUNCTION(Category = "Destroy")
 		void Die();
@@ -61,5 +68,16 @@ public:
 	FTimerHandle ActorTimerHandle;
 
 #pragma endregion
+
+
+/*
+
+//This function acts like a static function that can be accessed from anywhere in the game
+FORCEINLINE bool AExplosion::getSomething() const
+{
+	return true;
+}
+
+*/
 	
 };

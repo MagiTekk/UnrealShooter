@@ -2,6 +2,7 @@
 
 #include "UnrealShooter.h"
 #include "ExplosiveActor.h"
+#include "Explosion.h"
 #include "Engine/DestructibleMesh.h"
 
 
@@ -37,11 +38,8 @@ AExplosiveActor::AExplosiveActor()
 	ExplosiveTypeParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ExplosiveTypeParticleEffect"));
 	ExplosiveTypeParticleEffect->AttachTo(RootComponent);
 
-	//ConstructorHelpers::FObjectFinder<UParticleSystem> fireBlastEmitter(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
-	//FireParticleEffectReference = FireBlastEffectReference;
-
-	//BlastParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("BlastParticleEffect"));
-	//BlastParticleEffect->AttachTo(RootComponent);
+	ConstructorHelpers::FObjectFinder<UClass> explosion(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Effects/ExplosionBP.ExplosionBP_C'"));
+	ExplosionBP = explosion.Object;
 
 	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> DefaultMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_DefaultTarget.BasicMaterial_Inst_DefaultTarget'"));
 	DefaultMaterialInst = DefaultMaterialObj.Object;
@@ -118,6 +116,8 @@ void AExplosiveActor::OnDynamiteFractured(const FVector& HitPoint, const FVector
 	ExplosiveTypeParticleEffect->DestroyComponent();
 
 	//spawn a blast particle effect on the location this actor was when the mesh fracture happened
+	AExplosion* explosionActor = GetWorld()->SpawnActor<AExplosion>(ExplosionBP, GetActorLocation(), FRotator(0, 0, 0));
+	explosionActor->Explode();
 
 	GetWorld()->GetTimerManager().SetTimer(ActorTimerHandle, this, &AExplosiveActor::Die, 2.0f, false);
 }
