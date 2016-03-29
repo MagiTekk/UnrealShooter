@@ -183,11 +183,20 @@ void AWeapon_M9::OnHit(FHitResult hitResult)
 		}
 
 		//did I hit a destructible?
-		UActorComponent* objectDestruct = hitResult.GetActor()->GetComponentByClass(UDestructibleComponent::StaticClass());
-		if (objectDestruct)
+		//UActorComponent* objectDestruct = hitResult.GetActor()->GetComponentByClass(UDestructibleComponent::StaticClass());
+		UPrimitiveComponent* hitComp = hitResult.GetComponent();
+		if (hitComp)
 		{
-			UDestructibleComponent* destructibleComponent = Cast<UDestructibleComponent>(objectDestruct);
-			destructibleComponent->ApplyDamage(1000.0f, hitResult.Location, FVector(1.0f, 1.0f, 1.0f), 100.0f);
+			UActorComponent* objectDestruct = Cast<UActorComponent>(hitComp);
+			if (objectDestruct)
+			{
+				UDestructibleComponent* destructibleComponent = Cast<UDestructibleComponent>(objectDestruct);
+				if (destructibleComponent)
+				{
+					destructibleComponent->ApplyRadiusDamage(100.0f, hitResult.Location, 360.0f, 100.0f, true);
+				}
+				//destructibleComponent->ApplyDamage(1000.0f, hitResult.Location, FVector(1.0f, 1.0f, 1.0f), 100.0f);
+			}
 		}
 	}
 }

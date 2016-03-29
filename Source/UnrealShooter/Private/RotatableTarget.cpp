@@ -21,15 +21,15 @@ void ARotatableTarget::InitTarget()
 	this->SetRootComponent(DefaultSceneRoot);
 
 	//I had to simulate physics and disable gravity because of a bug where the DM is not visible after being spawned by code
-	ConstructorHelpers::FObjectFinder<UDestructibleMesh> meshHead(TEXT("DestructibleMesh'/Game/UnrealShooter/Mesh/Target/TargetMesh_Cube_DM.TargetMesh_Cube_DM'"));
+	ConstructorHelpers::FObjectFinder<UDestructibleMesh> destructibleCube(TEXT("DestructibleMesh'/Game/UnrealShooter/Mesh/Target/TargetMesh_Cube_DM.TargetMesh_Cube_DM'"));
 	HeadMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("HeadMesh"));
-	HeadMesh->SetDestructibleMesh(meshHead.Object);
+	HeadMesh->SetDestructibleMesh(destructibleCube.Object);
 	HeadMesh->SetMobility(EComponentMobility::Movable);
 	HeadMesh->AttachTo(DefaultSceneRoot);
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> meshBody(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube'"));
-	BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BodyMesh"));
-	BodyMesh->SetStaticMesh(meshBody.Object);
+	BodyMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("BodyMesh"));
+	BodyMesh->SetDestructibleMesh(destructibleCube.Object);
+	BodyMesh->SetMobility(EComponentMobility::Movable);
 	BodyMesh->AttachTo(DefaultSceneRoot);
 
 	ConstructorHelpers::FObjectFinder<UStaticMesh> meshBase(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube'"));
@@ -47,7 +47,7 @@ void ARotatableTarget::InitTarget()
 	//listen for my destructible's onFracture signal
 	//FScriptDelegate OnHeadFractured;
 	//OnHeadFractured.BindUFunction(this, "OnHeadFractured");
-	//HeadMesh->OnComponentFracture.AddUnique(OnHeadFractured
+	//HeadMesh->OnComponentFracture.AddUnique(OnHeadFractured);
 
 	RotationalRate = DEFAULT_ROTATIONAL_RATE;
 }
@@ -88,6 +88,7 @@ void ARotatableTarget::UpdateMaterialInstance()
 		HeadMesh->SetMaterial(0, DynamicInstance);
 		HeadMesh->SetMaterial(1, DynamicInstance);
 		BodyMesh->SetMaterial(0, DynamicInstance);
+		BodyMesh->SetMaterial(1, DynamicInstance);
 		BaseMesh->SetMaterial(0, DynamicInstance);
 	}
 }

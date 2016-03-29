@@ -160,7 +160,7 @@ public:
 		UDestructibleComponent* HeadMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
-		UStaticMeshComponent* BodyMesh;
+		UDestructibleComponent* BodyMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		UStaticMeshComponent* BaseMesh;

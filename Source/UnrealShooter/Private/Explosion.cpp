@@ -25,7 +25,7 @@ AExplosion::AExplosion()
 	ConstructorHelpers::FObjectFinder<UParticleSystem> iceBlastEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/Ice/Ice_blast.Ice_blast'"));
 	IceBlastEffectReference = iceBlastEmitter.Object;
 
-	ConstructorHelpers::FObjectFinder<UParticleSystem> lightningBlastEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/Lightning/P_DOT_Lightning_01.P_DOT_Lightning_01'"));
+	ConstructorHelpers::FObjectFinder<UParticleSystem> lightningBlastEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/Lightning/P_DOT_Lightning_Blast.P_DOT_Lightning_Blast'"));
 	LightningBlastEffectReference = lightningBlastEmitter.Object;
 
 	BlastParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("BlastParticleEffect"));
