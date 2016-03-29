@@ -128,7 +128,7 @@ protected:
 	const float FROZEN_TIME = 6.0f;
 
 	//color codes
-	const FLinearColor DEFAULTTARGET_COLOR =		{ 1.0f, 1.0f, 1.0f, 0.0f };
+	const FLinearColor DEFAULTTARGET_COLOR =		{ 0.1f, 0.1f, 0.1f, 0.0f };
 	const FLinearColor FALSETARGET_COLOR =			{ 1.0f, 0.066f, 0.019f, 0.0f };
 	const FLinearColor MIDTARGET_COLOR =			{ 0.073f, 1.0f, 0.149f, 0.0f };
 	const FLinearColor LOWTARGET_COLOR =			{ 0.064f, 0.169f, 1.0f, 0.0f };

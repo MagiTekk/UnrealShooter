@@ -55,9 +55,9 @@ void ARotatableTarget::InitTarget()
 //load the desired material instance
 void ARotatableTarget::InitMaterialInstance()
 {
-	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> DefaultMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_DefaultTarget.BasicMaterial_Inst_DefaultTarget'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> DefaultMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/M_IcyTarget_Inst.M_IcyTarget_Inst'"));
 	DefaultMaterialInst = DefaultMaterialObj.Object;
-	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> TransparentMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicTransparentMaterial_Inst.BasicTransparentMaterial_Inst'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> TransparentMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/BasicTransparentMaterial_Inst.BasicTransparentMaterial_Inst'"));
 	TransparentMaterialInst = TransparentMaterialObj.Object;
 }
 
@@ -295,12 +295,14 @@ void ARotatableTarget::startVanish()
 
 void ARotatableTarget::Freeze()
 {
+	DynamicInstance->SetScalarParameterValue("IceBlend", 0.4f);
 	this->SetActorTickEnabled(false);
 	GetWorld()->GetTimerManager().SetTimer(FreezeTimerHandle, this, &ARotatableTarget::UnFreeze, FROZEN_TIME, false);
 }
 
 void ARotatableTarget::UnFreeze()
 {
+	DynamicInstance->SetScalarParameterValue("IceBlend", 0.0f);
 	this->SetActorTickEnabled(true);
 }
 
