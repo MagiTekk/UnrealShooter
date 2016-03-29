@@ -18,6 +18,8 @@ UCLASS()
 class UNREALSHOOTER_API AExplosiveActor : public AActor
 {
 	GENERATED_BODY()
+
+	EExplosiveType explosiveType;
 	
 public:	
 	
@@ -38,7 +40,7 @@ public:
 		UDestructibleComponent* DynamiteMesh;
 
 	UFUNCTION(Category = "Properties")
-		void ApplyProperties(EExplosiveType explosiveType);
+		void ApplyProperties(EExplosiveType type);
 
 	UFUNCTION(Category = "Destroy")
 		void Die();
@@ -48,14 +50,11 @@ public:
 
 #pragma region ColorCodes
 
-	const FLinearColor DEFAULT_ELEMENT_COLOR = { 0.335f, 0.335f, 0.019f, 0.02f };
+		const float TIME_TO_LIVE = 2.0f;
 
 #pragma endregion
 
 #pragma region Material Instances
-
-	UPROPERTY(EditDefaultsOnly, Category = "Material")
-		UMaterialInstanceConstant* DefaultMaterialInst;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Material")
 		UMaterialInstanceConstant* FireMaterialInst;

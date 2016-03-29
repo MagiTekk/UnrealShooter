@@ -20,12 +20,13 @@ AExplosiveActor::AExplosiveActor()
 	DynamiteMesh->SetMobility(EComponentMobility::Movable);
 	DynamiteMesh->AttachTo(DefaultSceneRoot);
 
+	//Igniter particle effect
 	ConstructorHelpers::FObjectFinder<UParticleSystem> igniterEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/IgniterEffect.IgniterEffect'"));
 	IgniterParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("IgniterParticleEffect"));
 	IgniterParticleEffect->SetTemplate(igniterEmitter.Object);
 	IgniterParticleEffect->AttachTo(RootComponent);
 
-	//get all particle effects and assign one of them on apply properties
+	//Particle Effects
 	ConstructorHelpers::FObjectFinder<UParticleSystem> fireEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/Fire/P_Fire_Torch_01.P_Fire_Torch_01'"));
 	FireParticleEffectReference = fireEmitter.Object;
 
@@ -38,12 +39,11 @@ AExplosiveActor::AExplosiveActor()
 	ExplosiveTypeParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ExplosiveTypeParticleEffect"));
 	ExplosiveTypeParticleEffect->AttachTo(RootComponent);
 
+	//Explosion Actor
 	ConstructorHelpers::FObjectFinder<UClass> explosion(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Effects/ExplosionBP.ExplosionBP_C'"));
 	ExplosionBP = explosion.Object;
 
-	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> DefaultMaterialObj(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/Targets/BasicMaterial_Inst_DefaultTarget.BasicMaterial_Inst_DefaultTarget'"));
-	DefaultMaterialInst = DefaultMaterialObj.Object;
-
+	//Material
 	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> FiretMaterialReference(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/M_JaggedRockFire_MeshEmit_Lit_Inst.M_JaggedRockFire_MeshEmit_Lit_Inst'"));
 	FireMaterialInst = FiretMaterialReference.Object;
 
@@ -52,7 +52,6 @@ AExplosiveActor::AExplosiveActor()
 
 	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> LightningtMaterialReference(TEXT("MaterialInstanceConstant'/Game/UnrealShooter/Materials/Instances/M_JaggedRockLightning_MeshEmit_Lit_Inst.M_JaggedRockLightning_MeshEmit_Lit_Inst'"));
 	LightningMaterialInst = LightningtMaterialReference.Object;
-
 
 	//listen for my destructible's onFracture signal
 	FScriptDelegate OnDynamiteFractured;
@@ -79,33 +78,32 @@ void AExplosiveActor::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	//create dynamic instance and apply it
-	ApplyProperties(EExplosiveType::Default);
+	ApplyProperties(EExplosiveType::Ice);
 }
 
-void AExplosiveActor::ApplyProperties(EExplosiveType explosiveType)
+void AExplosiveActor::ApplyProperties(EExplosiveType type)
 {
-	//DynamicInstance = UMaterialInstanceDynamic::Create(DefaultMaterialInst, this);
+	explosiveType = type;
 	switch (explosiveType)
 	{
 		case EExplosiveType::Fire:
 			DynamicInstance = UMaterialInstanceDynamic::Create(FireMaterialInst, this);
+			ExplosiveTypeParticleEffect->SetTemplate(FireParticleEffectReference);
 			break;
 		case EExplosiveType::Ice:
 			DynamicInstance = UMaterialInstanceDynamic::Create(IceMaterialInst, this);
+			ExplosiveTypeParticleEffect->SetTemplate(IceParticleEffectReference);
 			break;
 		case EExplosiveType::Lightning:
 			DynamicInstance = UMaterialInstanceDynamic::Create(LightningMaterialInst, this);
+			ExplosiveTypeParticleEffect->SetTemplate(LightningParticleEffectReference);
 			break;
 		default:
-			//DynamicInstance = UMaterialInstanceDynamic::Create(DefaultMaterialInst, this);
-			DynamicInstance = UMaterialInstanceDynamic::Create(LightningMaterialInst, this);
-			//DynamicInstance->SetVectorParameterValue("BaseColor", DEFAULT_ELEMENT_COLOR);
+			DynamicInstance = UMaterialInstanceDynamic::Create(FireMaterialInst, this);
+			ExplosiveTypeParticleEffect->SetTemplate(FireParticleEffectReference);
 			break;
 	}
-
 	DynamiteMesh->SetMaterial(0, DynamicInstance);
-	//ExplosiveTypeParticleEffect->SetTemplate(FireParticleEffectReference);
-	ExplosiveTypeParticleEffect->SetTemplate(LightningParticleEffectReference);
 }
 
 //calback fired whenever the destructible mesh is destroyed, unused
@@ -117,9 +115,10 @@ void AExplosiveActor::OnDynamiteFractured(const FVector& HitPoint, const FVector
 
 	//spawn a blast particle effect on the location this actor was when the mesh fracture happened
 	AExplosion* explosionActor = GetWorld()->SpawnActor<AExplosion>(ExplosionBP, GetActorLocation(), FRotator(0, 0, 0));
+	explosionActor->ApplyProperties(explosiveType);
 	explosionActor->Explode();
 
-	GetWorld()->GetTimerManager().SetTimer(ActorTimerHandle, this, &AExplosiveActor::Die, 2.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(ActorTimerHandle, this, &AExplosiveActor::Die, TIME_TO_LIVE, false);
 }
 
 void AExplosiveActor::Die()

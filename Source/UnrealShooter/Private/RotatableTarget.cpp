@@ -293,6 +293,17 @@ void ARotatableTarget::startVanish()
 	bVanish = true;
 }
 
+void ARotatableTarget::Freeze()
+{
+	this->SetActorTickEnabled(false);
+	GetWorld()->GetTimerManager().SetTimer(FreezeTimerHandle, this, &ARotatableTarget::UnFreeze, FROZEN_TIME, false);
+}
+
+void ARotatableTarget::UnFreeze()
+{
+	this->SetActorTickEnabled(true);
+}
+
 //vanish this actor
 void ARotatableTarget::Vanish()
 {
@@ -314,10 +325,14 @@ void ARotatableTarget::Die()
 {
 	//clear timer
 	GetWorld()->GetTimerManager().ClearTimer(TargetTimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(FreezeTimerHandle);
 
 	//launch a signal to update our sequence
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 	DataInstance->OnTargetDestroyed.Broadcast();
+
+	//get rid of the dynamite
+	Dynamite->DestroyComponent();
 
 	//destroy
 	Destroy();

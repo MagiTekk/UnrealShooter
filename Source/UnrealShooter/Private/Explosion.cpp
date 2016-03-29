@@ -9,7 +9,7 @@
 AExplosion::AExplosion()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bCanEverTick = true;
 
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
 	this->SetRootComponent(DefaultSceneRoot);
@@ -18,7 +18,7 @@ AExplosion::AExplosion()
 	CollisionSphere->SetSphereRadius(365.0f);
 	CollisionSphere->AttachTo(RootComponent);
 
-	//get all particle effects and assign one of them on apply properties
+	//Particle Effects
 	ConstructorHelpers::FObjectFinder<UParticleSystem> fireBlastEmitter(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
 	FireBlastEffectReference = fireBlastEmitter.Object;
 
@@ -32,9 +32,15 @@ AExplosion::AExplosion()
 	BlastParticleEffect->SetRelativeScale3D(FVector(3.0f, 3.0f, 3.0f));
 	BlastParticleEffect->AttachTo(RootComponent);
 
-	ConstructorHelpers::FObjectFinder<USoundCue> explosionCue(TEXT("SoundCue'/Game/StarterContent/Audio/Explosion_Cue.Explosion_Cue'"));
-	ExplosionSoundCue = explosionCue.Object;
+	//Sound
+	ConstructorHelpers::FObjectFinder<USoundCue> fireCue(TEXT("SoundCue'/Game/StarterContent/Audio/Explosion_Cue.Explosion_Cue'"));
+	FireExplosionSoundCue = fireCue.Object;
 
+	ConstructorHelpers::FObjectFinder<USoundCue> iceCue(TEXT("SoundCue'/Game/UnrealShooter/Audio/Explosions/IceExplosion_Cue.IceExplosion_Cue'"));
+	IceExplosionSoundCue = iceCue.Object;
+
+	ConstructorHelpers::FObjectFinder<USoundCue> lightningnCue(TEXT("SoundCue'/Game/UnrealShooter/Audio/Explosions/LightningBolt_Cue.LightningBolt_Cue'"));
+	LightningExplosionSoundCue = lightningnCue.Object;
 }
 
 // Called when the game starts or when spawned
@@ -61,24 +67,6 @@ void AExplosion::PostInitializeComponents()
 void AExplosion::ApplyProperties(EExplosiveType type)
 {
 	explosiveType = type;
-
-	/*switch (explosiveType) //use sound component to set the explosion sound
-	{
-		case EExplosiveType::Fire:
-			BlastParticleEffect->SetTemplate(FireBlastEffectReference);
-			break;
-		case EExplosiveType::Ice:
-			BlastParticleEffect->SetTemplate(IceBlastEffectReference);
-			break;
-		case EExplosiveType::Lightning:
-			BlastParticleEffect->SetTemplate(LightningBlastEffectReference);
-			break;
-		default:
-			BlastParticleEffect->SetTemplate(FireBlastEffectReference);
-			break;
-	}*/
-
-	//Explode();
 }
 
 void AExplosion::Explode()
@@ -87,13 +75,13 @@ void AExplosion::Explode()
 	SpawnParticleEffect();
 
 	//play sound
-	UGameplayStatics::PlaySoundAtLocation(this, ExplosionSoundCue, GetActorLocation());
+	ApplySoundEffect();
 
 	//get all affected targets and apply explosion
 	ApplyExplosionEffect();
 
 	//set a timer for destruction
-	GetWorld()->GetTimerManager().SetTimer(ActorTimerHandle, this, &AExplosion::Die, 4.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(ActorTimerHandle, this, &AExplosion::Die, TIME_TO_LIVE, false);
 }
 
 void AExplosion::SpawnParticleEffect()
@@ -110,7 +98,7 @@ void AExplosion::SpawnParticleEffect()
 			BlastParticleEffect->SetTemplate(LightningBlastEffectReference);
 			break;
 		default:
-			BlastParticleEffect->SetTemplate(FireBlastEffectReference);
+			BlastParticleEffect->SetTemplate(IceBlastEffectReference);
 			break;
 	}
 }
@@ -140,16 +128,35 @@ void AExplosion::ApplyExplosionEffect()
 					Target->OnTargetHit();
 					break;
 				case EExplosiveType::Ice:
-					//BlastParticleEffect->SetTemplate(IceBlastEffectReference);
+					Target->Freeze();
 					break;
 				case EExplosiveType::Lightning:
-					//BlastParticleEffect->SetTemplate(LightningBlastEffectReference);
+					Target->OnTargetHit(); //TODO nullbot: change
 					break;
 				default:
 					Target->OnTargetHit();
 					break;
 			}
 		}
+	}
+}
+
+void AExplosion::ApplySoundEffect()
+{
+	switch (explosiveType)
+	{
+		case EExplosiveType::Fire:
+			UGameplayStatics::PlaySoundAtLocation(this, FireExplosionSoundCue, GetActorLocation());
+			break;
+		case EExplosiveType::Ice:
+			UGameplayStatics::PlaySoundAtLocation(this, IceExplosionSoundCue, GetActorLocation());
+			break;
+		case EExplosiveType::Lightning:
+			UGameplayStatics::PlaySoundAtLocation(this, LightningExplosionSoundCue, GetActorLocation());
+			break;
+		default:
+			UGameplayStatics::PlaySoundAtLocation(this, FireExplosionSoundCue, GetActorLocation());
+			break;
 	}
 }
 

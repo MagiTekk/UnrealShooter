@@ -122,8 +122,10 @@ class UNREALSHOOTER_API ARotatableTarget : public AActor
 protected:
 
 	const float DEFAULT_ROTATIONAL_RATE =			2.0f;
-	const float LOWERED_ROTATION =			90.0f;
-	const float RAISED_ROTATION =			0.0f;
+	const float LOWERED_ROTATION =					90.0f;
+	const float RAISED_ROTATION =					0.0f;
+
+	const float FROZEN_TIME = 6.0f;
 
 	//color codes
 	const FLinearColor DEFAULTTARGET_COLOR =		{ 1.0f, 1.0f, 1.0f, 0.0f };
@@ -188,15 +190,30 @@ public:
 	//UFUNCTION()
 	//void OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection);
 
-	void OnTargetHit();
-	void RaiseTarget();
-	void LowerTarget();
-	void startVanish();
+	UFUNCTION()
+		void OnTargetHit();
+	
+	UFUNCTION()
+		void RaiseTarget();
+	
+	UFUNCTION()
+		void LowerTarget();
+	
+	UFUNCTION()
+		void startVanish();
+
+	UFUNCTION()
+		void Freeze();
+
+	UFUNCTION()
+		void UnFreeze();
 
 #pragma region Timer
 public:
+
 	/* Handle to manage the timer */
 	FTimerHandle TargetTimerHandle;
+	FTimerHandle FreezeTimerHandle;
 
 #pragma endregion
 };
