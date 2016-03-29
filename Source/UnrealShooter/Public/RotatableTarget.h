@@ -102,6 +102,8 @@ class UNREALSHOOTER_API ARotatableTarget : public AActor
 	bool bLowerTarget;
 	bool bVanish;
 	bool bMoveTarget;
+	bool bIsTranslucent;
+	bool bIsFrozen;
 
 	float RotationalRate = DEFAULT_ROTATIONAL_RATE;
 
@@ -149,7 +151,7 @@ public:
 
 	void ApplyProperties(FRotatableTargetProperties TargetProperties, int32 TimeToLive);
 
-	void UpdateMaterialInstance(bool bisTranslucent = false);
+	void UpdateMaterialInstance();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		USceneComponent* DefaultSceneRoot;

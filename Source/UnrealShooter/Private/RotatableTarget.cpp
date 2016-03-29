@@ -79,14 +79,17 @@ void ARotatableTarget::PostInitializeComponents()
 	UpdateMaterialInstance();
 }
 
-void ARotatableTarget::UpdateMaterialInstance(bool bisTranslucent)
+void ARotatableTarget::UpdateMaterialInstance()
 {
-	DynamicInstance = UMaterialInstanceDynamic::Create(bisTranslucent? TransparentMaterialInst : DefaultMaterialInst, this);
-	DynamicInstance->SetVectorParameterValue("BaseColor", ARotatableTarget::GetMaterialColor());
-	HeadMesh->SetMaterial(0, DynamicInstance);
-	HeadMesh->SetMaterial(1, DynamicInstance);
-	BodyMesh->SetMaterial(0, DynamicInstance);
-	BaseMesh->SetMaterial(0, DynamicInstance);
+	if (!bIsFrozen)
+	{
+		DynamicInstance = UMaterialInstanceDynamic::Create(bIsTranslucent ? TransparentMaterialInst : DefaultMaterialInst, this);
+		DynamicInstance->SetVectorParameterValue("BaseColor", ARotatableTarget::GetMaterialColor());
+		HeadMesh->SetMaterial(0, DynamicInstance);
+		HeadMesh->SetMaterial(1, DynamicInstance);
+		BodyMesh->SetMaterial(0, DynamicInstance);
+		BaseMesh->SetMaterial(0, DynamicInstance);
+	}
 }
 
 FLinearColor ARotatableTarget::GetMaterialColor()
@@ -282,7 +285,8 @@ void ARotatableTarget::UpdateTargetLocation()
 
 void ARotatableTarget::OnTargetHit()
 {
-	UpdateMaterialInstance(true);
+	bIsTranslucent = true;
+	UpdateMaterialInstance();
 	LowerTarget();
 	startVanish();
 }
@@ -295,6 +299,7 @@ void ARotatableTarget::startVanish()
 
 void ARotatableTarget::Freeze()
 {
+	bIsFrozen = true;
 	DynamicInstance->SetScalarParameterValue("IceBlend", 0.4f);
 	this->SetActorTickEnabled(false);
 	GetWorld()->GetTimerManager().SetTimer(FreezeTimerHandle, this, &ARotatableTarget::UnFreeze, FROZEN_TIME, false);
@@ -302,6 +307,8 @@ void ARotatableTarget::Freeze()
 
 void ARotatableTarget::UnFreeze()
 {
+	bIsFrozen = false;
+	UpdateMaterialInstance();
 	DynamicInstance->SetScalarParameterValue("IceBlend", 0.0f);
 	this->SetActorTickEnabled(true);
 }
