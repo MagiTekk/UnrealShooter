@@ -78,7 +78,7 @@ void AExplosiveActor::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	//create dynamic instance and apply it
-	ApplyProperties(EExplosiveType::Ice);
+	ApplyProperties(explosiveType);
 }
 
 void AExplosiveActor::ApplyProperties(EExplosiveType type)

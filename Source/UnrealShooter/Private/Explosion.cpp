@@ -28,6 +28,9 @@ AExplosion::AExplosion()
 	ConstructorHelpers::FObjectFinder<UParticleSystem> lightningBlastEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/Lightning/P_DOT_Lightning_Blast.P_DOT_Lightning_Blast'"));
 	LightningBlastEffectReference = lightningBlastEmitter.Object;
 
+	ConstructorHelpers::FObjectFinder<UParticleSystem> lightningRayEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/Beam/P_Beam.P_Beam'"));
+	LightningBeamReference = lightningRayEmitter.Object;
+
 	BlastParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("BlastParticleEffect"));
 	BlastParticleEffect->SetRelativeScale3D(FVector(3.0f, 3.0f, 3.0f));
 	BlastParticleEffect->AttachTo(RootComponent);
@@ -113,6 +116,7 @@ void AExplosion::ApplyExplosionEffect()
 	for (int32 i = 0; i < CollectedActors.Num(); i++)
 	{
 		AActor * ACollected = CollectedActors[i];
+		UParticleSystemComponent* beam;
 
 		//Cast the collected Actor to ABatteryPickup
 		ARotatableTarget * const Target = Cast<ARotatableTarget>(ACollected);
@@ -131,11 +135,24 @@ void AExplosion::ApplyExplosionEffect()
 					Target->Freeze();
 					break;
 				case EExplosiveType::Lightning:
-					Target->OnTargetHit(); //TODO nullbot: change
+					//target will die by lightning, pause it's "doom" timer
+					GetWorld()->GetTimerManager().PauseTimer(Target->TargetTimerHandle);
+					beam = UGameplayStatics::SpawnEmitterAttached(LightningBeamReference, Target->HeadCenterPointScene);
+					beam->SetBeamTargetPoint(0, this->GetActorLocation(), 0);
+					Target->LightningIncoming();
 					break;
 				default:
 					Target->OnTargetHit();
 					break;
+			}
+		}
+		else
+		{
+			//just for now fire dynamites concatenate each other
+			AExplosiveActor * const Dynamite = Cast<AExplosiveActor>(ACollected);
+			if (Dynamite && explosiveType == EExplosiveType::Fire && Dynamite->explosiveType == EExplosiveType::Fire)
+			{
+				Dynamite->DynamiteMesh->ApplyRadiusDamage(100.0f, Dynamite->DynamiteMesh->GetComponentLocation(), 360.0f, 100.0f, true);
 			}
 		}
 	}

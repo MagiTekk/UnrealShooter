@@ -20,6 +20,9 @@ void ARotatableTarget::InitTarget()
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
 	this->SetRootComponent(DefaultSceneRoot);
 
+	HeadCenterPointScene = CreateDefaultSubobject<USceneComponent>(TEXT("HeadCenterPointScene"));
+	HeadCenterPointScene->AttachTo(DefaultSceneRoot);
+
 	//I had to simulate physics and disable gravity because of a bug where the DM is not visible after being spawned by code
 	ConstructorHelpers::FObjectFinder<UDestructibleMesh> destructibleCube(TEXT("DestructibleMesh'/Game/UnrealShooter/Mesh/Target/TargetMesh_Cube_DM.TargetMesh_Cube_DM'"));
 	HeadMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("HeadMesh"));
@@ -45,9 +48,9 @@ void ARotatableTarget::InitTarget()
 	InitMaterialInstance();
 
 	//listen for my destructible's onFracture signal
-	//FScriptDelegate OnHeadFractured;
-	//OnHeadFractured.BindUFunction(this, "OnHeadFractured");
-	//HeadMesh->OnComponentFracture.AddUnique(OnHeadFractured);
+	FScriptDelegate OnHeadFractured;
+	OnHeadFractured.BindUFunction(this, "OnHeadFractured");
+	HeadMesh->OnComponentFracture.AddUnique(OnHeadFractured);
 
 	RotationalRate = DEFAULT_ROTATIONAL_RATE;
 }
@@ -279,10 +282,10 @@ void ARotatableTarget::UpdateTargetLocation()
 }
 
 //calback fired whenever the destructible mesh is destroyed, unused
-/*void ARotatableTarget::OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection)
+void ARotatableTarget::OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection)
 {
-	ARotatableTarget::startVanish();
-}*/
+	bIsHeadShot = true;
+}
 
 void ARotatableTarget::OnTargetHit()
 {
@@ -290,6 +293,7 @@ void ARotatableTarget::OnTargetHit()
 	UpdateMaterialInstance();
 	LowerTarget();
 	startVanish();
+	RewardTargetPoints();
 }
 
 void ARotatableTarget::startVanish()
@@ -314,6 +318,17 @@ void ARotatableTarget::UnFreeze()
 	this->SetActorTickEnabled(true);
 }
 
+void ARotatableTarget::LightningIncoming()
+{
+	GetWorld()->GetTimerManager().SetTimer(LightningTimerHandle, this, &ARotatableTarget::LightningStrike, LiGHTNING_TIME, false);
+}
+
+void ARotatableTarget::LightningStrike()
+{
+	HeadMesh->ApplyRadiusDamage(100.0f, HeadCenterPointScene->GetComponentLocation(), 360.0f, 100.0f, true);
+	GetWorld()->GetTimerManager().SetTimer(LightningTimerHandle, this, &ARotatableTarget::OnTargetHit, 1.0f, false);
+}
+
 //vanish this actor
 void ARotatableTarget::Vanish()
 {
@@ -331,11 +346,17 @@ void ARotatableTarget::Vanish()
 	}
 }
 
+void ARotatableTarget::RewardTargetPoints()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::FString(FString::FromInt(bIsHeadShot ? TargetProperties.HeadshotPoints : TargetProperties.Points)));
+}
+
 void ARotatableTarget::Die()
 {
 	//clear timer
 	GetWorld()->GetTimerManager().ClearTimer(TargetTimerHandle);
 	GetWorld()->GetTimerManager().ClearTimer(FreezeTimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(LightningTimerHandle);
 
 	//launch a signal to update our sequence
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);

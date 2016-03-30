@@ -36,12 +36,15 @@ class UNREALSHOOTER_API UUnrealShooterDataSingleton : public UObject
 	void ParseSequences(const TArray<TSharedPtr<FJsonValue>> &SequencesJSON);
 	void ParseWaves(const TArray<TSharedPtr<FJsonValue>> &WavesJSON);
 	void ParseTargets(const TArray<TSharedPtr<FJsonValue>> &TargetsJSON);
+	void ParseTargetTypes(const TArray<TSharedPtr<FJsonValue>> &TargetTypesJSON);
 	void ParseLocations(const TArray<TSharedPtr<FJsonValue>> &LocationsJSON);
 	ETargetType GetEnumByString(FString const& inString);
 	FTargetLocation GetTargetLocationByID(int32 locationID);
 	FTargetWave GetTargetWaveByWaveID(int32 waveID);
 	FRotatableTargetProperties GetTargetPropertiesByTargetID(int32 targetID);
-	
+	ETargetType GetTargetTypeByTargetID(int32 targetTypeID);
+	int32 GetTargetPointsByTargetTypeID(int32 targetTypeID);
+	int32 GetTargetHeadShotPointsByTargetTypeID(int32 targetTypeID);
 	
 public:
 
@@ -75,6 +78,7 @@ public:
 	TArray<FTargetWave> Waves;
 	TArray<FRotatableTargetProperties> Targets;
 	TArray<FTargetLocation> Locations;
+	TArray<FTargetTypeProperties> TargetTypes;
 
 	FTargetSequenceStruct GetSequenceBySequenceName(FString SequenceName);
 	FTargetSequenceStruct GetSequenceBySequenceEnum(ESequenceEnum SequenceEnum);

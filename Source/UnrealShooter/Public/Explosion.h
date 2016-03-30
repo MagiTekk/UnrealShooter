@@ -60,6 +60,7 @@ private:
 	UParticleSystem* FireBlastEffectReference;
 	UParticleSystem* IceBlastEffectReference;
 	UParticleSystem* LightningBlastEffectReference;
+	UParticleSystem* LightningBeamReference;
 
 public:
 

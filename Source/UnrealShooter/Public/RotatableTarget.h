@@ -15,6 +15,38 @@ enum class ETargetType : uint8
 };
 
 USTRUCT()
+struct FTargetTypeProperties
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+		int32 TargetTypeID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+		ETargetType TargetType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+		int32 Points;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+		int32 HeadShotPoints;
+
+	FTargetTypeProperties()
+	{
+	}
+
+	FTargetTypeProperties(int32 TargetTypeID, ETargetType TargetType, int32 Points, int32 HeadShotPoints)
+	{
+		this->TargetTypeID = TargetTypeID;
+		this->TargetType = TargetType;
+		this->Points = Points;
+		this->HeadShotPoints = HeadShotPoints;
+	}
+};
+
+USTRUCT()
 struct FTargetLocation
 {
 	GENERATED_USTRUCT_BODY()
@@ -60,10 +92,10 @@ public:
 		float TimeToLive;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
-		float Points;
+		int32 Points;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
-		float HeadshotPoints;
+		int32 HeadshotPoints;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		bool bIsExplosive;
@@ -81,15 +113,17 @@ public:
 		this->TimeToLive = 5.0f;
 	}
 
-	FRotatableTargetProperties(int32 TargetID, FVector InitialLocation, float TimeToLive, ETargetType TargetType = ETargetType::SpecialTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, bool bIsExplosive = false)
+	FRotatableTargetProperties(int32 TargetID, FVector InitialLocation, float TimeToLive, int32 Points, int32 HeadshotPoints, ETargetType TargetType = ETargetType::SpecialTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, bool bIsExplosive = false)
 	{
 		this->TargetID = TargetID;
 		this->InitialLocation = InitialLocation;
 		this->Locations = Locations;
 		this->Speed = Speed;
 		this->TimeToLive = TimeToLive;
+		this->Points = Points;
+		this->HeadshotPoints = HeadshotPoints;
 		this->bIsExplosive = bIsExplosive;
-		this->TargetType = TargetType; //defines points rewarded per hit & target color
+		this->TargetType = TargetType;
 	}
 };
 
@@ -120,6 +154,7 @@ class UNREALSHOOTER_API ARotatableTarget : public AActor
 	void Vanish();
 	void Die();
 	void UpdateTargetLocation();
+	void RewardTargetPoints();
 
 protected:
 
@@ -128,6 +163,10 @@ protected:
 	const float RAISED_ROTATION =					0.0f;
 
 	const float FROZEN_TIME = 6.0f;
+	const float LiGHTNING_TIME = 3.0f;
+
+	const int32 POINTS = 4.0f;
+	const int32 HEADSHOT_POINTS = 10.0f;
 
 	//color codes
 	const FLinearColor DEFAULTTARGET_COLOR =		{ 0.1f, 0.1f, 0.1f, 0.0f };
@@ -155,6 +194,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		USceneComponent* DefaultSceneRoot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Scene")
+		USceneComponent* HeadCenterPointScene;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		UDestructibleComponent* HeadMesh;
@@ -189,8 +231,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		int32 TimeToLive;
 
-	//UFUNCTION()
-	//void OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection);
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Properties")
+		bool bIsHeadShot;
+
+	UFUNCTION()
+		void OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection);
 
 	UFUNCTION()
 		void OnTargetHit();
@@ -210,12 +255,19 @@ public:
 	UFUNCTION()
 		void UnFreeze();
 
+	UFUNCTION()
+		void LightningIncoming();
+
+	UFUNCTION()
+		void LightningStrike();
+
 #pragma region Timer
 public:
 
 	/* Handle to manage the timer */
 	FTimerHandle TargetTimerHandle;
 	FTimerHandle FreezeTimerHandle;
+	FTimerHandle LightningTimerHandle;
 
 #pragma endregion
 };

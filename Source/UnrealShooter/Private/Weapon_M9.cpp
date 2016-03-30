@@ -174,16 +174,7 @@ void AWeapon_M9::OnHit(FHitResult hitResult)
 
 	if (hitResult.GetActor())
 	{
-		ARotatableTarget* rotatableTarget = Cast<ARotatableTarget>(hitResult.GetActor());
-
-		//did I hit a target?
-		if (rotatableTarget)
-		{
-			rotatableTarget->OnTargetHit();
-		}
-
 		//did I hit a destructible?
-		//UActorComponent* objectDestruct = hitResult.GetActor()->GetComponentByClass(UDestructibleComponent::StaticClass());
 		UPrimitiveComponent* hitComp = hitResult.GetComponent();
 		if (hitComp)
 		{
@@ -195,8 +186,19 @@ void AWeapon_M9::OnHit(FHitResult hitResult)
 				{
 					destructibleComponent->ApplyRadiusDamage(100.0f, hitResult.Location, 360.0f, 100.0f, true);
 				}
-				//destructibleComponent->ApplyDamage(1000.0f, hitResult.Location, FVector(1.0f, 1.0f, 1.0f), 100.0f);
 			}
+		}
+
+		//did I hit a target?
+		ARotatableTarget* rotatableTarget = Cast<ARotatableTarget>(hitResult.GetActor());
+		if (rotatableTarget)
+		{
+			//was it a headshot?
+			if (hitResult.GetComponent()->GetName() == "HeadMesh")
+			{
+				rotatableTarget->bIsHeadShot = true;
+			}
+			rotatableTarget->OnTargetHit();
 		}
 	}
 }

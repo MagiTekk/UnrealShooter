@@ -25,9 +25,11 @@ void UUnrealShooterDataSingleton::ParseJSON()
 		const TArray<TSharedPtr<FJsonValue>> SequencesJSON = JsonObject->GetArrayField(TEXT("sequences"));
 		const TArray<TSharedPtr<FJsonValue>> WavesJSON = JsonObject->GetArrayField(TEXT("waves"));
 		const TArray<TSharedPtr<FJsonValue>> TargetsJSON = JsonObject->GetArrayField(TEXT("targets"));
+		const TArray<TSharedPtr<FJsonValue>> TargetTypesJSON = JsonObject->GetArrayField(TEXT("targetTypes"));
 		const TArray<TSharedPtr<FJsonValue>> LocationsJSON = JsonObject->GetArrayField("locations");
 
 		UUnrealShooterDataSingleton::ParseLocations(LocationsJSON);
+		UUnrealShooterDataSingleton::ParseTargetTypes(TargetTypesJSON);
 		UUnrealShooterDataSingleton::ParseTargets(TargetsJSON);
 		UUnrealShooterDataSingleton::ParseWaves(WavesJSON);
 		UUnrealShooterDataSingleton::ParseSequences(SequencesJSON);
@@ -76,7 +78,11 @@ void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValu
 		int32 targetID = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("targetID"));
 		int32 initialLocationID = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("initialLocation"));
 		int32 timeToLive = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("ttl"));
-		FString targetType = TargetsJSON[i]->AsObject()->GetStringField(TEXT("targetType"));
+
+		int32 points = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("ttl"));
+		int32 headShotPoints = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("ttl"));
+
+		int32 targetType = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("targetType"));
 		float speed = TargetsJSON[i]->AsObject()->GetNumberField(TEXT("speed"));
 		bool isExplosive = TargetsJSON[i]->AsObject()->GetBoolField(TEXT("isExplosive"));
 		
@@ -89,7 +95,20 @@ void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValu
 			int32 locationID = movementLocationsSubJSON[j]->AsNumber();
 			movementLocations.Add(GetTargetLocationByID(locationID).Location);
 		}
-		Targets.Emplace(FRotatableTargetProperties(targetID, spawnPointLocation, timeToLive, UUnrealShooterDataSingleton::GetEnumByString(targetType), movementLocations, speed, isExplosive));
+		Targets.Emplace(FRotatableTargetProperties(targetID, spawnPointLocation, timeToLive, GetTargetPointsByTargetTypeID(targetType), GetTargetHeadShotPointsByTargetTypeID(targetType), GetTargetTypeByTargetID(targetType), movementLocations, speed, isExplosive));
+	}
+}
+
+void UUnrealShooterDataSingleton::ParseTargetTypes(const TArray<TSharedPtr<FJsonValue>> &TargetTypesJSON)
+{
+	for (int32 i = 0; i != TargetTypesJSON.Num(); ++i)
+	{
+		int32 targetTypeID = TargetTypesJSON[i]->AsObject()->GetIntegerField(TEXT("targetTypeID"));
+		FString targetType = TargetTypesJSON[i]->AsObject()->GetStringField(TEXT("targetEnumClass"));
+		int32 points = TargetTypesJSON[i]->AsObject()->GetIntegerField(TEXT("points"));
+		int32 headShotPoints = TargetTypesJSON[i]->AsObject()->GetIntegerField(TEXT("headShotPoints"));
+
+		TargetTypes.Emplace(FTargetTypeProperties(targetTypeID, UUnrealShooterDataSingleton::GetEnumByString(targetType), points, headShotPoints));
 	}
 }
 
@@ -113,6 +132,45 @@ ETargetType UUnrealShooterDataSingleton::GetEnumByString(FString const & inStrin
 	if (inString == "InnocentTarget") return ETargetType::InnocentTarget;
 	if (inString == "FemaleTarget") return ETargetType::FemaleTarget;
 	if (inString == "MaleTarget") return ETargetType::MaleTarget;
+	return ETargetType::MaleTarget;
+}
+
+int32 UUnrealShooterDataSingleton::GetTargetPointsByTargetTypeID(int32 targetTypeID)
+{
+	for (int32 i = 0; i != TargetTypes.Num(); ++i)
+	{
+		int32 myTargetTypeID = TargetTypes[i].TargetTypeID;
+		if (myTargetTypeID == targetTypeID)
+		{
+			return TargetTypes[i].Points;
+		}
+	}
+	return 0;
+}
+
+int32 UUnrealShooterDataSingleton::GetTargetHeadShotPointsByTargetTypeID(int32 targetTypeID)
+{
+	for (int32 i = 0; i != TargetTypes.Num(); ++i)
+	{
+		int32 myTargetTypeID = TargetTypes[i].TargetTypeID;
+		if (myTargetTypeID == targetTypeID)
+		{
+			return TargetTypes[i].HeadShotPoints;
+		}
+	}
+	return 0;
+}
+
+ETargetType UUnrealShooterDataSingleton::GetTargetTypeByTargetID(int32 targetTypeID)
+{
+	for (int32 i = 0; i != TargetTypes.Num(); ++i)
+	{
+		int32 myTargetTypeID = TargetTypes[i].TargetTypeID;
+		if (myTargetTypeID == targetTypeID)
+		{
+			return TargetTypes[i].TargetType;
+		}
+	}
 	return ETargetType::MaleTarget;
 }
 

@@ -18,8 +18,6 @@ UCLASS()
 class UNREALSHOOTER_API AExplosiveActor : public AActor
 {
 	GENERATED_BODY()
-
-	EExplosiveType explosiveType;
 	
 public:	
 	
@@ -38,6 +36,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		UDestructibleComponent* DynamiteMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Explosive Type")
+		EExplosiveType explosiveType;
 
 	UFUNCTION(Category = "Properties")
 		void ApplyProperties(EExplosiveType type);
