@@ -112,6 +112,9 @@ public:
 
 	UFUNCTION()
 		void PlayNextWave();
+
+	UFUNCTION()
+		void CheckForSpecialTargets();
 	
 
 	FTimerHandle TimerHandle;

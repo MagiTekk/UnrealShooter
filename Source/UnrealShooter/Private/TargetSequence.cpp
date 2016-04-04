@@ -87,15 +87,23 @@ void UTargetSequence::PlayNextWave()
 				TargetsAvailable++;
 			}
 		}
-		else if (SpecialTargetsAvailable > 0)
-		{
-			World->GetTimerManager().SetTimer(TimerHandle, this, &UTargetSequence::PlayNextWave, 2.0f, false);
-		}
 		else
 		{
-			//Sequence finished!
-			ReactivatePlayWavesButton();
+			CheckForSpecialTargets();
 		}
+	}
+}
+
+void UTargetSequence::CheckForSpecialTargets()
+{
+	if (SpecialTargetsAvailable > 0)
+	{
+		World->GetTimerManager().SetTimer(TimerHandle, this, &UTargetSequence::CheckForSpecialTargets, 2.0f, false);
+	}
+	else
+	{
+		//Sequence finished!
+		ReactivatePlayWavesButton();
 	}
 }
 
@@ -127,7 +135,7 @@ void UTargetSequence::ReactivatePlayWavesButton()
 	{
 		// Same as with the Object Iterator, access the subclass instance with the * or -> operators.
 		ABasicButton *Button = *ActorItr;
-
+		//UE_LOG(LogTemp, Warning, TEXT("ReactivatePlayWavesButton - %s"), *ActorItr->GetName());
 		if (Button->GetName() == "SequenceButton")
 		{
 			Button->ActivateButton();
