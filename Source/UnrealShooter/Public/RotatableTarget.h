@@ -89,9 +89,6 @@ public:
 		float Speed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
-		float TimeToLive;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		int32 Points;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
@@ -110,16 +107,15 @@ public:
 
 	FRotatableTargetProperties()
 	{
-		this->TimeToLive = 5.0f;
+
 	}
 
-	FRotatableTargetProperties(int32 TargetID, FVector InitialLocation, float TimeToLive, int32 Points, int32 HeadshotPoints, ETargetType TargetType = ETargetType::SpecialTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, bool bIsExplosive = false)
+	FRotatableTargetProperties(int32 TargetID, FVector InitialLocation, int32 Points, int32 HeadshotPoints, ETargetType TargetType = ETargetType::SpecialTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, bool bIsExplosive = false)
 	{
 		this->TargetID = TargetID;
 		this->InitialLocation = InitialLocation;
 		this->Locations = Locations;
 		this->Speed = Speed;
-		this->TimeToLive = TimeToLive;
 		this->Points = Points;
 		this->HeadshotPoints = HeadshotPoints;
 		this->bIsExplosive = bIsExplosive;
@@ -164,9 +160,6 @@ protected:
 
 	const float FROZEN_TIME = 6.0f;
 	const float LiGHTNING_TIME = 3.0f;
-
-	const int32 POINTS = 4.0f;
-	const int32 HEADSHOT_POINTS = 10.0f;
 
 	//color codes
 	const FLinearColor DEFAULTTARGET_COLOR =		{ 0.1f, 0.1f, 0.1f, 0.0f };

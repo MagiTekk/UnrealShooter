@@ -3,6 +3,7 @@
 #include "UnrealShooter.h"
 #include "Weapon_M9.h"
 #include "MainCharacter.h"
+#include "UnrealShooterLevelScriptActor.h"
 #include "UnrealShooterDataSingleton.h"
 #include "RotatableTarget.h"
 
@@ -169,6 +170,8 @@ void AWeapon_M9::ShootWeapon()
 
 void AWeapon_M9::OnHit(FHitResult hitResult)
 {
+	bool bHitSuccess = false;
+
 	//gunshot hit effect
 	GetWorld()->SpawnActor<AActor>(Gunshot_FinalEffect, LaserImpact->GetComponentLocation(), LaserImpact->GetComponentRotation());
 
@@ -185,6 +188,7 @@ void AWeapon_M9::OnHit(FHitResult hitResult)
 				if (destructibleComponent)
 				{
 					destructibleComponent->ApplyRadiusDamage(100.0f, hitResult.Location, 360.0f, 100.0f, true);
+					bHitSuccess = true;
 				}
 			}
 		}
@@ -199,6 +203,17 @@ void AWeapon_M9::OnHit(FHitResult hitResult)
 				rotatableTarget->bIsHeadShot = true;
 			}
 			rotatableTarget->OnTargetHit();
+			bHitSuccess = true;
+		}
+	}
+
+
+	if (!bHitSuccess)
+	{
+		AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
+		if (MyLvlBP)
+		{
+			MyLvlBP->ResetTargetsHit();
 		}
 	}
 }

@@ -10,6 +10,9 @@ AUnrealShooterLevelScriptActor::AUnrealShooterLevelScriptActor()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
 
+	ConstructorHelpers::FObjectFinder<UClass> camShake(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Effects/SpecialTargetCameraShake.SpecialTargetCameraShake_C'"));
+	CameraShakeBP = camShake.Object;
+
 	WorldReference = GetWorld();
 }
 
@@ -17,6 +20,7 @@ AUnrealShooterLevelScriptActor::AUnrealShooterLevelScriptActor()
 void AUnrealShooterLevelScriptActor::BeginPlay()
 {
 	Super::BeginPlay();
+	ResetTargetsHit();
 }
 
 // Called every frame
@@ -29,6 +33,34 @@ void AUnrealShooterLevelScriptActor::Tick(float DeltaTime)
 void AUnrealShooterLevelScriptActor::BeginDestroy()
 {
 	Super::BeginDestroy();
+}
+
+void AUnrealShooterLevelScriptActor::ResetTargetsHit()
+{
+	TargetsHit = 0;
+}
+
+void AUnrealShooterLevelScriptActor::RewardTargetPoints(int32 points)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::FString(FString::FromInt(points)));
+}
+
+void AUnrealShooterLevelScriptActor::CameraShake()
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC)
+	{
+		PC->ClientPlayCameraShake(CameraShakeBP, 10.0f);
+	}
+}
+
+void AUnrealShooterLevelScriptActor::OnTargetHit()
+{
+	TargetsHit++;
+	if (TargetsHit % 5 == 0)
+	{
+		CurrentSequence->SpawnSpecialTarget();
+	}
 }
 
 void AUnrealShooterLevelScriptActor::PlaySequence(ESequenceEnum sequenceType)

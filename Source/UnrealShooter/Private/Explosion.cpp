@@ -2,6 +2,7 @@
 
 #include "UnrealShooter.h"
 #include "RotatableTarget.h"
+#include "UnrealShooterLevelScriptActor.h"
 #include "Explosion.h"
 
 
@@ -140,6 +141,8 @@ void AExplosion::ApplyExplosionEffect()
 					beam = UGameplayStatics::SpawnEmitterAttached(LightningBeamReference, Target->HeadCenterPointScene);
 					beam->SetBeamTargetPoint(0, this->GetActorLocation(), 0);
 					Target->LightningIncoming();
+					break;
+				case EExplosiveType::Special:
 					break;
 				default:
 					Target->OnTargetHit();

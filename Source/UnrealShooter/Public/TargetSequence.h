@@ -70,28 +70,48 @@ class UNREALSHOOTER_API UTargetSequence : public UObject
 	FTargetWave _currentWave;
 	TArray<ARotatableTarget*> _currentWaveTargets;
 	int32 TargetsAvailable;
+	int32 SpecialTargetsAvailable;
 	FTargetWave GetNextWave();
 	
 public:
 
 	UTargetSequence();
 
-	FString sequenceName;
-	TArray<FTargetWave> Waves;
+	UPROPERTY()
+		FString sequenceName;
 
-	UWorld* World;
-	UClass* TargetBP;
-	//UClass* TargetCylinderBP;
+	UPROPERTY()
+		TArray<FTargetWave> Waves;
+
+	UPROPERTY()
+		UWorld* World;
+
+	UPROPERTY()
+		UClass* TargetBP;
+
+	UPROPERTY()
+		UClass* SpecialTargetBP;
 	
 	/*
 	* Important, to add a callBack to a MultiCast delegate you must
 	* make this an UFUNCTION() or it will not fire
 	*/
 	UFUNCTION()
-	void OnTargetDestroyedHandler();
+		void OnTargetDestroyedHandler();
+	UFUNCTION()
+		void OnSpecialTargetDestroyedHandler();
 
-	void ApplyProperties(FString sequenceName, TArray<FTargetWave> Waves, UWorld* World);
-	void PlayNextWave();
+	UFUNCTION()
+		void ReactivatePlayWavesButton();
+
+	UFUNCTION()
+		void SpawnSpecialTarget();
+
+	UFUNCTION()
+		void ApplyProperties(FString sqName, TArray<FTargetWave> SequenceWaves, UWorld* theWorld);
+
+	UFUNCTION()
+		void PlayNextWave();
 	
 
 	FTimerHandle TimerHandle;

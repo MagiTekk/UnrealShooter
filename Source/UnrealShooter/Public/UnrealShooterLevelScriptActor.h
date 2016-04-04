@@ -14,7 +14,7 @@ UCLASS()
 class UNREALSHOOTER_API AUnrealShooterLevelScriptActor : public ALevelScriptActor
 {
 	GENERATED_BODY()
-	
+
 public:
 
 	AUnrealShooterLevelScriptActor();
@@ -23,8 +23,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UnrealShooterLevel)
 		FName UnrealShooterLevelName;
 
-	UPROPERTY()
-		UWorld* WorldReference;
+	UWorld* WorldReference;
+	int32 TargetsHit;
 
 	/*
 	* **If you don't specify this UPROPERTY then the GC will get rid of this UObject**
@@ -36,6 +36,8 @@ public:
 	UPROPERTY()
 	UTargetSequence* CurrentSequence;
 
+	UClass* CameraShakeBP;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -45,9 +47,22 @@ public:
 	// On remove from world
 	virtual void BeginDestroy() override;
 
+	UFUNCTION()
+		void ResetTargetsHit();
+
+	UFUNCTION()
+		void OnTargetHit();
+
+	UFUNCTION()
+		void CameraShake();
+
+	UFUNCTION()
+		void RewardTargetPoints(int32 points);
+
 #pragma region Sequences
 
-	void PlaySequence(ESequenceEnum sequenceType);
+	UFUNCTION()
+		void PlaySequence(ESequenceEnum sequenceType);
 
 #pragma endregion
 };

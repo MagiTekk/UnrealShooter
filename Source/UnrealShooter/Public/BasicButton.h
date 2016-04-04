@@ -55,5 +55,8 @@ public:
 		UMaterialInstanceConstant* DynamicInstanceConstant;
 
 	UFUNCTION()
+		void ActivateButton();
+
+	UFUNCTION()
 		virtual void OnContextAction();
 };

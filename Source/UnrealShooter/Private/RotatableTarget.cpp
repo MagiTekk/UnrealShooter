@@ -4,6 +4,7 @@
 #include "BasicSpawnPoint.h"
 #include "RotatableTarget.h"
 #include "ExplosiveActor.h"
+#include "UnrealShooterLevelScriptActor.h"
 #include "UnrealShooterDataSingleton.h"
 #include "Engine/DestructibleMesh.h"
 
@@ -294,6 +295,13 @@ void ARotatableTarget::OnTargetHit()
 	LowerTarget();
 	startVanish();
 	RewardTargetPoints();
+
+	//chain hits for special target display
+	AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
+	if (MyLvlBP)
+	{
+		MyLvlBP->OnTargetHit();
+	}
 }
 
 void ARotatableTarget::startVanish()
@@ -348,7 +356,11 @@ void ARotatableTarget::Vanish()
 
 void ARotatableTarget::RewardTargetPoints()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::FString(FString::FromInt(bIsHeadShot ? TargetProperties.HeadshotPoints : TargetProperties.Points)));
+	AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
+	if (MyLvlBP)
+	{
+		MyLvlBP->RewardTargetPoints(bIsHeadShot ? TargetProperties.HeadshotPoints : TargetProperties.Points);
+	}
 }
 
 void ARotatableTarget::Die()

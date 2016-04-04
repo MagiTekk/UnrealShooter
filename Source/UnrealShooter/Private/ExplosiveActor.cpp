@@ -4,6 +4,7 @@
 #include "ExplosiveActor.h"
 #include "Explosion.h"
 #include "Engine/DestructibleMesh.h"
+#include "UnrealShooterLevelScriptActor.h"
 
 
 AExplosiveActor::AExplosiveActor()
@@ -117,6 +118,16 @@ void AExplosiveActor::OnDynamiteFractured(const FVector& HitPoint, const FVector
 	AExplosion* explosionActor = GetWorld()->SpawnActor<AExplosion>(ExplosionBP, GetActorLocation(), FRotator(0, 0, 0));
 	explosionActor->ApplyProperties(explosiveType);
 	explosionActor->Explode();
+
+	if (explosiveType == EExplosiveType::Fire)
+	{
+		//reward points && shake the camera effect
+		AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
+		if (MyLvlBP)
+		{
+			MyLvlBP->CameraShake();
+		}
+	}
 
 	GetWorld()->GetTimerManager().SetTimer(ActorTimerHandle, this, &AExplosiveActor::Die, TIME_TO_LIVE, false);
 }

@@ -77,10 +77,6 @@ void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValu
 	{
 		int32 targetID = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("targetID"));
 		int32 initialLocationID = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("initialLocation"));
-		int32 timeToLive = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("ttl"));
-
-		int32 points = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("ttl"));
-		int32 headShotPoints = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("ttl"));
 
 		int32 targetType = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("targetType"));
 		float speed = TargetsJSON[i]->AsObject()->GetNumberField(TEXT("speed"));
@@ -95,7 +91,7 @@ void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValu
 			int32 locationID = movementLocationsSubJSON[j]->AsNumber();
 			movementLocations.Add(GetTargetLocationByID(locationID).Location);
 		}
-		Targets.Emplace(FRotatableTargetProperties(targetID, spawnPointLocation, timeToLive, GetTargetPointsByTargetTypeID(targetType), GetTargetHeadShotPointsByTargetTypeID(targetType), GetTargetTypeByTargetID(targetType), movementLocations, speed, isExplosive));
+		Targets.Emplace(FRotatableTargetProperties(targetID, spawnPointLocation, GetTargetPointsByTargetTypeID(targetType), GetTargetHeadShotPointsByTargetTypeID(targetType), GetTargetTypeByTargetID(targetType), movementLocations, speed, isExplosive));
 	}
 }
 

@@ -146,7 +146,7 @@ void AMainCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 	InputComponent->BindAction("ExecuteAction", IE_Pressed, this, &AMainCharacter::ExecuteContextAction);
 
-	InputComponent->BindAction("Pause", IE_Pressed, this, &AMainCharacter::PauseGame);
+	InputComponent->BindAction("Pause", IE_Pressed, this, &AMainCharacter::PauseGame).bExecuteWhenPaused = true;
 
 	/* UI Mappings */
 	InputComponent->BindAction("UINavigationUp", IE_Pressed, this, &AMainCharacter::UINavigationUp).bExecuteWhenPaused = true;
@@ -579,20 +579,23 @@ void AMainCharacter::ExecuteContextAction()
 {
 	if (ActionListener)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0, FColor::Magenta, FString::FString("EXECUTE CONTEXT ACTION"));
-		ActionListener->OnContextAction();
+		//GEngine->AddOnScreenDebugMessage(-1, 3.0, FColor::Magenta, FString::FString("EXECUTE CONTEXT ACTION"));
+		if (!bReloadPistol)
+		{
+			ActionListener->OnContextAction();
+		}
 	}
 }
 
 void AMainCharacter::OnRegisterActorAsListener(AActor * IteractiveActor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Character - Enter Overlap"));
+	//UE_LOG(LogTemp, Warning, TEXT("Character - Enter Overlap"));
 	ActionListener = Cast<ABasicButton>(IteractiveActor);
 }
 
 void AMainCharacter::OnUnregisterActorAsListener()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Character - Exit Overlap"));
+	//UE_LOG(LogTemp, Warning, TEXT("Character - Exit Overlap"));
 	ActionListener = nullptr;
 }
 

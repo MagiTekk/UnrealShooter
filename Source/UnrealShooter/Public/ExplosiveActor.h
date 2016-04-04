@@ -11,6 +11,7 @@ enum class EExplosiveType : uint8
 	Fire,
 	Ice,
 	Lightning,
+	Special,
 	Default
 };
 
@@ -49,7 +50,7 @@ public:
 	UFUNCTION()
 		void OnDynamiteFractured(const FVector& HitPoint, const FVector& HitDirection);
 
-#pragma region ColorCodes
+#pragma region Constants
 
 		const float TIME_TO_LIVE = 2.0f;
 
@@ -89,9 +90,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Particle System")
 		UParticleSystemComponent* ExplosiveTypeParticleEffect;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Particle System")
-		UParticleSystemComponent* BlastParticleEffect;
 
 #pragma endregion
 

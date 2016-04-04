@@ -71,7 +71,7 @@ void AUnrealPlayerController::AddStartScreen()
 
 void AUnrealPlayerController::ShowPauseMenu()
 {
-	if (wPauseMenu) // Check if the Asset is assigned in the blueprint.
+	if (wPauseMenu && !IsPaused()) // Check if the Asset is assigned in the blueprint.
 	{
 		// Create the widget and store it.
 		PauseMenuReference = CreateWidget<UUserWidget>(this, wPauseMenu);
@@ -91,6 +91,17 @@ void AUnrealPlayerController::ShowPauseMenu()
 
 		//Show the Cursor.
 		bShowMouseCursor = true;
+	}
+	else if (PauseMenuReference)
+	{
+		//unpause
+		FInputModeGameOnly Mode;
+		SetInputMode(Mode);
+		bShowMouseCursor = false;
+		bIsWidgetShown = false;
+		PauseMenuReference->RemoveFromViewport();
+		SetPause(false);
+		bIsWidgetShown = false;
 	}
 }
 

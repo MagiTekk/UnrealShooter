@@ -2,6 +2,7 @@
 
 #include "UnrealShooter.h"
 #include "BasicButton.h"
+#include "MainCharacter.h"
 
 
 // Sets default values
@@ -24,7 +25,7 @@ ABasicButton::ABasicButton()
 	ButtonMesh->AttachTo(DefaultSceneRoot);
 
 	TriggerCollission = CreateDefaultSubobject<UCapsuleComponent>(TEXT("TriggerCollission"));
-	TriggerCollission->AttachTo(ButtonMesh);
+	TriggerCollission->AttachTo(DefaultSceneRoot);
 	TriggerCollission->SetCapsuleSize(156.53f, 156.53f);
 
 	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> DefaultMaterialObj(TEXT("MaterialInstanceConstant'/Game/DemoRoom/Materials/M_Button_Inst.M_Button_Inst'"));
@@ -51,32 +52,47 @@ void ABasicButton::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	DynamicMaterialInstance = UMaterialInstanceDynamic::Create(DynamicInstanceConstant, this);
-	DynamicMaterialInstance->SetScalarParameterValue("State", 1);
+	DynamicMaterialInstance->SetScalarParameterValue("State", 0);
 	ButtonMesh->SetMaterial(2, DynamicMaterialInstance);
 }
 
 void ABasicButton::NotifyActorBeginOverlap(AActor * OtherActor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Button - Enter Overlap"));
-	TextRenderComponent->SetVisibility(true);
-
-	//fire signal
-	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	DataInstance->OnActorBeginOverlap.Broadcast(this);
+	AMainCharacter* mainChar = Cast<AMainCharacter>(OtherActor);
+	if (!bIsActive && mainChar)
+	{
+		ActivateButton();
+	}
 }
 
 void ABasicButton::NotifyActorEndOverlap(AActor * OtherActor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Button - Exit Overlap"));
-	TextRenderComponent->SetVisibility(false);
+	AMainCharacter* mainChar = Cast<AMainCharacter>(OtherActor);
+	if (!bIsActive && mainChar)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Button - Exit Overlap"));
+		TextRenderComponent->SetVisibility(false);
 
-	//set material instance state to active
-	DynamicMaterialInstance->SetScalarParameterValue("State", 1);
+		//set material instance state to active
+		DynamicMaterialInstance->SetScalarParameterValue("State", 0);
+		//bIsActive = false;
+
+		//fire signal
+		UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+		DataInstance->OnActorEndOverlap.Broadcast();
+	}
+}
+
+void ABasicButton::ActivateButton()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Button - ActivateButton"));
 	bIsActive = false;
+	TextRenderComponent->SetVisibility(true);
+	DynamicMaterialInstance->SetScalarParameterValue("State", 1);
 
 	//fire signal
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	DataInstance->OnActorEndOverlap.Broadcast();
+	DataInstance->OnActorBeginOverlap.Broadcast(this);
 }
 
 void ABasicButton::OnContextAction()
@@ -92,6 +108,7 @@ void ABasicButton::OnContextAction()
 		MyLvlBP->PlaySequence(SequenceType);
 
 		bIsActive = true;
+		TextRenderComponent->SetVisibility(false);
 	}
 }
 

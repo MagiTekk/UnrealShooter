@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UnrealShooter.h"
+#include "BasicButton.h"
 #include "BasicSpawnPoint.h"
+#include "SpecialTarget.h"
 #include "RotatableTarget.h"
 #include "Engine/DestructibleMesh.h"
 #include "UnrealShooterDataSingleton.h"
@@ -12,23 +14,42 @@ UTargetSequence::UTargetSequence()
 	ConstructorHelpers::FObjectFinder<UClass> Target(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Target/TargetDummyBP.TargetDummyBP_C'"));
 	TargetBP = Target.Object;
 
-	/*
-	ConstructorHelpers::FObjectFinder<UClass> TargetCylinder(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Target/TargetCylinder_BP.TargetCylinder_BP_C'"));
-	TargetCylinderBP = TargetCylinder.Object;
-	*/
+	ConstructorHelpers::FObjectFinder<UClass> specialTargetReference(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Target/SpecialTargetBP.SpecialTargetBP_C'"));
+	SpecialTargetBP = specialTargetReference.Object;
 }
 
-void UTargetSequence::ApplyProperties(FString sequenceName, TArray<FTargetWave> Waves, UWorld* World)
+void UTargetSequence::ApplyProperties(FString sqName, TArray<FTargetWave> SequenceWaves, UWorld* theWorld)
 {
-	this->sequenceName = sequenceName;
-	this->Waves = Waves;
-	this->World = World;
+	this->sequenceName = sqName;
+	this->Waves = SequenceWaves;
+	this->World = theWorld;
 
 	TargetsAvailable = 0;
 
 	//event handler
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 	DataInstance->OnTargetDestroyed.AddDynamic(this, &UTargetSequence::OnTargetDestroyedHandler);
+	DataInstance->OnSpecialTargetDestroyed.AddDynamic(this, &UTargetSequence::OnSpecialTargetDestroyedHandler);
+}
+
+void UTargetSequence::SpawnSpecialTarget()
+{
+	//Spawn special target
+	ASpecialTarget* targetSpawned = World->SpawnActor<ASpecialTarget>(SpecialTargetBP);
+	
+	//default destination
+	FVector Arr[] = { FVector(101.0f, 101.0f, 0.0f) };
+	TArray<FVector> locations;
+	locations.Append(Arr, ARRAY_COUNT(Arr));
+
+	targetSpawned->ApplyProperties(FSpecialTargetProperties(FVector(100.0f, 100.0f, 0.0f), 0.0f, 100, locations));
+	SpecialTargetsAvailable++;
+}
+
+void UTargetSequence::OnSpecialTargetDestroyedHandler()
+{
+	//check if all the targets on this wave were destroyed
+	SpecialTargetsAvailable--;
 }
 
 void UTargetSequence::OnTargetDestroyedHandler()
@@ -54,10 +75,9 @@ void UTargetSequence::PlayNextWave()
 			GEngine->AddOnScreenDebugMessage(-1, 3.0, FColor::Magenta, FString::FString("RELOAD TIME"));
 
 			//this is because the wave is simply a "reload time" wave
-			FTimerHandle THandle;
-			World->GetTimerManager().SetTimer(THandle, this, &UTargetSequence::PlayNextWave, 3.0f, false);
+			World->GetTimerManager().SetTimer(TimerHandle, this, &UTargetSequence::PlayNextWave, 3.0f, false);
 		}
-		else
+		else if (_currentWave.Targets.Num() > 0)
 		{
 			ARotatableTarget* spawnedTarget;
 			for (auto& props : _currentWave.Targets)
@@ -67,13 +87,22 @@ void UTargetSequence::PlayNextWave()
 				TargetsAvailable++;
 			}
 		}
+		else if (SpecialTargetsAvailable > 0)
+		{
+			World->GetTimerManager().SetTimer(TimerHandle, this, &UTargetSequence::PlayNextWave, 2.0f, false);
+		}
+		else
+		{
+			//Sequence finished!
+			ReactivatePlayWavesButton();
+		}
 	}
 }
 
 FTargetWave UTargetSequence::GetNextWave()
 {
 	//first wave not set
-	if (_currentWave.WaveID != -1.0f && _currentWave.Targets.Num() == 0)
+	if (_currentWave.WaveID != -1 && _currentWave.WaveID >= 0 && _currentWave.Targets.Num() == 0)
 	{
 		return Waves[0];
 	}
@@ -90,6 +119,21 @@ FTargetWave UTargetSequence::GetNextWave()
 		}
 	}
 	return FTargetWave();
+}
+
+void UTargetSequence::ReactivatePlayWavesButton()
+{
+	for (TActorIterator<ABasicButton> ActorItr(World); ActorItr; ++ActorItr)
+	{
+		// Same as with the Object Iterator, access the subclass instance with the * or -> operators.
+		ABasicButton *Button = *ActorItr;
+
+		if (Button->GetName() == "SequenceButton")
+		{
+			Button->ActivateButton();
+			break;
+		}
+	}
 }
 
 
