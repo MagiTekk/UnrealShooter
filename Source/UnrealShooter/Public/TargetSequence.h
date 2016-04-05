@@ -70,12 +70,13 @@ class UNREALSHOOTER_API UTargetSequence : public UObject
 	FTargetWave _currentWave;
 	TArray<ARotatableTarget*> _currentWaveTargets;
 	int32 TargetsAvailable;
-	int32 SpecialTargetsAvailable;
 	FTargetWave GetNextWave();
 	
 public:
 
 	UTargetSequence();
+
+	const int32 DEFAULT_SPECIAL_TARGET_POINTS = 500;
 
 	UPROPERTY()
 		FString sequenceName;
@@ -98,8 +99,6 @@ public:
 	*/
 	UFUNCTION()
 		void OnTargetDestroyedHandler();
-	UFUNCTION()
-		void OnSpecialTargetDestroyedHandler();
 
 	UFUNCTION()
 		void ReactivatePlayWavesButton();
@@ -112,9 +111,6 @@ public:
 
 	UFUNCTION()
 		void PlayNextWave();
-
-	UFUNCTION()
-		void CheckForSpecialTargets();
 	
 
 	FTimerHandle TimerHandle;

@@ -41,7 +41,6 @@ void ARotatableTarget::InitTarget()
 	BaseMesh->SetStaticMesh(meshBase.Object);
 	BaseMesh->AttachTo(DefaultSceneRoot);
 
-	//ConstructorHelpers::FObjectFinder<AActor> dynamiteBP(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Target/ExplosiveTarget.ExplosiveTarget_C'"));
 	Dynamite = CreateDefaultSubobject<UChildActorComponent>(TEXT("Dynamite"));
 	Dynamite->SetChildActorClass(AExplosiveActor::StaticClass());
 	Dynamite->AttachTo(DefaultSceneRoot);
@@ -110,7 +109,6 @@ FLinearColor ARotatableTarget::GetMaterialColor()
 		case ETargetType::InnocentTarget:
 			return FALSETARGET_COLOR;
 			break;
-		case ETargetType::SpecialTarget:
 		default:
 			return DEFAULTTARGET_COLOR;
 			break;
@@ -122,9 +120,28 @@ void ARotatableTarget::ApplyProperties(FRotatableTargetProperties TargetProperti
 	this->TargetProperties = TargetProperties;
 	this->SetActorLocation(GetSpawnPoint(TargetProperties.InitialLocation));
 	this->TimeToLive = TimeToLive;
-	//Dynamite->DestroyComponent();
+
+	//comment out this call and you will have a default explosive on every target!
+	InitDynamite();
+
 	SetNewLocation();
 	UpdateMaterialInstance();
+}
+
+void ARotatableTarget::InitDynamite()
+{
+	if (TargetProperties.ExplosiveType == EExplosiveType::NonExplosive)
+	{
+		Dynamite->DestroyComponent();
+	}
+	else
+	{
+		AExplosiveActor* DynamiteActor = Cast<AExplosiveActor>(Dynamite->ChildActor);
+		if (DynamiteActor)
+		{
+			DynamiteActor->ApplyProperties(TargetProperties.ExplosiveType);
+		}
+	}
 }
 
 // Called every frame
@@ -288,19 +305,26 @@ void ARotatableTarget::OnHeadFractured(const FVector& HitPoint, const FVector& H
 	bIsHeadShot = true;
 }
 
-void ARotatableTarget::OnTargetHit()
+void ARotatableTarget::OnTargetHit(bool forceHit)
 {
-	bIsTranslucent = true;
-	UpdateMaterialInstance();
-	LowerTarget();
-	startVanish();
-	RewardTargetPoints();
-
-	//chain hits for special target display
-	AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
-	if (MyLvlBP)
+	//in case the target has been hit already
+	if (!bIsTranslucent && !bIsElectrified || forceHit)
 	{
-		MyLvlBP->OnTargetHit();
+		if (!bIsFrozen)
+		{
+			bIsTranslucent = true;
+		}
+		UpdateMaterialInstance();
+		LowerTarget();
+		startVanish();
+		RewardTargetPoints();
+
+		//chain hits for special target display
+		AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
+		if (MyLvlBP)
+		{
+			MyLvlBP->OnTargetHit();
+		}
 	}
 }
 
@@ -328,13 +352,17 @@ void ARotatableTarget::UnFreeze()
 
 void ARotatableTarget::LightningIncoming()
 {
+	bIsElectrified = true;
 	GetWorld()->GetTimerManager().SetTimer(LightningTimerHandle, this, &ARotatableTarget::LightningStrike, LiGHTNING_TIME, false);
 }
 
 void ARotatableTarget::LightningStrike()
 {
 	HeadMesh->ApplyRadiusDamage(100.0f, HeadCenterPointScene->GetComponentLocation(), 360.0f, 100.0f, true);
-	GetWorld()->GetTimerManager().SetTimer(LightningTimerHandle, this, &ARotatableTarget::OnTargetHit, 1.0f, false);
+
+	//timer with parameters, they have to be passed using a FTimerDelegate
+	FTimerDelegate LightningDelegate = FTimerDelegate::CreateUObject(this, &ARotatableTarget::OnTargetHit, true);
+	GetWorld()->GetTimerManager().SetTimer(LightningTimerHandle, LightningDelegate, 1.0f, false);
 }
 
 //vanish this actor
@@ -360,6 +388,7 @@ void ARotatableTarget::RewardTargetPoints()
 	if (MyLvlBP)
 	{
 		MyLvlBP->RewardTargetPoints(bIsHeadShot ? TargetProperties.HeadshotPoints : TargetProperties.Points);
+		bIsHeadShot = false; //when target is frozen you can get double points if you don't do this
 	}
 }
 
@@ -375,7 +404,10 @@ void ARotatableTarget::Die()
 	DataInstance->OnTargetDestroyed.Broadcast();
 
 	//get rid of the dynamite
-	Dynamite->DestroyComponent();
+	if (Dynamite)
+	{
+		Dynamite->DestroyComponent();
+	}
 
 	//destroy
 	Destroy();

@@ -3,12 +3,12 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "ExplosiveActor.h"
 #include "RotatableTarget.generated.h"
 
 UENUM()
 enum class ETargetType : uint8
 {
-	SpecialTarget,
 	InnocentTarget,
 	FemaleTarget,
 	MaleTarget
@@ -95,7 +95,7 @@ public:
 		int32 HeadshotPoints;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
-		bool bIsExplosive;
+		EExplosiveType ExplosiveType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 		ETargetType TargetType;
@@ -110,7 +110,7 @@ public:
 
 	}
 
-	FRotatableTargetProperties(int32 TargetID, FVector InitialLocation, int32 Points, int32 HeadshotPoints, ETargetType TargetType = ETargetType::SpecialTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, bool bIsExplosive = false)
+	FRotatableTargetProperties(int32 TargetID, FVector InitialLocation, int32 Points, int32 HeadshotPoints, ETargetType TargetType = ETargetType::MaleTarget, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f, EExplosiveType ExplosiveType = EExplosiveType::NonExplosive)
 	{
 		this->TargetID = TargetID;
 		this->InitialLocation = InitialLocation;
@@ -118,7 +118,7 @@ public:
 		this->Speed = Speed;
 		this->Points = Points;
 		this->HeadshotPoints = HeadshotPoints;
-		this->bIsExplosive = bIsExplosive;
+		this->ExplosiveType = ExplosiveType;
 		this->TargetType = TargetType;
 	}
 };
@@ -134,6 +134,7 @@ class UNREALSHOOTER_API ARotatableTarget : public AActor
 	bool bMoveTarget;
 	bool bIsTranslucent;
 	bool bIsFrozen;
+	bool bIsElectrified;
 
 	float RotationalRate = DEFAULT_ROTATIONAL_RATE;
 
@@ -172,6 +173,7 @@ public:
 	ARotatableTarget();
 
 	void InitTarget();
+	void InitDynamite();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -231,7 +233,7 @@ public:
 		void OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection);
 
 	UFUNCTION()
-		void OnTargetHit();
+		void OnTargetHit(bool forceHit = false);
 	
 	UFUNCTION()
 		void RaiseTarget();

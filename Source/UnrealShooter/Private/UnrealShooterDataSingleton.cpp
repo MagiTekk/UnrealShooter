@@ -26,10 +26,12 @@ void UUnrealShooterDataSingleton::ParseJSON()
 		const TArray<TSharedPtr<FJsonValue>> WavesJSON = JsonObject->GetArrayField(TEXT("waves"));
 		const TArray<TSharedPtr<FJsonValue>> TargetsJSON = JsonObject->GetArrayField(TEXT("targets"));
 		const TArray<TSharedPtr<FJsonValue>> TargetTypesJSON = JsonObject->GetArrayField(TEXT("targetTypes"));
+		const TArray<TSharedPtr<FJsonValue>> ExplosiveTypesJSON = JsonObject->GetArrayField(TEXT("explosiveTypes"));
 		const TArray<TSharedPtr<FJsonValue>> LocationsJSON = JsonObject->GetArrayField("locations");
 
 		UUnrealShooterDataSingleton::ParseLocations(LocationsJSON);
 		UUnrealShooterDataSingleton::ParseTargetTypes(TargetTypesJSON);
+		UUnrealShooterDataSingleton::ParseExplosiveTypes(ExplosiveTypesJSON);
 		UUnrealShooterDataSingleton::ParseTargets(TargetsJSON);
 		UUnrealShooterDataSingleton::ParseWaves(WavesJSON);
 		UUnrealShooterDataSingleton::ParseSequences(SequencesJSON);
@@ -80,7 +82,7 @@ void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValu
 
 		int32 targetType = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("targetType"));
 		float speed = TargetsJSON[i]->AsObject()->GetNumberField(TEXT("speed"));
-		bool isExplosive = TargetsJSON[i]->AsObject()->GetBoolField(TEXT("isExplosive"));
+		int32 explosiveTypeID = TargetsJSON[i]->AsObject()->GetIntegerField(TEXT("explosiveType"));
 		
 		FVector spawnPointLocation = GetTargetLocationByID(initialLocationID).Location;
 		TArray<FVector> movementLocations;
@@ -91,7 +93,18 @@ void UUnrealShooterDataSingleton::ParseTargets(const TArray<TSharedPtr<FJsonValu
 			int32 locationID = movementLocationsSubJSON[j]->AsNumber();
 			movementLocations.Add(GetTargetLocationByID(locationID).Location);
 		}
-		Targets.Emplace(FRotatableTargetProperties(targetID, spawnPointLocation, GetTargetPointsByTargetTypeID(targetType), GetTargetHeadShotPointsByTargetTypeID(targetType), GetTargetTypeByTargetID(targetType), movementLocations, speed, isExplosive));
+		Targets.Emplace(FRotatableTargetProperties(targetID, spawnPointLocation, GetTargetPointsByTargetTypeID(targetType), GetTargetHeadShotPointsByTargetTypeID(targetType), GetTargetTypeByTargetID(targetType), movementLocations, speed, GetExplosiveTypeByExplosiveID(explosiveTypeID)));
+	}
+}
+
+void UUnrealShooterDataSingleton::ParseExplosiveTypes(const TArray<TSharedPtr<FJsonValue>> &ExplosiveTypesJSON)
+{
+	for (int32 i = 0; i != ExplosiveTypesJSON.Num(); ++i)
+	{
+		int32 explosiveTypeID = ExplosiveTypesJSON[i]->AsObject()->GetIntegerField(TEXT("explosiveTypeID"));
+		FString explosiveType = ExplosiveTypesJSON[i]->AsObject()->GetStringField(TEXT("explosiveEnumClass"));
+
+		ExplosiveTypes.Emplace(FExplosiveTypeProperties(explosiveTypeID, UUnrealShooterDataSingleton::GetExplosiveEnumByString(explosiveType)));
 	}
 }
 
@@ -122,9 +135,17 @@ void UUnrealShooterDataSingleton::ParseLocations(const TArray<TSharedPtr<FJsonVa
 	}
 }
 
+EExplosiveType UUnrealShooterDataSingleton::GetExplosiveEnumByString(FString const & inString)
+{
+	if (inString == "NonExplosive") return EExplosiveType::NonExplosive;
+	if (inString == "Fire") return EExplosiveType::Fire;
+	if (inString == "Ice") return EExplosiveType::Ice;
+	if (inString == "Lightning") return EExplosiveType::Lightning;
+	return EExplosiveType::NonExplosive;
+}
+
 ETargetType UUnrealShooterDataSingleton::GetEnumByString(FString const & inString)
 {
-	if (inString == "SpecialTarget") return ETargetType::SpecialTarget;
 	if (inString == "InnocentTarget") return ETargetType::InnocentTarget;
 	if (inString == "FemaleTarget") return ETargetType::FemaleTarget;
 	if (inString == "MaleTarget") return ETargetType::MaleTarget;
@@ -155,6 +176,19 @@ int32 UUnrealShooterDataSingleton::GetTargetHeadShotPointsByTargetTypeID(int32 t
 		}
 	}
 	return 0;
+}
+
+EExplosiveType UUnrealShooterDataSingleton::GetExplosiveTypeByExplosiveID(int32 explosiveTypeID)
+{
+	for (int32 i = 0; i != ExplosiveTypes.Num(); ++i)
+	{
+		int32 myExplosiveTypeID = ExplosiveTypes[i].ExplosiveTypeID;
+		if (myExplosiveTypeID == explosiveTypeID)
+		{
+			return ExplosiveTypes[i].ExplosiveType;
+		}
+	}
+	return EExplosiveType::NonExplosive;
 }
 
 ETargetType UUnrealShooterDataSingleton::GetTargetTypeByTargetID(int32 targetTypeID)
@@ -233,6 +267,9 @@ FTargetSequenceStruct UUnrealShooterDataSingleton::GetSequenceBySequenceEnum(ESe
 			break;
 		case ESequenceEnum::SequenceB:
 			SequenceName = TEXT("SequenceB");
+			break;
+		case ESequenceEnum::SequenceC:
+			SequenceName = TEXT("SequenceC");
 			break;
 	}
 

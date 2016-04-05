@@ -65,7 +65,8 @@ void AExplosion::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	ApplyProperties(EExplosiveType::Default);
+	//default explosion type for actors dragged into the level
+	ApplyProperties(EExplosiveType::Fire);
 }
 
 void AExplosion::ApplyProperties(EExplosiveType type)
@@ -82,7 +83,10 @@ void AExplosion::Explode()
 	ApplySoundEffect();
 
 	//get all affected targets and apply explosion
-	ApplyExplosionEffect();
+	if (explosiveType != EExplosiveType::NonExplosive)
+	{
+		ApplyExplosionEffect();
+	}
 
 	//set a timer for destruction
 	GetWorld()->GetTimerManager().SetTimer(ActorTimerHandle, this, &AExplosion::Die, TIME_TO_LIVE, false);
@@ -142,10 +146,7 @@ void AExplosion::ApplyExplosionEffect()
 					beam->SetBeamTargetPoint(0, this->GetActorLocation(), 0);
 					Target->LightningIncoming();
 					break;
-				case EExplosiveType::Special:
-					break;
 				default:
-					Target->OnTargetHit();
 					break;
 			}
 		}

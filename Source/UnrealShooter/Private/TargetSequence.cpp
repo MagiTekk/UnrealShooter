@@ -29,7 +29,6 @@ void UTargetSequence::ApplyProperties(FString sqName, TArray<FTargetWave> Sequen
 	//event handler
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 	DataInstance->OnTargetDestroyed.AddDynamic(this, &UTargetSequence::OnTargetDestroyedHandler);
-	DataInstance->OnSpecialTargetDestroyed.AddDynamic(this, &UTargetSequence::OnSpecialTargetDestroyedHandler);
 }
 
 void UTargetSequence::SpawnSpecialTarget()
@@ -42,14 +41,8 @@ void UTargetSequence::SpawnSpecialTarget()
 	TArray<FVector> locations;
 	locations.Append(Arr, ARRAY_COUNT(Arr));
 
-	targetSpawned->ApplyProperties(FSpecialTargetProperties(FVector(100.0f, 100.0f, 0.0f), 0.0f, 100, locations));
-	SpecialTargetsAvailable++;
-}
-
-void UTargetSequence::OnSpecialTargetDestroyedHandler()
-{
-	//check if all the targets on this wave were destroyed
-	SpecialTargetsAvailable--;
+	targetSpawned->ApplyProperties(FSpecialTargetProperties(FVector(100.0f, 100.0f, 0.0f), 0.0f, DEFAULT_SPECIAL_TARGET_POINTS, locations));
+	TargetsAvailable++;
 }
 
 void UTargetSequence::OnTargetDestroyedHandler()
@@ -89,21 +82,9 @@ void UTargetSequence::PlayNextWave()
 		}
 		else
 		{
-			CheckForSpecialTargets();
+			//Sequence finished!
+			ReactivatePlayWavesButton();
 		}
-	}
-}
-
-void UTargetSequence::CheckForSpecialTargets()
-{
-	if (SpecialTargetsAvailable > 0)
-	{
-		World->GetTimerManager().SetTimer(TimerHandle, this, &UTargetSequence::CheckForSpecialTargets, 2.0f, false);
-	}
-	else
-	{
-		//Sequence finished!
-		ReactivatePlayWavesButton();
 	}
 }
 

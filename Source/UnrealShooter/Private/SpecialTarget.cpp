@@ -92,7 +92,7 @@ void ASpecialTarget::OnMeshFractured(const FVector & HitPoint, const FVector & H
 
 	//spawn a blast particle effect on the location this actor was when the mesh fracture happened
 	AExplosion* explosionActor = GetWorld()->SpawnActor<AExplosion>(ExplosionBP, GetActorLocation(), FRotator(0, 0, 0));
-	explosionActor->ApplyProperties(EExplosiveType::Special);
+	explosionActor->ApplyProperties(EExplosiveType::NonExplosive);
 	explosionActor->Explode();
 
 	//reward points && shake the camera effect
@@ -197,7 +197,7 @@ void ASpecialTarget::Die()
 {
 	//launch a signal to update our sequence
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	DataInstance->OnSpecialTargetDestroyed.Broadcast();
+	DataInstance->OnTargetDestroyed.Broadcast();
 
 	Destroy();
 }

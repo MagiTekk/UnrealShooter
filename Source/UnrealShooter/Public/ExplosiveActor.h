@@ -11,8 +11,31 @@ enum class EExplosiveType : uint8
 	Fire,
 	Ice,
 	Lightning,
-	Special,
-	Default
+	NonExplosive
+};
+
+USTRUCT()
+struct FExplosiveTypeProperties
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+		int32 ExplosiveTypeID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+		EExplosiveType ExplosiveType;
+
+	FExplosiveTypeProperties()
+	{
+	}
+
+	FExplosiveTypeProperties(int32 ExplosiveTypeID, EExplosiveType ExplosiveType)
+	{
+		this->ExplosiveTypeID = ExplosiveTypeID;
+		this->ExplosiveType = ExplosiveType;
+	}
 };
 
 UCLASS()
