@@ -27,6 +27,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ResolutionScale")
 		FString WINDOW_BIG = "r.SetRes 1920x1080";
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ResolutionScale")
+		FString WINDOW_MEDIUM = "r.SetRes 1280x768";
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ResolutionScale")
+		FString WINDOW_SMALL = "r.SetRes 800x600";
+
 	//Resolution
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ResolutionScale")
 		FString RESOLUTION_LOW = "sg.ResolutionQuality 25";
