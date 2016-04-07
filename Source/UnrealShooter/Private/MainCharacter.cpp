@@ -405,9 +405,13 @@ void AMainCharacter::BRangCharacterYaw()
 The animBP will take this var and run the animation depending on true or false */
 void AMainCharacter::Equip_Pistol()
 {
-	//toggle this value
-	bUnEquipPistol = bEquipPistol;
-	bEquipPistol = !bEquipPistol;
+	if (!bBlockEquipAction && !bCameraZoomIn && !bReloadPistol)
+	{
+		//toggle this value
+		bUnEquipPistol = bEquipPistol;
+		bEquipPistol = !bEquipPistol;
+		bBlockEquipAction = true;
+	}
 }
 
 /**
@@ -415,7 +419,7 @@ create a timeline and do the animation here, maybe create a timeline helper clas
 */
 void AMainCharacter::Trigger_Aim_In()
 {
-	if (ActiveWeapon && GetSpawndedM9()->bIsWeaponAttached)
+	if (ActiveWeapon && GetSpawndedM9()->bIsWeaponAttached && GetSpawndedM9()->Mesh->IsVisible() && bEquipPistol)
 	{
 		bCameraZoomIn = true;
 		bCameraZoomOut = false;
@@ -449,7 +453,7 @@ void AMainCharacter::Trigger_Aim_In()
 
 void AMainCharacter::Trigger_Aim_Out()
 {
-	if (bEquipPistol)
+	if (ActiveWeapon && GetSpawndedM9()->bIsWeaponAttached && GetSpawndedM9()->Mesh->IsVisible() && bEquipPistol)
 	{
 		bCameraZoomIn = false;
 		bCameraZoomOut = true;
@@ -480,7 +484,7 @@ void AMainCharacter::Aim_Out()
 void AMainCharacter::StartReloading()
 {
 	//only reload when you are aiming
-	if (ActiveWeapon && bCameraZoomIn && AmmoAvailable > 0)
+	if (ActiveWeapon && GetSpawndedM9()->Mesh->IsVisible() && bCameraZoomIn && AmmoAvailable > 0)
 	{
 		//goes back to false on the animation blueprint
 		bReloadPistol = true;
@@ -490,7 +494,7 @@ void AMainCharacter::StartReloading()
 void AMainCharacter::ReloadWeapon()
 {
 	//only reload when you are aiming
-	if (ActiveWeapon)
+	if (ActiveWeapon && GetSpawndedM9()->Mesh->IsVisible())
 	{
 		AWeapon_M9* SpawnedWeapon = GetSpawndedM9();
 
@@ -505,7 +509,7 @@ void AMainCharacter::ReloadWeapon()
 
 void AMainCharacter::ShootWeapon()
 {
-	if (ActiveWeapon && bCameraZoomIn && !bReloadPistol && GetSpawndedM9()->Ammo > 0)
+	if (ActiveWeapon && GetSpawndedM9()->Mesh->IsVisible() && bCameraZoomIn && !bReloadPistol && GetSpawndedM9()->Ammo > 0)
 	{
 		GetSpawndedM9()->ShootWeapon();
 
@@ -554,16 +558,24 @@ void AMainCharacter::AttachOrDetachWeapon()
 	{
 		if (bEquipPistol)
 		{
-			ActiveWeapon = GetWorld()->SpawnActor<AWeapon_M9>(AWeapon_M9::StaticClass());
-			GetSpawndedM9()->AddWeapon(GetMesh(), "hand_rPistolSocket");
+			if (GetSpawndedM9() && !GetSpawndedM9()->Mesh->IsVisible())
+			{
+				GetSpawndedM9()->Mesh->SetVisibility(true);
+			}
+			else
+			{
+				ActiveWeapon = GetWorld()->SpawnActor<AWeapon_M9>(AWeapon_M9::StaticClass());
+				GetSpawndedM9()->AddWeapon(GetMesh(), "hand_rPistolSocket");
+			}
 		}
 		else
 		{
-			GetSpawndedM9()->DestroyWeapon();
-			//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Yellow, FString::FString("Weapon Destroyed"));
+			//GetSpawndedM9()->DestroyWeapon();
+			GetSpawndedM9()->Mesh->SetVisibility(false);
 		}
 		UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 		DataInstance->OnWeaponEquipped.Broadcast();
+		bBlockEquipAction = false;
 	}
 }
 

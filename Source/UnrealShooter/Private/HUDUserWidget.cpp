@@ -27,7 +27,8 @@ void UHUDUserWidget::InitWidget()
 void UHUDUserWidget::UpdateWeaponAmmoAvailable()
 {
 	AWeapon_M9* Weapon = Cast<AWeapon_M9>(MyCharacter->ActiveWeapon);
-	WeaponAmmoAvailable = Weapon ? Weapon->Ammo : 0;
+	//int32 ammo = Weapon ? Weapon->Ammo : 0;
+	WeaponAmmoAvailable = Weapon ? Weapon->Ammo : 0; //ammo > WeaponAmmoAvailable ? WeaponAmmoAvailable : ammo;
 }
 
 void UHUDUserWidget::UpdateWeaponAmmoCapacity()

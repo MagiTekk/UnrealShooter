@@ -62,6 +62,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation)
 		bool bCameraZoomOut;
 
+	bool bBlockEquipAction;
+
 #pragma endregion
 
 #pragma region Constants
