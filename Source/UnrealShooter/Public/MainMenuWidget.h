@@ -133,11 +133,13 @@ public:
 	const FLinearColor PRESSED_STATE_COLOR = FLinearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIVisibility")
-		bool bIsMainMenuVisible = true;
+		ESlateVisibility EMainMenuVisible = ESlateVisibility::Visible;
 
-	//OTHER PROPERTIES
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIVisibility")
-		bool bIsOptionsMenuVisible;
+		ESlateVisibility EOptionsMenuVisible = ESlateVisibility::Hidden;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIVisibility")
+		ESlateVisibility ECreditsWindowVisible = ESlateVisibility::Hidden;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
 		TArray<UButton*> wMainMenuButtons;
@@ -145,18 +147,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
 		TArray<UButton*> wOptionsMenuButtons;
 
-	//UI NAV
-	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
-		void UIClicked();
-
-	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
-		void UINavigate(FVector2D direction);
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
+		TArray<UButton*> wCreditsWindowButtons;
 
 	UFUNCTION(Category = "UINavigation")
 		void SetHoverState(TArray<UButton*> buttons);
 
 	UFUNCTION(Category = "UINavigation")
 		void UINativeNavigation();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
+		void UIClicked();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
+		void UINavigate(FVector2D direction);
 
 	UFUNCTION(BlueprintCallable, Category = "Bindings")
 		bool SupportKeyboardFocus();
@@ -176,6 +180,13 @@ public:
 
 #pragma region Unused
 	//UNUSED BUT LIFE SAVER
+
+	//UI NAV
+	//UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
+		//void UIClicked();
+
+	//UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
+		//void UINavigate(FVector2D direction);
 
 	//bool bIsNavigationActive;
 

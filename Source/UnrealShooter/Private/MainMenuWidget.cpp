@@ -46,26 +46,27 @@ void UMainMenuWidget::SetHoverState(TArray<UButton*> buttons)
 	}
 }
 
-
-
-
 void UMainMenuWidget::UINativeNavigation()
 {
 	//FVector2D currentIndex = UIIndex;
 	//UIIndex += !bIsNavigationActive ? FVector2D(0.0f,0.0f) : direction;
 	//CapLowUIIndexValue();
 
-	if (bIsMainMenuVisible)
+	if (EMainMenuVisible == ESlateVisibility::Visible)
 	{
 		//CapUIIndexValue(wMainMenuButtons);
 		//SetMainState(wMainMenuButtons);
 		SetHoverState(wMainMenuButtons);
 	}
-	else if (bIsOptionsMenuVisible)
+	else if (EOptionsMenuVisible == ESlateVisibility::Visible)
 	{
 		//CapUIIndexValue(wOptionsMenuButtons);
 		//SetMainState(wOptionsMenuButtons);
 		SetHoverState(wOptionsMenuButtons);
+	}
+	else if (ECreditsWindowVisible == ESlateVisibility::Visible)
+	{
+		SetHoverState(wCreditsWindowButtons);
 	}
 
 	//bIsNavigationActive = true;
