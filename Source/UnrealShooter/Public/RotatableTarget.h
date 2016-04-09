@@ -156,7 +156,7 @@ class UNREALSHOOTER_API ARotatableTarget : public AActor
 protected:
 
 	const float DEFAULT_ROTATIONAL_RATE =			2.0f;
-	const float LOWERED_ROTATION =					90.0f;
+	const float LOWERED_ROTATION =					-90.0f;
 	const float RAISED_ROTATION =					0.0f;
 
 	const float FROZEN_TIME = 6.0f;
@@ -204,6 +204,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 		UChildActorComponent* Dynamite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Text Render")
+		UTextRenderComponent* PointsTextRender;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Material")
 		UMaterialInstanceConstant* DefaultMaterialInst;

@@ -45,6 +45,10 @@ void ARotatableTarget::InitTarget()
 	Dynamite->SetChildActorClass(AExplosiveActor::StaticClass());
 	Dynamite->AttachTo(DefaultSceneRoot);
 
+	PointsTextRender = CreateDefaultSubobject<UTextRenderComponent>(TEXT("PointsTextRender"));
+	//PointsTextRender->SetVisibility(false);
+	PointsTextRender->AttachTo(DefaultSceneRoot);
+
 	InitMaterialInstance();
 
 	//listen for my destructible's onFracture signal
@@ -68,15 +72,11 @@ void ARotatableTarget::InitMaterialInstance()
 void ARotatableTarget::BeginPlay()
 {
 	Super::BeginPlay();
-	RaiseTarget();
 }
 
 void ARotatableTarget::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	//by default all targets spawn on the ground
-	this->SetActorRotation(FRotator{ LOWERED_ROTATION, 0.0f, 0.0f });
 
 	//create dynamic instance and apply it to all the meshes
 	UpdateMaterialInstance();
@@ -121,11 +121,15 @@ void ARotatableTarget::ApplyProperties(FRotatableTargetProperties TargetProperti
 	this->SetActorLocation(GetSpawnPoint(TargetProperties.InitialLocation));
 	this->TimeToLive = TimeToLive;
 
+	//by default all targets spawn on the ground
+	this->SetActorRotation(FRotator{ LOWERED_ROTATION, 0.0f, 0.0f });
+
 	//comment out this call and you will have a default explosive on every target!
 	InitDynamite();
 
 	SetNewLocation();
 	UpdateMaterialInstance();
+	RaiseTarget();
 }
 
 void ARotatableTarget::InitDynamite()
@@ -185,9 +189,9 @@ void ARotatableTarget::LowerTarget()
 void ARotatableTarget::DoTargetUp()
 {
 	FRotator actorRotation = GetActorRotation();
-	if (actorRotation.Pitch > RAISED_ROTATION)
+	if (actorRotation.Pitch < RAISED_ROTATION)
 	{
-		FRotator newRotation = FRotator{ actorRotation.Pitch - RotationalRate, GetActorRotation().Yaw, GetActorRotation().Roll };
+		FRotator newRotation = FRotator{ actorRotation.Pitch + RotationalRate, actorRotation.Yaw, actorRotation.Roll };
 		SetActorRotation(newRotation);
 	}
 	else
@@ -199,9 +203,9 @@ void ARotatableTarget::DoTargetUp()
 void ARotatableTarget::DoTargetDown()
 {
 	FRotator actorRotation = GetActorRotation();
-	if (actorRotation.Pitch < LOWERED_ROTATION)
+	if (actorRotation.Pitch > LOWERED_ROTATION)
 	{
-		FRotator newRotation = FRotator{ actorRotation.Pitch + RotationalRate, GetActorRotation().Yaw, GetActorRotation().Roll };
+		FRotator newRotation = FRotator{ actorRotation.Pitch - RotationalRate, actorRotation.Yaw, actorRotation.Roll };
 		SetActorRotation(newRotation);
 	}
 	else
