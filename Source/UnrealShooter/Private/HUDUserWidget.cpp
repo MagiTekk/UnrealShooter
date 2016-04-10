@@ -48,3 +48,7 @@ void UHUDUserWidget::UpdateHUD()
 	UpdateWeaponAmmoCapacity();
 	UpdateAmmoStored();
 }
+
+void UHUDUserWidget::OnReloadTime_Implementation()
+{
+}

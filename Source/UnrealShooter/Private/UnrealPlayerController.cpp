@@ -105,6 +105,17 @@ void AUnrealPlayerController::ShowPauseMenu()
 	}
 }
 
+void AUnrealPlayerController::StartReloadTime()
+{
+	HUDReference->ReloadTimeVisibility = ESlateVisibility::Visible;
+	HUDReference->OnReloadTime();
+}
+
+void AUnrealPlayerController::OnReloadTimeFinished()
+{
+	HUDReference->ReloadTimeVisibility = ESlateVisibility::Hidden;
+}
+
 void AUnrealPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();

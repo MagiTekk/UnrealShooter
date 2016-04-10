@@ -7,6 +7,7 @@
 #include "RotatableTarget.h"
 #include "Engine/DestructibleMesh.h"
 #include "UnrealShooterDataSingleton.h"
+#include "UnrealPlayerController.h"
 #include "TargetSequence.h"
 
 UTargetSequence::UTargetSequence()
@@ -94,13 +95,22 @@ void UTargetSequence::PlayNextWave()
 		InnocentTargetsThisWave = 0;
 		_currentWaveTargets.Empty();
 		_currentWave = GetNextWave();
+
+		//is this a "reload time" wave?
 		if (_currentWave.WaveID == -1.0f)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PlayNextWave() - RELOAD TIME"));
-			GEngine->AddOnScreenDebugMessage(-1, 3.0, FColor::Magenta, FString::FString("RELOAD TIME"));
-
-			//this is because the wave is simply a "reload time" wave
-			World->GetTimerManager().SetTimer(TimerHandle, this, &UTargetSequence::PlayNextWave, 3.0f, false);
+			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0);
+			if (PC)
+			{
+				AUnrealPlayerController* const UPC = CastChecked<AUnrealPlayerController>(PC);
+				if (UPC)
+				{
+					UPC->StartReloadTime();
+				}
+			}
+			World->GetTimerManager().SetTimer(TimerHandle, this, &UTargetSequence::ReloadTimeFinished, 4.0f, false);
+			//UE_LOG(LogTemp, Warning, TEXT("PlayNextWave() - RELOAD TIME"));
+			//GEngine->AddOnScreenDebugMessage(-1, 4.0, FColor::Magenta, FString::FString("RELOAD TIME"));
 		}
 		else if (_currentWave.Targets.Num() > 0)
 		{
@@ -128,6 +138,20 @@ void UTargetSequence::PlayNextWave()
 			ReactivatePlayWavesButton();
 		}
 	}
+}
+
+void UTargetSequence::ReloadTimeFinished()
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0);
+	if (PC)
+	{
+		AUnrealPlayerController* const UPC = CastChecked<AUnrealPlayerController>(PC);
+		if (UPC)
+		{
+			UPC->OnReloadTimeFinished();
+		}
+	}
+	PlayNextWave();
 }
 
 FTargetWave UTargetSequence::GetNextWave()

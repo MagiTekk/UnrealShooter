@@ -114,6 +114,9 @@ public:
 
 	UFUNCTION()
 		void PlayNextWave();
+
+	UFUNCTION()
+		void ReloadTimeFinished();
 	
 
 	FTimerHandle TimerHandle;

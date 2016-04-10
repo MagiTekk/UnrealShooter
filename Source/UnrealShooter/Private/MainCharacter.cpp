@@ -514,7 +514,7 @@ void AMainCharacter::ShootWeapon()
 		GetSpawndedM9()->ShootWeapon();
 
 		//Do Recoil on the player
-		RecoilAnimation();
+		//RecoilAnimation(); not working
 	}
 	else if (GetSpawndedM9()->Ammo == 0)
 	{

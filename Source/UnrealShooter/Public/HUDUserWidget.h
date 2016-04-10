@@ -30,6 +30,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
 		int32 AmmoStored;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Visibility")
+		ESlateVisibility ReloadTimeVisibility = ESlateVisibility::Hidden;
+
 	UFUNCTION(Category = "Bindings")
 		void UpdateWeaponAmmoAvailable();
 
@@ -41,5 +44,8 @@ public:
 
 	UFUNCTION(Category = "Bindings")
 		void UpdateHUD();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Animation")
+		void OnReloadTime();
 	
 };

@@ -63,6 +63,12 @@ public:
 	UFUNCTION()
 		void ShowPauseMenu();
 
+	UFUNCTION()
+		void StartReloadTime();
+
+	UFUNCTION()
+		void OnReloadTimeFinished();
+
 #pragma endregion
 #pragma region ActionMappings
 
