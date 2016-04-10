@@ -103,7 +103,7 @@ void ASpecialTarget::OnMeshFractured(const FVector & HitPoint, const FVector & H
 		MyLvlBP->RewardTargetPoints(TargetProperties.Points, this->GetActorLocation());
 	}
 
-	GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ASpecialTarget::Die, TIME_TO_BLOW, false);
+	Die();
 }
 
 FVector ASpecialTarget::GetSpawnPoint(FVector SpawnPosition)

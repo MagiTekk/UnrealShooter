@@ -43,6 +43,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		TSubclassOf<class UUserWidget> wPauseMenu;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+		TSubclassOf<class UUserWidget> wSequenceSelector;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Widgets")
+		UUserWidget* SequenceSelectorReference;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Widgets")
 		UUserWidget* PauseMenuReference;
 
@@ -62,6 +68,9 @@ public:
 
 	UFUNCTION()
 		void ShowPauseMenu();
+
+	UFUNCTION()
+		void ShowSequenceSelector();
 
 	UFUNCTION()
 		void StartReloadTime();

@@ -75,6 +75,7 @@ void AUnrealShooterLevelScriptActor::OnTargetHit()
 
 void AUnrealShooterLevelScriptActor::PlaySequence(ESequenceEnum sequenceType)
 {
+	TargetsHit = 0; //reset this value
 	CurrentSequence = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 	FTargetSequenceStruct sequenceProps = DataInstance->GetSequenceBySequenceEnum(sequenceType);

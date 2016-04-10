@@ -135,6 +135,7 @@ void UTargetSequence::PlayNextWave()
 		else
 		{
 			//Sequence finished!
+			//ShowScreenFinisher();
 			ReactivatePlayWavesButton();
 		}
 	}
@@ -152,6 +153,20 @@ void UTargetSequence::ReloadTimeFinished()
 		}
 	}
 	PlayNextWave();
+}
+
+void UTargetSequence::ShowScreenFinisher()
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0);
+	if (PC)
+	{
+		AUnrealPlayerController* const UPC = CastChecked<AUnrealPlayerController>(PC);
+		if (UPC)
+		{
+			//Show finisher, we have this sequence's name and data right here to pass it along the display
+			//UPC->OnReloadTimeFinished();
+		}
+	}
 }
 
 FTargetWave UTargetSequence::GetNextWave()

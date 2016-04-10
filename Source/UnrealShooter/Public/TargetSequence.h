@@ -117,6 +117,9 @@ public:
 
 	UFUNCTION()
 		void ReloadTimeFinished();
+
+	UFUNCTION()
+		void ShowScreenFinisher();
 	
 
 	FTimerHandle TimerHandle;

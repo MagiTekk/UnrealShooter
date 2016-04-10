@@ -5,13 +5,13 @@
 #include "Blueprint/UserWidget.h"
 #include "UMG.h"
 #include "Components/Button.h"
-#include "PauseMenuWidget.generated.h"
+#include "SequenceSelectorWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREALSHOOTER_API UPauseMenuWidget : public UUserWidget
+class UNREALSHOOTER_API USequenceSelectorWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
@@ -26,10 +26,10 @@ public:
 
 	// Called every frame
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
-	
+
 	//OTHER PROPERTIES
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
-		TArray<UButton*> wPauseMenuButtons;
+		TArray<UButton*> wSequenceSelectorButtons;
 
 	//UI NAV
 	UFUNCTION(BlueprintNativeEvent, Category = "UINavigation")
@@ -43,4 +43,12 @@ public:
 
 	UFUNCTION(Category = "UINavigation")
 		void UINativeNavigation();
+
+	UFUNCTION(BlueprintCallable, Category = "UIAction")
+		void UISequenceSelected(ESequenceEnum sequenceType);
+
+	UFUNCTION(BlueprintCallable, Category = "UIAction")
+		void OnCancel();
+	
+	
 };

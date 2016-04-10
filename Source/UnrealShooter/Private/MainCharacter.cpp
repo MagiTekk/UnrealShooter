@@ -39,7 +39,7 @@ void AMainCharacter::InitBasicValues()
 	//initial player values
 	Health = 100.0f;
 	Stamina = 100.0f;
-	AmmoAvailable = 60;
+	AmmoAvailable = 300;
 }
 
 /**

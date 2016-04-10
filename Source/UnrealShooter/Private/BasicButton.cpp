@@ -2,6 +2,7 @@
 
 #include "UnrealShooter.h"
 #include "BasicButton.h"
+#include "UnrealPlayerController.h"
 #include "MainCharacter.h"
 
 
@@ -70,7 +71,7 @@ void ABasicButton::NotifyActorEndOverlap(AActor * OtherActor)
 	AMainCharacter* mainChar = Cast<AMainCharacter>(OtherActor);
 	if (!bIsActive && mainChar)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Button - Exit Overlap"));
+		//UE_LOG(LogTemp, Warning, TEXT("Button - Exit Overlap"));
 		TextRenderComponent->SetVisibility(false);
 
 		//set material instance state to active
@@ -83,32 +84,47 @@ void ABasicButton::NotifyActorEndOverlap(AActor * OtherActor)
 	}
 }
 
+/*Only Activate the button if the player is in range*/
 void ABasicButton::ActivateButton()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Button - ActivateButton"));
-	bIsActive = false;
-	TextRenderComponent->SetVisibility(true);
-	DynamicMaterialInstance->SetScalarParameterValue("State", 1);
+	TArray<AActor*> CollectedActors;
+	TriggerCollission->GetOverlappingActors(CollectedActors);
 
-	//fire signal
-	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	DataInstance->OnActorBeginOverlap.Broadcast(this);
+	bIsActive = false;
+	//for each Actor collected
+	for (int32 i = 0; i < CollectedActors.Num(); i++)
+	{
+		AActor* ACollected = CollectedActors[i];
+		AMainCharacter* player = Cast<AMainCharacter>(ACollected);
+		if (player)
+		{
+			TextRenderComponent->SetVisibility(true);
+			DynamicMaterialInstance->SetScalarParameterValue("State", 1);
+
+			//fire signal
+			UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
+			DataInstance->OnActorBeginOverlap.Broadcast(this);
+		}
+	}
 }
 
 void ABasicButton::OnContextAction()
 {
 	if (!bIsActive)
 	{
-		//set material instance state to active
-		DynamicMaterialInstance->SetScalarParameterValue("State", 0);
-
-		AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
-
-		if (!MyLvlBP) return;
-		MyLvlBP->PlaySequence(SequenceType);
-
-		bIsActive = true;
-		TextRenderComponent->SetVisibility(false);
+		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		if (PC)
+		{
+			AUnrealPlayerController* const UPC = CastChecked<AUnrealPlayerController>(PC);
+			if (UPC)
+			{
+				//set material instance state to active
+				DynamicMaterialInstance->SetScalarParameterValue("State", 0);
+				bIsActive = true;
+				TextRenderComponent->SetVisibility(false);
+				UPC->ShowSequenceSelector();
+			}
+		}
 	}
 }
 

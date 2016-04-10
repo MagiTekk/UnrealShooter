@@ -109,7 +109,6 @@ public:
 
 #pragma region Constants
 
-	const float TIME_TO_BLOW = 2.0f;
 	const FLinearColor DEFAULTTARGET_COLOR = { 0.24f, 0.009788f, 0.0f, 0.0f };
 
 #pragma endregion
@@ -124,14 +123,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Particle System")
 		UParticleSystemComponent* ExplosiveTypeParticleEffect;
-
-#pragma endregion
-
-#pragma region Timer
-public:
-
-	/* Handle to manage the timer */
-	FTimerHandle TargetTimerHandle;
 
 #pragma endregion
 };

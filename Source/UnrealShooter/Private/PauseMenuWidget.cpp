@@ -9,7 +9,6 @@
 void UPauseMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	PController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 	DataInstance->OnUINavigation.AddDynamic(this, &UPauseMenuWidget::UINavigate);
