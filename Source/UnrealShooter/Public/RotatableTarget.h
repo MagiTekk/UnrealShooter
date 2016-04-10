@@ -205,9 +205,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 		UChildActorComponent* Dynamite;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Text Render")
-		UTextRenderComponent* PointsTextRender;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Material")
 		UMaterialInstanceConstant* DefaultMaterialInst;
 

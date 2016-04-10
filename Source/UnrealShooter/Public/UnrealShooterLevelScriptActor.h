@@ -57,7 +57,7 @@ public:
 		void CameraShake();
 
 	UFUNCTION()
-		void RewardTargetPoints(int32 points);
+		void RewardTargetPoints(int32 points, FVector Location);
 
 #pragma region Sequences
 

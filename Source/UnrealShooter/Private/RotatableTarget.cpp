@@ -45,10 +45,6 @@ void ARotatableTarget::InitTarget()
 	Dynamite->SetChildActorClass(AExplosiveActor::StaticClass());
 	Dynamite->AttachTo(DefaultSceneRoot);
 
-	PointsTextRender = CreateDefaultSubobject<UTextRenderComponent>(TEXT("PointsTextRender"));
-	//PointsTextRender->SetVisibility(false);
-	PointsTextRender->AttachTo(DefaultSceneRoot);
-
 	InitMaterialInstance();
 
 	//listen for my destructible's onFracture signal
@@ -391,7 +387,7 @@ void ARotatableTarget::RewardTargetPoints()
 	AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
 	if (MyLvlBP)
 	{
-		MyLvlBP->RewardTargetPoints(bIsHeadShot ? TargetProperties.HeadshotPoints : TargetProperties.Points);
+		MyLvlBP->RewardTargetPoints(bIsHeadShot ? TargetProperties.HeadshotPoints : TargetProperties.Points, this->GetActorLocation());
 		bIsHeadShot = false; //when target is frozen you can get double points if you don't do this
 	}
 }

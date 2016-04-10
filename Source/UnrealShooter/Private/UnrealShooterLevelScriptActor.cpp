@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UnrealShooter.h"
+#include "UnrealHUD.h"
 #include "UnrealShooterLevelScriptActor.h"
 
 
@@ -40,9 +41,21 @@ void AUnrealShooterLevelScriptActor::ResetTargetsHit()
 	TargetsHit = 0;
 }
 
-void AUnrealShooterLevelScriptActor::RewardTargetPoints(int32 points)
+void AUnrealShooterLevelScriptActor::RewardTargetPoints(int32 points, FVector Location)
 {
+	//FString displayedText
 	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::FString(FString::FromInt(points)));
+
+
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC)
+	{
+		AUnrealHUD* HUD = Cast<AUnrealHUD>(PC->GetHUD());
+		if (HUD)
+		{
+			HUD->RewardTargetPoints(points, Location);
+		}
+	}
 }
 
 void AUnrealShooterLevelScriptActor::CameraShake()

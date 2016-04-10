@@ -100,7 +100,7 @@ void ASpecialTarget::OnMeshFractured(const FVector & HitPoint, const FVector & H
 	if (MyLvlBP)
 	{
 		MyLvlBP->CameraShake();
-		MyLvlBP->RewardTargetPoints(TargetProperties.Points);
+		MyLvlBP->RewardTargetPoints(TargetProperties.Points, this->GetActorLocation());
 	}
 
 	GetWorld()->GetTimerManager().SetTimer(TargetTimerHandle, this, &ASpecialTarget::Die, TIME_TO_BLOW, false);
