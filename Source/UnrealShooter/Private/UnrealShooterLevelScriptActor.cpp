@@ -43,10 +43,7 @@ void AUnrealShooterLevelScriptActor::ResetTargetsHit()
 
 void AUnrealShooterLevelScriptActor::RewardTargetPoints(int32 points, FVector Location)
 {
-	//FString displayedText
-	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::FString(FString::FromInt(points)));
-
-
+	//GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::FString(FString::FromInt(points)));
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (PC)
 	{

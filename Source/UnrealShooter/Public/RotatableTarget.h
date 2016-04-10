@@ -159,7 +159,7 @@ protected:
 	const float LOWERED_ROTATION =					-90.0f;
 	const float RAISED_ROTATION =					0.0f;
 
-	const float FROZEN_TIME = 6.0f;
+	const float FROZEN_TIME = 10.0f;
 	const float LiGHTNING_TIME = 3.0f;
 
 	//color codes
@@ -215,9 +215,6 @@ public:
 		UMaterialInstanceDynamic* DynamicInstance;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Target")
-		ETargetType TargetType;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Target")
 		FVector CustomPosition;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
@@ -255,6 +252,10 @@ public:
 
 	UFUNCTION()
 		void LightningStrike();
+
+	/* Used to vanish a target even when it wasn't hit*/
+	UFUNCTION()
+		void FakeTargetHit();
 
 #pragma region Timer
 public:

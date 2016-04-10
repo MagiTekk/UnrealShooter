@@ -32,7 +32,7 @@ void AUnrealHUD::RewardTargetPoints(int32 points, FVector Location)
 
 void AUnrealHUD::DrawRewardedPoints()
 {
-	//for (auto& props : PointsDisplayedOnScreen)
+	int32 deletionCounter = 0;
 	for (int32 Index = 0; Index != PointsDisplayedOnScreen.Num(); ++Index)
 	{
 		auto& props = PointsDisplayedOnScreen[Index];
@@ -40,14 +40,16 @@ void AUnrealHUD::DrawRewardedPoints()
 		FString textToDraw = (props.Points >= 0 ? TEXT("+") : TEXT("")) + FString::FromInt(props.Points);
 		FVector2D projectedLocationToDraw(projectedLocation.X + (HIT_POINTS_OFFSET * Index), projectedLocation.Y - (HIT_POINTS_OFFSET * Index));
 		FVector2D fontScaleToDraw(1.0f, 1.0f);
-		const FColor AlphaWhite(255, 255, 255, props.FakeTimer);
+		int32 negativeColor = props.Points >= 0 ? 255 : 0;
+		const FColor AlphaWhite(255, negativeColor, negativeColor, props.FakeTimer); //always white but red for bad target
 
-		//Only proceed if the objective is in front of the player
+		//Only proceed if the objective is in front of the player?
 		if (projectedLocation.Z > 0)
 		{
-			props.FakeTimer -= 2.0f;
+			props.FakeTimer -= 1.5f;
 			if (props.FakeTimer < 0 && !props.bMarkedForDestruction)
 			{
+				deletionCounter++;
 				props.bMarkedForDestruction = true;
 			}
 			else if (props.FakeTimer >= 0)
@@ -58,6 +60,14 @@ void AUnrealHUD::DrawRewardedPoints()
 	}
 
 	//remove transparent points, one at a time to avoid index out of bounds
+	for (int32 i = 0; i < deletionCounter; ++i)
+	{
+		RemoveMarkedElement();
+	}
+}
+
+void AUnrealHUD::RemoveMarkedElement()
+{
 	for (int32 Index = 0; Index != PointsDisplayedOnScreen.Num(); ++Index)
 	{
 		auto& element = PointsDisplayedOnScreen[Index];

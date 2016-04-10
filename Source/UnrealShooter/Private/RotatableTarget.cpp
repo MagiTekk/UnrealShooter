@@ -328,6 +328,14 @@ void ARotatableTarget::OnTargetHit(bool forceHit)
 	}
 }
 
+void ARotatableTarget::FakeTargetHit()
+{
+	bIsTranslucent = true;
+	UpdateMaterialInstance();
+	LowerTarget();
+	startVanish();
+}
+
 void ARotatableTarget::startVanish()
 {
 	//start vanishing actor
@@ -401,7 +409,7 @@ void ARotatableTarget::Die()
 
 	//launch a signal to update our sequence
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	DataInstance->OnTargetDestroyed.Broadcast();
+	DataInstance->OnTargetDestroyed.Broadcast(this);
 
 	//get rid of the dynamite
 	if (Dynamite)

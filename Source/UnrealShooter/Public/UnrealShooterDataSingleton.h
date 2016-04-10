@@ -9,12 +9,13 @@
 #include "UnrealShooterDataSingleton.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnActorEndOverlap);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnTargetDestroyed);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnTargetDestroyed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnWeaponShot);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnWeaponReloaded);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnWeaponEquipped);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTargetDelegate_OnUISelection);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTargetDelegate_OnTargetDestroyed, AActor*, Target);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTargetDelegate_OnUINavigation, FVector2D, Direction);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTargetDelegate_OnActorBeginOverlap, AActor*, ContextActor);
 

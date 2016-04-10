@@ -45,15 +45,44 @@ void UTargetSequence::SpawnSpecialTarget()
 	TargetsAvailable++;
 }
 
-void UTargetSequence::OnTargetDestroyedHandler()
+void UTargetSequence::OnTargetDestroyedHandler(AActor* Target)
 {
 	//check if all the targets on this wave were destroyed
 	TargetsAvailable--;
-	//UE_LOG(LogTemp, Warning, TEXT("We still have: -- %d -- targets on the level"), TargetsAvailable);
+	UpdateTargetsThisWave(Target);
+	
 	if (TargetsAvailable == 0)
 	{
 		//spawn the next wave
 		PlayNextWave();
+	}
+	else if (NormalTargetsThisWave <= 0 && InnocentTargetsThisWave > 0)
+	{
+		//find out if an innocent target is left, if that's true then destroy it
+		for (auto& target : _currentWaveTargets)
+		{
+			if (target->TargetProperties.TargetType == ETargetType::InnocentTarget)
+			{
+				target->FakeTargetHit();
+			}
+		}
+	}
+	//UE_LOG(LogTemp, Warning, TEXT("We still have: -- %d -- targets on the level"), TargetsAvailable);
+}
+
+void UTargetSequence::UpdateTargetsThisWave(AActor* Target)
+{
+	ARotatableTarget* rotTarget = Cast<ARotatableTarget>(Target);
+	if (rotTarget)
+	{
+		if (rotTarget->TargetProperties.TargetType != ETargetType::InnocentTarget)
+		{
+			NormalTargetsThisWave--;
+		}
+		else
+		{
+			InnocentTargetsThisWave--;
+		}
 	}
 }
 
@@ -61,6 +90,9 @@ void UTargetSequence::PlayNextWave()
 {
 	if (World)
 	{
+		NormalTargetsThisWave = 0;
+		InnocentTargetsThisWave = 0;
+		_currentWaveTargets.Empty();
 		_currentWave = GetNextWave();
 		if (_currentWave.WaveID == -1.0f)
 		{
@@ -78,6 +110,16 @@ void UTargetSequence::PlayNextWave()
 				spawnedTarget = World->SpawnActor<ARotatableTarget>(TargetBP);
 				spawnedTarget->ApplyProperties(props, _currentWave.TimeToLive);
 				TargetsAvailable++;
+				_currentWaveTargets.Emplace(spawnedTarget);
+
+				if (props.TargetType == ETargetType::InnocentTarget)
+				{
+					InnocentTargetsThisWave++;
+				}
+				else 
+				{
+					NormalTargetsThisWave++;
+				}
 			}
 		}
 		else

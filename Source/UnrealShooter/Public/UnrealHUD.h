@@ -48,6 +48,7 @@ private:
 
 	TArray<FHUDPointsProperties> PointsDisplayedOnScreen;
 	void DrawRewardedPoints();
+	void RemoveMarkedElement();
 
 public:
 

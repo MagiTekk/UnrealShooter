@@ -70,7 +70,10 @@ class UNREALSHOOTER_API UTargetSequence : public UObject
 	FTargetWave _currentWave;
 	TArray<ARotatableTarget*> _currentWaveTargets;
 	int32 TargetsAvailable;
+	int32 NormalTargetsThisWave;
+	int32 InnocentTargetsThisWave;
 	FTargetWave GetNextWave();
+	void UpdateTargetsThisWave(AActor* Target);
 	
 public:
 
@@ -98,7 +101,7 @@ public:
 	* make this an UFUNCTION() or it will not fire
 	*/
 	UFUNCTION()
-		void OnTargetDestroyedHandler();
+		void OnTargetDestroyedHandler(AActor* Target);
 
 	UFUNCTION()
 		void ReactivatePlayWavesButton();

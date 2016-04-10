@@ -197,7 +197,7 @@ void ASpecialTarget::Die()
 {
 	//launch a signal to update our sequence
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
-	DataInstance->OnTargetDestroyed.Broadcast();
+	DataInstance->OnTargetDestroyed.Broadcast(this);
 
 	Destroy();
 }
