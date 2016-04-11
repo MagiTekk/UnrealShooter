@@ -52,6 +52,12 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Widgets")
 		UUserWidget* PauseMenuReference;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+		TSubclassOf<class UUserWidget> wFinisher;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Widgets")
+		UUserWidget* FinisherReference;
+
 	/* Make sure this is set to true every time a selectable widget is shown */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		bool bIsWidgetShown;
@@ -71,6 +77,9 @@ public:
 
 	UFUNCTION()
 		void ShowSequenceSelector();
+
+	UFUNCTION()
+		void ShowFinisher();
 
 	UFUNCTION()
 		void StartReloadTime();

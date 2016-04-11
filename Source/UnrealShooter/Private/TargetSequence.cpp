@@ -135,8 +135,7 @@ void UTargetSequence::PlayNextWave()
 		else
 		{
 			//Sequence finished!
-			//ShowScreenFinisher();
-			ReactivatePlayWavesButton();
+			World->GetTimerManager().SetTimer(FinisherHandle, this, &UTargetSequence::OnSequenceFinished, 2.0f, false);
 		}
 	}
 }
@@ -155,7 +154,7 @@ void UTargetSequence::ReloadTimeFinished()
 	PlayNextWave();
 }
 
-void UTargetSequence::ShowScreenFinisher()
+void UTargetSequence::OnSequenceFinished()
 {
 	APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0);
 	if (PC)
@@ -163,8 +162,8 @@ void UTargetSequence::ShowScreenFinisher()
 		AUnrealPlayerController* const UPC = CastChecked<AUnrealPlayerController>(PC);
 		if (UPC)
 		{
-			//Show finisher, we have this sequence's name and data right here to pass it along the display
-			//UPC->OnReloadTimeFinished();
+			//Close the doors (if open) and show finisher
+			UPC->ShowFinisher();
 		}
 	}
 }

@@ -130,6 +130,31 @@ void AUnrealPlayerController::ShowSequenceSelector()
 	}
 }
 
+void AUnrealPlayerController::ShowFinisher()
+{
+	if (wFinisher && !IsPaused()) // Check if the Asset is assigned in the blueprint.
+	{
+		// Create the widget and store it.
+		FinisherReference = CreateWidget<UUserWidget>(this, wFinisher);
+
+		// now you can use the widget directly since you have a referance for it.
+		// Extra check to  make sure the pointer holds the widget.
+		if (FinisherReference)
+		{
+			//let add it to the view port
+			FinisherReference->AddToViewport();
+			bIsWidgetShown = true;
+			SetPause(true);
+
+			FInputModeGameAndUI Mode;
+			SetInputMode(Mode);
+		}
+
+		//Show the Cursor.
+		bShowMouseCursor = true;
+	}
+}
+
 void AUnrealPlayerController::StartReloadTime()
 {
 	HUDReference->ReloadTimeVisibility = ESlateVisibility::Visible;
