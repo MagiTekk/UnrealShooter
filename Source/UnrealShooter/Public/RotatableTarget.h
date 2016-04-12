@@ -253,6 +253,9 @@ public:
 	UFUNCTION()
 		void LightningStrike();
 
+	UFUNCTION()
+		void ChainHitsCheck();
+
 	/* Used to vanish a target even when it wasn't hit*/
 	UFUNCTION()
 		void FakeTargetHit();

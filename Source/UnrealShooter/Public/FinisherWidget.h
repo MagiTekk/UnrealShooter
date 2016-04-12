@@ -28,6 +28,21 @@ public:
 	// Called every frame
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UIBindings")
+		int32 Points;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UIBindings")
+		int32 AmountNormalHits;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UIBindings")
+		int32 AmountHeadshotHits;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UIBindings")
+		int32 AmountBonusHits;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UIBindings")
+		FName CurrentSequenceName;
+
 	//OTHER PROPERTIES
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UIButtons")
 		TArray<UButton*> wFinisherButtons;

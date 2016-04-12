@@ -24,7 +24,13 @@ public:
 		FName UnrealShooterLevelName;
 
 	UWorld* WorldReference;
-	int32 TargetsHit;
+	int32 Points;
+	int32 ChainHits;
+	int32 AmountNormalHits;
+	int32 AmountHeadshotHits;
+	int32 AmountBonusHits;
+	FName CurrentSequenceName;
+	FName GetSequenceEnumCodeName(ESequenceEnum sequenceType);
 
 	/*
 	* **If you don't specify this UPROPERTY then the GC will get rid of this UObject**
@@ -51,13 +57,16 @@ public:
 		void ResetTargetsHit();
 
 	UFUNCTION()
-		void OnTargetHit();
+		void OnTargetHit(bool bIsHeadshot, bool bIsBonusTarget);
 
 	UFUNCTION()
 		void CameraShake();
 
 	UFUNCTION()
-		void RewardTargetPoints(int32 points, FVector Location);
+		void InitSequenceValues();
+
+	UFUNCTION()
+		void DisplayRewardedPoints(int32 points, FVector Location);
 
 #pragma region Sequences
 

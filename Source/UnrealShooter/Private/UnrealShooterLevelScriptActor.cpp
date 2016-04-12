@@ -38,18 +38,18 @@ void AUnrealShooterLevelScriptActor::BeginDestroy()
 
 void AUnrealShooterLevelScriptActor::ResetTargetsHit()
 {
-	TargetsHit = 0;
+	ChainHits = 0;
 }
 
-void AUnrealShooterLevelScriptActor::RewardTargetPoints(int32 points, FVector Location)
+void AUnrealShooterLevelScriptActor::DisplayRewardedPoints(int32 points, FVector Location)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::FString(FString::FromInt(points)));
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (PC)
 	{
 		AUnrealHUD* HUD = Cast<AUnrealHUD>(PC->GetHUD());
 		if (HUD)
 		{
+			Points += points;
 			HUD->RewardTargetPoints(points, Location);
 		}
 	}
@@ -64,21 +64,65 @@ void AUnrealShooterLevelScriptActor::CameraShake()
 	}
 }
 
-void AUnrealShooterLevelScriptActor::OnTargetHit()
+void AUnrealShooterLevelScriptActor::OnTargetHit(bool bIsHeadshot, bool bIsBonusTarget)
 {
-	TargetsHit++;
-	if (TargetsHit % 5 == 0)
+	if (!bIsBonusTarget)
+	{
+		ChainHits++;
+		AmountNormalHits += !bIsHeadshot ? 1 : 0;
+		AmountHeadshotHits += bIsHeadshot ? 1 : 0;
+	}
+	else
+	{
+		ChainHits = 0;
+		AmountBonusHits++;
+	}
+
+	if (ChainHits != 0 && ChainHits % 5 == 0)
 	{
 		CurrentSequence->SpawnSpecialTarget();
 	}
 }
 
+void AUnrealShooterLevelScriptActor::InitSequenceValues()
+{
+	Points = 0;
+	ChainHits = 0;
+	AmountNormalHits = 0;
+	AmountHeadshotHits = 0;
+}
+
 void AUnrealShooterLevelScriptActor::PlaySequence(ESequenceEnum sequenceType)
 {
-	TargetsHit = 0; //reset this value
+	InitSequenceValues();
+	CurrentSequenceName = GetSequenceEnumCodeName(sequenceType);
+
 	CurrentSequence = NewObject<UTargetSequence>(UTargetSequence::StaticClass());
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 	FTargetSequenceStruct sequenceProps = DataInstance->GetSequenceBySequenceEnum(sequenceType);
 	CurrentSequence->ApplyProperties(sequenceProps.sequenceName, sequenceProps.Waves, GetWorld());
 	CurrentSequence->PlayNextWave();
+}
+
+FName AUnrealShooterLevelScriptActor::GetSequenceEnumCodeName(ESequenceEnum sequenceType)
+{
+	switch (sequenceType)
+	{
+		case ESequenceEnum::SequenceA:
+			return TEXT("A");
+			break;
+		case ESequenceEnum::SequenceB:
+			return TEXT("B");
+			break;
+		case ESequenceEnum::SequenceC:
+			return TEXT("C");
+			break;
+		case ESequenceEnum::SequenceD:
+			return TEXT("D");
+			break;
+		case ESequenceEnum::SequenceE:
+			return TEXT("E");
+			break;
+	}
+	return TEXT("");
 }

@@ -317,14 +317,8 @@ void ARotatableTarget::OnTargetHit(bool forceHit)
 		UpdateMaterialInstance();
 		LowerTarget();
 		startVanish();
+		ChainHitsCheck();
 		RewardTargetPoints();
-
-		//chain hits for special target display
-		AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
-		if (MyLvlBP)
-		{
-			MyLvlBP->OnTargetHit();
-		}
 	}
 }
 
@@ -373,6 +367,16 @@ void ARotatableTarget::LightningStrike()
 	GetWorld()->GetTimerManager().SetTimer(LightningTimerHandle, LightningDelegate, 1.0f, false);
 }
 
+void ARotatableTarget::ChainHitsCheck()
+{
+	//chain hits for special target display
+	AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
+	if (MyLvlBP)
+	{
+		MyLvlBP->OnTargetHit(bIsHeadShot, false);
+	}
+}
+
 //vanish this actor
 void ARotatableTarget::Vanish()
 {
@@ -395,7 +399,7 @@ void ARotatableTarget::RewardTargetPoints()
 	AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
 	if (MyLvlBP)
 	{
-		MyLvlBP->RewardTargetPoints(bIsHeadShot ? TargetProperties.HeadshotPoints : TargetProperties.Points, this->GetActorLocation());
+		MyLvlBP->DisplayRewardedPoints(bIsHeadShot ? TargetProperties.HeadshotPoints : TargetProperties.Points, this->GetActorLocation());
 		bIsHeadShot = false; //when target is frozen you can get double points if you don't do this
 	}
 }

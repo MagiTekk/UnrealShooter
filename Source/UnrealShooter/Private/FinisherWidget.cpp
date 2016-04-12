@@ -10,6 +10,16 @@ void UFinisherWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	AUnrealShooterLevelScriptActor* MyLvlBP = Cast<AUnrealShooterLevelScriptActor>(GetWorld()->GetLevelScriptActor());
+	if (MyLvlBP)
+	{
+		Points = MyLvlBP->Points;
+		AmountNormalHits = MyLvlBP->AmountNormalHits;
+		AmountHeadshotHits = MyLvlBP->AmountHeadshotHits;
+		AmountBonusHits = MyLvlBP->AmountBonusHits;
+		CurrentSequenceName = MyLvlBP->CurrentSequenceName;
+	}
+
 	UUnrealShooterDataSingleton* DataInstance = Cast<UUnrealShooterDataSingleton>(GEngine->GameSingleton);
 	DataInstance->OnUINavigation.AddDynamic(this, &UFinisherWidget::UINavigate);
 	DataInstance->OnUISelection.AddDynamic(this, &UFinisherWidget::UIClicked);

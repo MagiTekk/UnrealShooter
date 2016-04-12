@@ -24,7 +24,9 @@ enum class ESequenceEnum : uint8
 {
 	SequenceA,
 	SequenceB,
-	SequenceC
+	SequenceC,
+	SequenceD,
+	SequenceE
 };
 
 /**
