@@ -272,7 +272,7 @@ FTargetSequenceStruct UUnrealShooterDataSingleton::GetSequenceBySequenceEnum(ESe
 			SequenceName = TEXT("SequenceC");
 			break;
 		case ESequenceEnum::SequenceD:
-			SequenceName = TEXT("SequenceC");
+			SequenceName = TEXT("SequenceD");
 			break;
 		case ESequenceEnum::SequenceE:
 			SequenceName = TEXT("SequenceE");
