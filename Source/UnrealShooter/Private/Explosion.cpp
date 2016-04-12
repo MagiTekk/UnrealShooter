@@ -134,17 +134,24 @@ void AExplosion::ApplyExplosionEffect()
 			switch (explosiveType)
 			{
 				case EExplosiveType::Fire:
-					Target->OnTargetHit();
+					if (!Target->bIsFrozen && !Target->bIsElectrified)
+					{
+						Target->OnTargetHit();
+					}
 					break;
 				case EExplosiveType::Ice:
 					Target->Freeze();
 					break;
 				case EExplosiveType::Lightning:
 					//target will die by lightning, pause it's "doom" timer
-					GetWorld()->GetTimerManager().PauseTimer(Target->TargetTimerHandle);
-					beam = UGameplayStatics::SpawnEmitterAttached(LightningBeamReference, Target->HeadCenterPointScene);
-					beam->SetBeamTargetPoint(0, this->GetActorLocation(), 0);
-					Target->LightningIncoming();
+					// for chain lightning, check on the isElectrified bool
+					if (!Target->bIsElectrified)
+					{
+						GetWorld()->GetTimerManager().PauseTimer(Target->TargetTimerHandle);
+						beam = UGameplayStatics::SpawnEmitterAttached(LightningBeamReference, Target->HeadCenterPointScene);
+						beam->SetBeamTargetPoint(0, this->GetActorLocation(), 0);
+						Target->LightningIncoming();
+					}
 					break;
 				default:
 					break;
@@ -154,7 +161,7 @@ void AExplosion::ApplyExplosionEffect()
 		{
 			//just for now fire dynamites concatenate each other
 			AExplosiveActor * const Dynamite = Cast<AExplosiveActor>(ACollected);
-			if (Dynamite && explosiveType == EExplosiveType::Fire && Dynamite->explosiveType == EExplosiveType::Fire)
+			if (Dynamite) // && explosiveType == EExplosiveType::Fire && Dynamite->explosiveType == EExplosiveType::Fire
 			{
 				Dynamite->DynamiteMesh->ApplyRadiusDamage(100.0f, Dynamite->DynamiteMesh->GetComponentLocation(), 360.0f, 100.0f, true);
 			}

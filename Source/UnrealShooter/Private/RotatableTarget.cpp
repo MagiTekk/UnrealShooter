@@ -76,6 +76,7 @@ void ARotatableTarget::PostInitializeComponents()
 
 	//create dynamic instance and apply it to all the meshes
 	UpdateMaterialInstance();
+	InitDynamite();
 }
 
 void ARotatableTarget::UpdateMaterialInstance()
@@ -338,9 +339,12 @@ void ARotatableTarget::startVanish()
 
 void ARotatableTarget::Freeze()
 {
-	bIsFrozen = true;
-	DynamicInstance->SetScalarParameterValue("IceBlend", 0.4f);
-	this->SetActorTickEnabled(false);
+	if (!bIsFrozen)
+	{
+		bIsFrozen = true;
+		DynamicInstance->SetScalarParameterValue("IceBlend", 0.4f);
+		this->SetActorTickEnabled(false);
+	}
 	GetWorld()->GetTimerManager().SetTimer(FreezeTimerHandle, this, &ARotatableTarget::UnFreeze, FROZEN_TIME, false);
 }
 

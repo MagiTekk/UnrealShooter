@@ -80,7 +80,10 @@ void AUnrealShooterLevelScriptActor::OnTargetHit(bool bIsHeadshot, bool bIsBonus
 
 	if (ChainHits != 0 && ChainHits % 5 == 0)
 	{
-		CurrentSequence->SpawnSpecialTarget();
+		if (CurrentSequence)
+		{
+			CurrentSequence->SpawnSpecialTarget();
+		}
 	}
 }
 

@@ -34,16 +34,19 @@ void UTargetSequence::ApplyProperties(FString sqName, TArray<FTargetWave> Sequen
 
 void UTargetSequence::SpawnSpecialTarget()
 {
-	//Spawn special target
-	ASpecialTarget* targetSpawned = World->SpawnActor<ASpecialTarget>(SpecialTargetBP);
-	
-	//default destination
-	FVector Arr[] = { FVector(101.0f, 101.0f, 0.0f) };
-	TArray<FVector> locations;
-	locations.Append(Arr, ARRAY_COUNT(Arr));
+	if (World)
+	{
+		//Spawn special target
+		ASpecialTarget* targetSpawned = World->SpawnActor<ASpecialTarget>(SpecialTargetBP);
 
-	targetSpawned->ApplyProperties(FSpecialTargetProperties(FVector(100.0f, 100.0f, 0.0f), 0.0f, DEFAULT_SPECIAL_TARGET_POINTS, locations));
-	TargetsAvailable++;
+		//default destination
+		FVector Arr[] = { FVector(101.0f, 101.0f, 0.0f) };
+		TArray<FVector> locations;
+		locations.Append(Arr, ARRAY_COUNT(Arr));
+
+		targetSpawned->ApplyProperties(FSpecialTargetProperties(FVector(100.0f, 100.0f, 0.0f), 0.0f, DEFAULT_SPECIAL_TARGET_POINTS, locations));
+		TargetsAvailable++;
+	}
 }
 
 void UTargetSequence::OnTargetDestroyedHandler(AActor* Target)

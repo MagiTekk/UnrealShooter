@@ -119,7 +119,7 @@ void AUnrealPlayerController::ShowSequenceSelector()
 			//let add it to the view port
 			SequenceSelectorReference->AddToViewport();
 			bIsWidgetShown = true;
-			SetPause(true);
+			//SetPause(true);
 
 			FInputModeGameAndUI Mode;
 			SetInputMode(Mode);
@@ -144,7 +144,7 @@ void AUnrealPlayerController::ShowFinisher()
 			//let add it to the view port
 			FinisherReference->AddToViewport();
 			bIsWidgetShown = true;
-			SetPause(true);
+			//SetPause(true);
 
 			FInputModeGameAndUI Mode;
 			SetInputMode(Mode);
