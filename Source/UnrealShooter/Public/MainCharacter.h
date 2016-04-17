@@ -73,7 +73,7 @@ protected:
 	const FRotator INITIAL_ROTATION = FRotator(0, 0, 0);
 	const float SPEED_RUNNING = 0.8f;
 	const float SPEED_WALKING = 0.45f;
-	const float TURN_BACK_RATE = 2.0f;
+	const float TURN_BACK_RATE = 4.0f;
 	const float TURN_BACK_COMPLETE_BUILDUP = 73.0f;
 	const float BASE_AIM_AROUND_RATE = 150.0f;
 	const float BASE_LOOK_AROUND_RATE = 300.0f;

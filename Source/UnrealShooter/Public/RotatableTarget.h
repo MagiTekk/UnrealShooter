@@ -153,7 +153,7 @@ class UNREALSHOOTER_API ARotatableTarget : public AActor
 
 protected:
 
-	const float DEFAULT_ROTATIONAL_RATE =			2.0f;
+	const float DEFAULT_ROTATIONAL_RATE =			5.0f; //2.0 at 120fps
 	const float LOWERED_ROTATION =					-90.0f;
 	const float RAISED_ROTATION =					0.0f;
 
@@ -226,6 +226,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Properties")
 		bool bIsHeadShot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Properties")
+		bool bPointsRedeemed;
 
 	UFUNCTION()
 		void OnHeadFractured(const FVector& HitPoint, const FVector& HitDirection);

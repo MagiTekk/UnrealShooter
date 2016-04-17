@@ -146,31 +146,36 @@ void ASpecialTarget::UpdateTargetLocation()
 	float xMovementRate = actorLocation.X <= NextLocation.X ? TargetProperties.Speed : TargetProperties.Speed * -1;
 	float yMovementRate = actorLocation.Y <= NextLocation.Y ? TargetProperties.Speed : TargetProperties.Speed * -1;
 
-	//we must check if we arrived at our destination
+	//check out the new location
+	FVector newLocation = { bMoveX ? actorLocation.X + xMovementRate : actorLocation.X,
+		bMoveY ? actorLocation.Y + yMovementRate : actorLocation.Y,
+		actorLocation.Z };
+
+	//will the new location place the actor at or after our destination?
 	if (bMoveX && xMovementRate > 0)
 	{
-		if (actorLocation.X >= NextLocation.X)
+		if (newLocation.X >= NextLocation.X)
 		{
 			bMoveTarget = false;
 		}
 	}
 	else if (bMoveX && xMovementRate < 0)
 	{
-		if (actorLocation.X <= NextLocation.X)
+		if (newLocation.X <= NextLocation.X)
 		{
 			bMoveTarget = false;
 		}
 	}
 	else if (bMoveY && yMovementRate > 0)
 	{
-		if (actorLocation.Y >= NextLocation.Y)
+		if (newLocation.Y >= NextLocation.Y)
 		{
 			bMoveTarget = false;
 		}
 	}
 	else
 	{
-		if (actorLocation.Y <= NextLocation.Y)
+		if (newLocation.Y <= NextLocation.Y)
 		{
 			bMoveTarget = false;
 		}
@@ -178,15 +183,11 @@ void ASpecialTarget::UpdateTargetLocation()
 
 	if (bMoveTarget)
 	{
-		FVector newLocation = { bMoveX ? actorLocation.X + xMovementRate : actorLocation.X,
-			bMoveY ? actorLocation.Y + yMovementRate : actorLocation.Y,
-			actorLocation.Z };
-
 		this->SetActorLocation(newLocation);
 	}
 	else
 	{
-		//just o be sure, set the location to exactly the target's location
+		//just to be sure, set the location to exactly the target's location
 		this->SetActorLocation(NextLocation);
 
 		//get a new location and continue moving on

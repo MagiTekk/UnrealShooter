@@ -128,8 +128,8 @@ void AMainCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 	/*Turn Axes Mouse*/
 	//Another set of configuration is needed to play with the mouse, the camera system has to be redefined.
-	//InputComponent->BindAxis("MouseLookRight", this, &APawn::AddControllerYawInput);
-	//InputComponent->BindAxis("MouseLookUp", this, &AMainCharacter::LookUp);
+	InputComponent->BindAxis("MouseLookRight", this, &AMainCharacter::AimRight);
+	InputComponent->BindAxis("MouseLookUp", this, &AMainCharacter::AimUp);
 
 	/*Action Key Mapping*/
 	InputComponent->BindAction("Equip", IE_Pressed, this, &AMainCharacter::Equip_Pistol);
@@ -258,19 +258,22 @@ void AMainCharacter::LookRight(float rate)
 
 void AMainCharacter::AimRight(float rate)
 {
-	UMainCharacterAnimInstance * Animation = GetAnimationInstance();
-
-	const FRotator YawRotation(0, rate, 0);
-
-	bool bAddRotation = (rate > 0 && Animation->SkelControl_UpperArmstRotation.Yaw < AIM_BOUNDS_YAW_VALUE) || (rate < 0 && Animation->SkelControl_UpperArmstRotation.Yaw > -AIM_BOUNDS_YAW_VALUE);
-
-	if (bAddRotation)
+	if (bCameraZoomIn)
 	{
-		Animation->SkelControl_UpperArmstRotation += (YawRotation * BASE_AIM_AROUND_RATE * GetWorld()->GetDeltaSeconds());
-	}
-	else
-	{
-		AddYawRotation(rate * 0.5f, true);
+		UMainCharacterAnimInstance * Animation = GetAnimationInstance();
+
+		const FRotator YawRotation(0, rate, 0);
+
+		bool bAddRotation = (rate > 0 && Animation->SkelControl_UpperArmstRotation.Yaw < AIM_BOUNDS_YAW_VALUE) || (rate < 0 && Animation->SkelControl_UpperArmstRotation.Yaw > -AIM_BOUNDS_YAW_VALUE);
+
+		if (bAddRotation)
+		{
+			Animation->SkelControl_UpperArmstRotation += (YawRotation * BASE_AIM_AROUND_RATE * GetWorld()->GetDeltaSeconds());
+		}
+		else
+		{
+			AddYawRotation(rate * 0.5f, true);
+		}
 	}
 }
 
@@ -313,24 +316,27 @@ void AMainCharacter::LookUp(float rate)
 
 void AMainCharacter::AimUp(float rate)
 {
-	if (!GetMesh()) return;
-
-	UMainCharacterAnimInstance * Animation = Cast<UMainCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-
-	//No Anim Instance Acquired?
-	if (!Animation) return;
-
-	const FRotator PitchRotation(rate, 0, 0);
-	bool bAddRotation = (rate > 0 && Animation->SkelControl_UpperArmstRotation.Pitch < AIM_BOUNDS_PITCH_VALUE) || (rate < 0 && Animation->SkelControl_UpperArmstRotation.Pitch > -AIM_BOUNDS_PITCH_VALUE);
-
-	if (bAddRotation)
+	if (bCameraZoomIn)
 	{
-		Animation->SkelControl_UpperArmstRotation += (PitchRotation * BASE_AIM_AROUND_RATE * GetWorld()->GetDeltaSeconds());
-		
-		//start moving the camera as well
-		if (Animation->SkelControl_UpperArmstRotation.Pitch > 20.f || Animation->SkelControl_UpperArmstRotation.Pitch < -20.f)
+		if (!GetMesh()) return;
+
+		UMainCharacterAnimInstance * Animation = Cast<UMainCharacterAnimInstance>(GetMesh()->GetAnimInstance());
+
+		//No Anim Instance Acquired?
+		if (!Animation) return;
+
+		const FRotator PitchRotation(rate, 0, 0);
+		bool bAddRotation = (rate > 0 && Animation->SkelControl_UpperArmstRotation.Pitch < AIM_BOUNDS_PITCH_VALUE) || (rate < 0 && Animation->SkelControl_UpperArmstRotation.Pitch > -AIM_BOUNDS_PITCH_VALUE);
+
+		if (bAddRotation)
 		{
-			CameraBoom->AddLocalRotation(PitchRotation * BASE_AIM_AROUND_RATE * GetWorld()->GetDeltaSeconds());
+			Animation->SkelControl_UpperArmstRotation += (PitchRotation * BASE_AIM_AROUND_RATE * GetWorld()->GetDeltaSeconds());
+
+			//start moving the camera as well
+			if (Animation->SkelControl_UpperArmstRotation.Pitch > 20.f || Animation->SkelControl_UpperArmstRotation.Pitch < -20.f)
+			{
+				CameraBoom->AddLocalRotation(PitchRotation * BASE_AIM_AROUND_RATE * GetWorld()->GetDeltaSeconds());
+			}
 		}
 	}
 }

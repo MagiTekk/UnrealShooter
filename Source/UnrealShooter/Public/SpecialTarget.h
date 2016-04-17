@@ -37,7 +37,7 @@ public:
 		this->TimeToLive = 5.0f;
 	}
 
-	FSpecialTargetProperties(FVector InitialLocation, float TimeToLive, int32 Points, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 1.0f)
+	FSpecialTargetProperties(FVector InitialLocation, float TimeToLive, int32 Points, TArray<FVector> Locations = TArray<FVector>{}, float Speed = 2.0f)
 	{
 		this->InitialLocation = InitialLocation;
 		this->Locations = Locations;

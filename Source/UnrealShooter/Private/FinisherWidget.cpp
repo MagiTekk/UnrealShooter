@@ -65,7 +65,8 @@ void UFinisherWidget::OnConfirm()
 	for (TActorIterator<ABasicButton> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		ABasicButton *Button = *ActorItr;
-		if (Button->GetName() == "SequenceButton")
+		FName RequiredCustomName = FName(TEXT("btn_sequenceSelector"));
+		if (Button->CustomName.Compare(RequiredCustomName) == 0)
 		{
 			Button->ActivateButton();
 			break;

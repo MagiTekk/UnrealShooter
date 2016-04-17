@@ -33,6 +33,9 @@ public:
 	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
 	virtual void PostInitializeComponents() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Properties")
+		FName CustomName;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 		USceneComponent* DefaultSceneRoot;
 
