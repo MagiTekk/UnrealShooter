@@ -19,13 +19,13 @@ AExplosiveActor::AExplosiveActor()
 	DynamiteMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("DynamiteMesh"));
 	DynamiteMesh->SetDestructibleMesh(dynamiteMeshBP.Object);
 	DynamiteMesh->SetMobility(EComponentMobility::Movable);
-	DynamiteMesh->AttachTo(DefaultSceneRoot);
+	DynamiteMesh->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//Igniter particle effect
 	ConstructorHelpers::FObjectFinder<UParticleSystem> igniterEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/IgniterEffect.IgniterEffect'"));
 	IgniterParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("IgniterParticleEffect"));
 	IgniterParticleEffect->SetTemplate(igniterEmitter.Object);
-	IgniterParticleEffect->AttachTo(RootComponent);
+	IgniterParticleEffect->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//Particle Effects
 	ConstructorHelpers::FObjectFinder<UParticleSystem> fireEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/Fire/P_Fire_Torch_01.P_Fire_Torch_01'"));
@@ -38,7 +38,7 @@ AExplosiveActor::AExplosiveActor()
 	LightningParticleEffectReference = lightningEmitter.Object;
 
 	ExplosiveTypeParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ExplosiveTypeParticleEffect"));
-	ExplosiveTypeParticleEffect->AttachTo(RootComponent);
+	ExplosiveTypeParticleEffect->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//Explosion Actor
 	ConstructorHelpers::FObjectFinder<UClass> explosion(TEXT("Blueprint'/Game/UnrealShooter/Blueprint/Effects/ExplosionBP.ExplosionBP_C'"));

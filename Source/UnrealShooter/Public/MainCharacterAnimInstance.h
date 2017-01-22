@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 #include "MainCharacterAnimInstance.generated.h"
 
 /**
@@ -22,7 +23,24 @@ class UNREALSHOOTER_API UMainCharacterAnimInstance : public UAnimInstance
 
 	const FRotator INITIAL_ARMS_ROTATION = FRotator(0,0,0);
 
-	void InitMontageAnimations();
+	void InitMontageAnimations()
+	{
+		//you can only get the anim montages(also maybe BPs?) using the constructor helper from the constructor
+		ConstructorHelpers::FObjectFinder<UAnimMontage> FO_EquipPistolMontage(TEXT("AnimMontage'/Game/UnrealShooter/Animation/MainCharacter/Actions/Equip_Pistol_Montage.Equip_Pistol_Montage'"));
+		Equip_Pistol_Montage = FO_EquipPistolMontage.Object;
+
+		ConstructorHelpers::FObjectFinder<UAnimMontage> FO_UnequipPistolMontage(TEXT("AnimMontage'/Game/UnrealShooter/Animation/MainCharacter/Actions/Unequip_Pistol_Montage.Unequip_Pistol_Montage'"));
+		Unequip_Pistol_Montage = FO_UnequipPistolMontage.Object;
+
+		ConstructorHelpers::FObjectFinder<UAnimMontage> FO_ReloadPistolMontage(TEXT("AnimMontage'/Game/UnrealShooter/Animation/MainCharacter/Actions/Reload_Pistol_Montage.Reload_Pistol_Montage'"));
+		Reload_Pistol_Montage = FO_ReloadPistolMontage.Object;
+
+		ConstructorHelpers::FObjectFinder<USoundCue> Reload_Cue(TEXT("SoundCue'/Game/UnrealShooter/Audio/Eject_Clip_And_Re-Load_Cue.Eject_Clip_And_Re-Load_Cue'"));
+		Reload_SoundCue = Reload_Cue.Object;
+
+		ConstructorHelpers::FObjectFinder<UAnimSequence> FO_RecoilAnimSequence(TEXT("AnimSequence'/Game/UnrealShooter/Animation/MainCharacter/Actions/Shoot_Pistol_Recoil.Shoot_Pistol_Recoil'"));
+		Recoil_Sequence = FO_RecoilAnimSequence.Object;
+	}
 
 	//void UpdateArmsRotation();	//unused, but may help for a future bone rotation
 

@@ -55,7 +55,6 @@ public:
 	AUnrealHUD();
 
 	virtual void DrawHUD() override;
-	virtual void DrawText(const FString& Text, FVector2D Position, UFont* TextFont, FVector2D FontScale, FColor TextColor) override;
 
 	const int32 HIT_POINTS_OFFSET = 20;
 

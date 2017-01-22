@@ -64,12 +64,12 @@ void AMainCharacter::initCameraComponents()
 {
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->AttachTo(RootComponent);
+	CameraBoom->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character
 
 	// Create a follow camera
 	ThirdPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("ThirdPersonCamera"));
-	ThirdPersonCamera->AttachTo(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	ThirdPersonCamera->AttachToComponent(CameraBoom, FAttachmentTransformRules::KeepRelativeTransform, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	ThirdPersonCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 }
 
@@ -114,46 +114,46 @@ void AMainCharacter::Tick( float DeltaTime )
 /**
 Called to bind functionality to input
 */
-void AMainCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
+void AMainCharacter::SetupPlayerInputComponent(class UInputComponent* NewInputComponent)
 {
-	Super::SetupPlayerInputComponent(InputComponent);
+	Super::SetupPlayerInputComponent(NewInputComponent);
 
 	/*Movement Axes*/
-	InputComponent->BindAxis("MoveForward", this, &AMainCharacter::MoveForward);
-	InputComponent->BindAxis("MoveRight", this, &AMainCharacter::MoveRight);
+	NewInputComponent->BindAxis("MoveForward", this, &AMainCharacter::MoveForward);
+	NewInputComponent->BindAxis("MoveRight", this, &AMainCharacter::MoveRight);
 
 	/*Turn Axes Keys*/
-	InputComponent->BindAxis("LookRight", this, &AMainCharacter::LookRight);
-	InputComponent->BindAxis("LookUp", this, &AMainCharacter::LookUp);
+	NewInputComponent->BindAxis("LookRight", this, &AMainCharacter::LookRight);
+	NewInputComponent->BindAxis("LookUp", this, &AMainCharacter::LookUp);
 
 	/*Turn Axes Mouse*/
 	//Another set of configuration is needed to play with the mouse, the camera system has to be redefined.
-	InputComponent->BindAxis("MouseLookRight", this, &AMainCharacter::AimRight);
-	InputComponent->BindAxis("MouseLookUp", this, &AMainCharacter::AimUp);
+	NewInputComponent->BindAxis("MouseLookRight", this, &AMainCharacter::AimRight);
+	NewInputComponent->BindAxis("MouseLookUp", this, &AMainCharacter::AimUp);
 
 	/*Action Key Mapping*/
-	InputComponent->BindAction("Equip", IE_Pressed, this, &AMainCharacter::Equip_Pistol);
+	NewInputComponent->BindAction("Equip", IE_Pressed, this, &AMainCharacter::Equip_Pistol);
 
-	InputComponent->BindAction("Aim", IE_Pressed, this, &AMainCharacter::Trigger_Aim_In);
-	InputComponent->BindAction("Aim", IE_Released, this, &AMainCharacter::Trigger_Aim_Out);
+	NewInputComponent->BindAction("Aim", IE_Pressed, this, &AMainCharacter::Trigger_Aim_In);
+	NewInputComponent->BindAction("Aim", IE_Released, this, &AMainCharacter::Trigger_Aim_Out);
 
-	InputComponent->BindAction("Reload", IE_Pressed, this, &AMainCharacter::StartReloading);
+	NewInputComponent->BindAction("Reload", IE_Pressed, this, &AMainCharacter::StartReloading);
 
-	InputComponent->BindAction("Shoot", IE_Pressed, this, &AMainCharacter::ShootWeapon);
+	NewInputComponent->BindAction("Shoot", IE_Pressed, this, &AMainCharacter::ShootWeapon);
 
-	InputComponent->BindAction("Run", IE_Pressed, this, &AMainCharacter::Run);
-	InputComponent->BindAction("Run", IE_Released, this, &AMainCharacter::DoNotRun);
+	NewInputComponent->BindAction("Run", IE_Pressed, this, &AMainCharacter::Run);
+	NewInputComponent->BindAction("Run", IE_Released, this, &AMainCharacter::DoNotRun);
 
-	InputComponent->BindAction("ExecuteAction", IE_Pressed, this, &AMainCharacter::ExecuteContextAction);
+	NewInputComponent->BindAction("ExecuteAction", IE_Pressed, this, &AMainCharacter::ExecuteContextAction);
 
-	InputComponent->BindAction("Pause", IE_Pressed, this, &AMainCharacter::PauseGame).bExecuteWhenPaused = true;
+	NewInputComponent->BindAction("Pause", IE_Pressed, this, &AMainCharacter::PauseGame).bExecuteWhenPaused = true;
 
 	/* UI Mappings */
-	InputComponent->BindAction("UINavigationUp", IE_Pressed, this, &AMainCharacter::UINavigationUp).bExecuteWhenPaused = true;
-	InputComponent->BindAction("UINavigationDown", IE_Pressed, this, &AMainCharacter::UINavigationDown).bExecuteWhenPaused = true;
-	InputComponent->BindAction("UINavigationLeft", IE_Pressed, this, &AMainCharacter::UINavigationLeft).bExecuteWhenPaused = true;
-	InputComponent->BindAction("UINavigationRight", IE_Pressed, this, &AMainCharacter::UINavigationRight).bExecuteWhenPaused = true;
-	InputComponent->BindAction("UISelectElement", IE_Pressed, this, &AMainCharacter::UISelectElement).bExecuteWhenPaused = true;
+	NewInputComponent->BindAction("UINavigationUp", IE_Pressed, this, &AMainCharacter::UINavigationUp).bExecuteWhenPaused = true;
+	NewInputComponent->BindAction("UINavigationDown", IE_Pressed, this, &AMainCharacter::UINavigationDown).bExecuteWhenPaused = true;
+	NewInputComponent->BindAction("UINavigationLeft", IE_Pressed, this, &AMainCharacter::UINavigationLeft).bExecuteWhenPaused = true;
+	NewInputComponent->BindAction("UINavigationRight", IE_Pressed, this, &AMainCharacter::UINavigationRight).bExecuteWhenPaused = true;
+	NewInputComponent->BindAction("UISelectElement", IE_Pressed, this, &AMainCharacter::UISelectElement).bExecuteWhenPaused = true;
 }
 
 void AMainCharacter::MoveForward(float value)

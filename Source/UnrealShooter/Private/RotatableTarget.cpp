@@ -22,28 +22,28 @@ void ARotatableTarget::InitTarget()
 	this->SetRootComponent(DefaultSceneRoot);
 
 	HeadCenterPointScene = CreateDefaultSubobject<USceneComponent>(TEXT("HeadCenterPointScene"));
-	HeadCenterPointScene->AttachTo(DefaultSceneRoot);
+	HeadCenterPointScene->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//I had to simulate physics and disable gravity because of a bug where the DM is not visible after being spawned by code
 	ConstructorHelpers::FObjectFinder<UDestructibleMesh> destructibleCube(TEXT("DestructibleMesh'/Game/UnrealShooter/Mesh/Target/TargetMesh_Cube_DM.TargetMesh_Cube_DM'"));
 	HeadMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("HeadMesh"));
 	HeadMesh->SetDestructibleMesh(destructibleCube.Object);
 	HeadMesh->SetMobility(EComponentMobility::Movable);
-	HeadMesh->AttachTo(DefaultSceneRoot);
+	HeadMesh->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 
 	BodyMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("BodyMesh"));
 	BodyMesh->SetDestructibleMesh(destructibleCube.Object);
 	BodyMesh->SetMobility(EComponentMobility::Movable);
-	BodyMesh->AttachTo(DefaultSceneRoot);
+	BodyMesh->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 
 	ConstructorHelpers::FObjectFinder<UStaticMesh> meshBase(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube'"));
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	BaseMesh->SetStaticMesh(meshBase.Object);
-	BaseMesh->AttachTo(DefaultSceneRoot);
+	BaseMesh->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 
 	Dynamite = CreateDefaultSubobject<UChildActorComponent>(TEXT("Dynamite"));
 	Dynamite->SetChildActorClass(AExplosiveActor::StaticClass());
-	Dynamite->AttachTo(DefaultSceneRoot);
+	Dynamite->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 
 	InitMaterialInstance();
 
@@ -112,11 +112,11 @@ FLinearColor ARotatableTarget::GetMaterialColor()
 	}
 }
 
-void ARotatableTarget::ApplyProperties(FRotatableTargetProperties TargetProperties, int32 TimeToLive)
+void ARotatableTarget::ApplyProperties(FRotatableTargetProperties TProperties, int32 TTL)
 {
-	this->TargetProperties = TargetProperties;
+	this->TargetProperties = TProperties;
 	this->SetActorLocation(GetSpawnPoint(TargetProperties.InitialLocation));
-	this->TimeToLive = TimeToLive;
+	this->TimeToLive = TTL;
 
 	//by default all targets spawn on the ground
 	this->SetActorRotation(FRotator{ LOWERED_ROTATION, 0.0f, 0.0f });
@@ -137,7 +137,7 @@ void ARotatableTarget::InitDynamite()
 	}
 	else
 	{
-		AExplosiveActor* DynamiteActor = Cast<AExplosiveActor>(Dynamite->ChildActor);
+		AExplosiveActor* DynamiteActor = Cast<AExplosiveActor>(Dynamite->GetChildActor());
 		if (DynamiteActor)
 		{
 			DynamiteActor->ApplyProperties(TargetProperties.ExplosiveType);

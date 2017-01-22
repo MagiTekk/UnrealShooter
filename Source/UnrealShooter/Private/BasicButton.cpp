@@ -18,15 +18,15 @@ ABasicButton::ABasicButton()
 	TextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRender"));
 	TextRenderComponent->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
 	TextRenderComponent->SetVisibility(false);
-	TextRenderComponent->AttachTo(DefaultSceneRoot);
+	TextRenderComponent->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 
 	ConstructorHelpers::FObjectFinder<UStaticMesh> meshBody(TEXT("StaticMesh'/Game/DemoRoom/Meshes/SM_Button.SM_Button'"));
 	ButtonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ButtonMesh"));
 	ButtonMesh->SetStaticMesh(meshBody.Object);
-	ButtonMesh->AttachTo(DefaultSceneRoot);
+	ButtonMesh->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 
 	TriggerCollission = CreateDefaultSubobject<UCapsuleComponent>(TEXT("TriggerCollission"));
-	TriggerCollission->AttachTo(DefaultSceneRoot);
+	TriggerCollission->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 	TriggerCollission->SetCapsuleSize(156.53f, 156.53f);
 
 	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> DefaultMaterialObj(TEXT("MaterialInstanceConstant'/Game/DemoRoom/Materials/M_Button_Inst.M_Button_Inst'"));

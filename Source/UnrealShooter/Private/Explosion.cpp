@@ -17,7 +17,7 @@ AExplosion::AExplosion()
 
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
 	CollisionSphere->SetSphereRadius(365.0f);
-	CollisionSphere->AttachTo(RootComponent);
+	CollisionSphere->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//Particle Effects
 	ConstructorHelpers::FObjectFinder<UParticleSystem> fireBlastEmitter(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
@@ -34,7 +34,7 @@ AExplosion::AExplosion()
 
 	BlastParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("BlastParticleEffect"));
 	BlastParticleEffect->SetRelativeScale3D(FVector(3.0f, 3.0f, 3.0f));
-	BlastParticleEffect->AttachTo(RootComponent);
+	BlastParticleEffect->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//Sound
 	ConstructorHelpers::FObjectFinder<USoundCue> fireCue(TEXT("SoundCue'/Game/StarterContent/Audio/Explosion_Cue.Explosion_Cue'"));

@@ -23,7 +23,7 @@ ASpecialTarget::ASpecialTarget()
 	DestructibleMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("DestructibleMesh"));
 	DestructibleMesh->SetDestructibleMesh(destructibleCube.Object);
 	DestructibleMesh->SetMobility(EComponentMobility::Movable);
-	DestructibleMesh->AttachTo(DefaultSceneRoot);
+	DestructibleMesh->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//listen for my destructible's onFracture signal
 	FScriptDelegate OnMeshFractured;
@@ -42,7 +42,7 @@ ASpecialTarget::ASpecialTarget()
 
 	ExplosiveTypeParticleEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ExplosiveTypeParticleEffect"));
 	ExplosiveTypeParticleEffect->SetTemplate(SpecialParticleEffectReference);
-	ExplosiveTypeParticleEffect->AttachTo(RootComponent);
+	ExplosiveTypeParticleEffect->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void ASpecialTarget::PostInitializeComponents()

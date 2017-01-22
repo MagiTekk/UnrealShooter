@@ -20,11 +20,6 @@ void AUnrealHUD::DrawHUD()
 	}
 }
 
-void AUnrealHUD::DrawText(const FString & Text, FVector2D Position, UFont * TextFont, FVector2D FontScale, FColor TextColor)
-{
-	Super::DrawText(Text, Position, TextFont, FontScale, TextColor);
-}
-
 void AUnrealHUD::RewardTargetPoints(int32 points, FVector Location)
 {
 	PointsDisplayedOnScreen.Emplace(FHUDPointsProperties(points, Location, 255.0f));
@@ -54,7 +49,7 @@ void AUnrealHUD::DrawRewardedPoints()
 			}
 			else if (props.FakeTimer >= 0)
 			{
-				DrawText(textToDraw, projectedLocationToDraw, HUDFont, fontScaleToDraw, AlphaWhite);
+				DrawText(textToDraw, AlphaWhite, projectedLocationToDraw.X, projectedLocationToDraw.Y, HUDFont);
 			}
 		}
 	}

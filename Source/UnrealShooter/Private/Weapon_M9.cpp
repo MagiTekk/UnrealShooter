@@ -30,22 +30,22 @@ AWeapon_M9::AWeapon_M9()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetStaticMesh(WeaponMesh_M9.Object);
 	Mesh->SetCollisionProfileName("NoCollision");
-	Mesh->AttachTo(DefaultSceneRoot);
+	Mesh->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);
 
 	LaserSource = CreateDefaultSubobject<UChildActorComponent>(TEXT("LaserSource"));
 	LaserSource->SetRelativeLocation(FVector(10.0f, 0.0f, 4.0f));
-	LaserSource->AttachTo(Mesh);
+	LaserSource->AttachToComponent(Mesh, FAttachmentTransformRules::KeepRelativeTransform);
 
 	LaserImpact = CreateDefaultSubobject<UPointLightComponent>(TEXT("LaserImpact"));
 	LaserImpact->SetIntensity(70.0f);
 	LaserImpact->SetLightColor(FLinearColor(255, 0, 0));
 	LaserImpact->SetAttenuationRadius(15.0f);
-	LaserImpact->AttachTo(LaserSource);
+	LaserImpact->AttachToComponent(LaserSource, FAttachmentTransformRules::KeepRelativeTransform);
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem> particleEmitter(TEXT("ParticleSystem'/Game/UnrealShooter/Particles/LaserBeam.LaserBeam'"));
 	LaserBeam = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("LaserBeam"));
 	LaserBeam->SetTemplate(particleEmitter.Object);
-	LaserBeam->AttachTo(RootComponent);
+	LaserBeam->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	ConstructorHelpers::FObjectFinder<UClass> GunshotInitial(TEXT("Class'/Game/UnrealShooter/Blueprint/M9/Blueprint_Effect_Muzzle_Flash.Blueprint_Effect_Muzzle_Flash_C'"));
 	if (GunshotInitial.Object)
@@ -105,7 +105,7 @@ void AWeapon_M9::AddWeapon(USkeletalMeshComponent* MeshComponent, FName SocketNa
 	if (World)
 	{
 		// snap to the socket
-		AttachRootComponentTo(MeshComponent, SocketName, EAttachLocation::SnapToTarget);
+		AttachToComponent(MeshComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
 		bIsWeaponAttached = true;
 		//UE_LOG(LogTemp, Warning, TEXT("AWeapon_M9::AddWeapon says: Spawn Complete!"));
 		//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Yellow, FString::FString("Spawn Complete"));
